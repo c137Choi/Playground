@@ -178,17 +178,6 @@ extension UIImage {
     var jpegCompressedData: Data? {
         jpegData(compressionQuality: 0.3)
     }
-    
-	/// 图片二进制类型
-	var data: Data? {
-		if let data = pngData() {
-			return data
-		} else if let data = jpegData(compressionQuality: 1) {
-			return data
-		} else {
-			return .none
-		}
-	}
 	
 	/// 圆角图片(圆角
 	var roundImage: UIImage? {

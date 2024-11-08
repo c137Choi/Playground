@@ -79,6 +79,14 @@ extension UICollectionViewFlowLayout {
 
 extension UICollectionView {
     
+    /// 选中前检查IndexPath
+    func safeSelectItem(at indexPath: IndexPath?, animated: Bool, scrollPosition: UICollectionView.ScrollPosition) {
+        let checkedIndexPath = indexPath.flatMap {
+            $0.validIndexPath(for: self)
+        }
+        selectItem(at: checkedIndexPath, animated: animated, scrollPosition: scrollPosition)
+    }
+    
     /// 刷新项目
     /// - Parameter indexPath: 要刷新的IndexPath
     func reloadItem(at indexPath: IndexPath) {

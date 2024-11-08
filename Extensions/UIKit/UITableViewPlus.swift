@@ -20,6 +20,14 @@ extension UITableView {
         }
     }
     
+    /// 选中前检查IndexPath
+    public func safeSelectRow(at indexPath: IndexPath?, animated: Bool, scrollPosition: UITableView.ScrollPosition) {
+        let checkedIndexPath = indexPath.flatMap {
+            $0.validIndexPath(for: self)
+        }
+        selectRow(at: checkedIndexPath, animated: animated, scrollPosition: scrollPosition)
+    }
+    
     public func selectRows(at indexPaths: [IndexPath] = [], animated: Bool = true, scrollPosition: UITableView.ScrollPosition = .none) {
         for indexPath in indexPaths {
             if let indexPathsForSelectedRows, indexPathsForSelectedRows.contains(indexPath) {

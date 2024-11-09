@@ -14,11 +14,12 @@ class BaseStandardTableViewController<Cell: UITableViewCell>: BaseTableViewContr
         Cell.registerTo(tableView)
     }
     
-    func configureCell(_ cell: Cell) {}
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = Cell.dequeueReusableCell(from: tableView, indexPath: indexPath)
-        configureCell(cell)
+        configureCell(cell, at: indexPath)
         return cell
     }
+    
+    func configureCell(_ cell: Cell, at indexPath: IndexPath) {}
+    
 }

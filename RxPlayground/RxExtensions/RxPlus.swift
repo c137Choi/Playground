@@ -353,6 +353,17 @@ extension ObservableConvertibleType {
         .empty()
     }
     
+    /// 经过一段时间丢弃序列
+    /// - Parameter timeout: 超时时间
+    /// - Returns: 事件序列
+    func dispose(after timeout: RxTimeInterval) -> Observable<Element> {
+        /// 超时序列
+        let timeout = Observable<Int>
+            .timer(.seconds(30), period: 1, scheduler: MainScheduler.instance)
+            .take(1)
+        return observable.take(until: timeout)
+    }
+    
     /// Observable 稳定性测试 | 指定时间内是否发出指定个数的事件
     /// - Parameters:
     ///   - timeSpan: 经过的时间 | 默认不检查时间 0 纳秒

@@ -484,7 +484,7 @@ extension ObservableConvertibleType where Element: Collection {
     
     func removeDuplicates<Value>(at keyPath: KeyPath<Element.Element, Value>) -> Observable<[Element.Element]> where Value: Equatable {
         asObservable().map { collection in
-            collection.removeDuplicates(at: keyPath)
+            collection.removingDuplicates(at: keyPath)
         }
     }
     

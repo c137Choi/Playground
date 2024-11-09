@@ -16,8 +16,8 @@ extension Sequence {
     /// 根据KeyPath过滤掉重复的元素
     /// - Parameter keyPath: 元素的KeyPath
     /// - Returns: 无重复元素的数组
-    func removeDuplicates<Value>(at keyPath: KeyPath<Element, Value>) -> [Element] where Value: Equatable {
-        removeDuplicates { element1, element2 in
+    func removingDuplicates<Value>(at keyPath: KeyPath<Element, Value>) -> [Element] where Value: Equatable {
+        removingDuplicates { element1, element2 in
             element1[keyPath: keyPath] == element2[keyPath: keyPath]
         }
     }
@@ -25,7 +25,7 @@ extension Sequence {
     /// 移除重复项
     /// - Parameter includeElement: 判断是否重复的回调
     /// - Returns: 无重复元素的数组
-    func removeDuplicates(includeElement: (Element, Element) -> Bool) -> [Element] {
+    func removingDuplicates(includeElement: (Element, Element) -> Bool) -> [Element] {
         var results = [Element]()
         
         forEach { element in

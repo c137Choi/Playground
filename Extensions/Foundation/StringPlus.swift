@@ -558,9 +558,16 @@ extension String {
         Data(utf8).base64EncodedString()
     }
     
+    /// 以空(\0)结尾的ASCII二进制
+    var nullTerminatedASCII: Data? {
+        cString(using: .ascii).map {
+            Data(bytes: $0, count: $0.count)
+        }
+    }
+    
     /// 转换为utf8编码的二进制数据
     /// 注: 其中系统属性utf8CString已经在尾部拼接上了\0(null-terminated)
-    var nullTerminatedUTF8Encoded: Data {
+    var nullTerminatedUTF8: Data {
         let bytes = utf8CString.map(UInt8.init)
         return Data(bytes)
     }

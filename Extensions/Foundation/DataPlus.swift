@@ -223,6 +223,10 @@ extension Data {
         return changedBytesArray
     }
     
+    /// 二进制转换为指定的整数类型
+    /// - Parameter numberType: 整数类型
+    /// - Returns: 指定整数类型的整数
+    /// - 注: 传入的整数类型占用的二进制数必须和自身的字节数相同
     func binaryInteger<T>(_ numberType: T.Type) -> T? where T: BinaryInteger {
         do {
             return try withUnsafeBytes { rawBufferPointer in

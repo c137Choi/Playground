@@ -20,6 +20,16 @@ extension UITableView {
         }
     }
     
+    /// 执行TableView的reloadData并保持之前的contentOffset
+    /// 实现手指下拉时刷新保持页面流畅
+    public func reloadDataWhileKeepPreviousLocation() {
+        UIView.performWithoutAnimation {
+            let previousLocation = contentOffset
+            reloadData()
+            contentOffset = previousLocation
+        }
+    }
+    
     /// 选中前检查IndexPath
     public func safeSelectRow(at indexPath: IndexPath?, animated: Bool, scrollPosition: UITableView.ScrollPosition) {
         let checkedIndexPath = indexPath.flatMap {

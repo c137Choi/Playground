@@ -158,7 +158,19 @@ extension UIBaseStaticTable {
         var rows: [StaticRow] {
             didSet {
                 guard let tableView, let sectionIndex else { return }
-                tableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
+                /// 方案1:
+                UIView.performWithoutAnimation {
+                    /// 根据UITableView.RowAnimation.none的注释来看
+                    /// The inserted or deleted rows use the default animations.
+                    /// 所以如果不使用动画,需要将下面一句放在UIView.performWithoutAnimation中执行
+                    tableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
+                }
+//                /// 方案2:
+//                UIView.setAnimationsEnabled(false)
+//                defer {
+//                    UIView.setAnimationsEnabled(true)
+//                }
+//                tableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
             }
         }
         var sectionIndex: Int?

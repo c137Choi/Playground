@@ -13,7 +13,6 @@ enum Rx {
     @UniqueAddress static var disposeBag
     @UniqueAddress static var activityTrackingDisposeBag
     @UniqueAddress static var anyUpdateRelay
-    @UniqueAddress static var activityIndicator
 }
 
 public extension Reactive where Base: AnyObject {
@@ -132,14 +131,8 @@ extension Reactive where Base: ActivityTracker {
     /// - Parameter timeInterval: 延迟多长时间开始追踪
     func activity(delayed timeInterval: RxTimeInterval) -> ActivityIndicator {
         synchronized(lock: base) {
-            /// 创建一个ActivityIndicator
-            var newIndicator: ActivityIndicator {
-                let indicator = ActivityIndicator(delayed: timeInterval)
-                setAssociatedObject(base, Rx.activityIndicator, indicator, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-                return indicator
-            }
-            /// 活动指示器
-            let indicator = associated(ActivityIndicator.self, base, Rx.activityIndicator).or(newIndicator)
+            /// 创建活动指示器
+            let indicator = ActivityIndicator(delayed: timeInterval)
             /// 每次都重新跟踪活动序列
             activityTrackingDisposebag = DisposeBag {
                 indicator.drive(with: base) { weakBase, processing in

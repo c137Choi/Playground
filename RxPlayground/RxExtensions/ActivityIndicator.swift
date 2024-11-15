@@ -74,7 +74,7 @@ public class ActivityIndicator : SharedSequenceConvertibleType {
         recursiveLock.unlock()
     }
     
-    func reset() {
+    public func reset() {
         recursiveLock.lock()
         relay.accept(0)
         recursiveLock.unlock()

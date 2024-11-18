@@ -302,7 +302,7 @@ struct ValueRequirement: OptionSet {
 @propertyWrapper final class IgnoreEmptyString: ValidValueOnly<String> {
 	override var wrappedValue: String? {
 		get { super.wrappedValue }
-		set { super.wrappedValue = newValue.validStringOrNone }
+		set { super.wrappedValue = newValue.unwrappedValidStringOrNone }
 	}
 }
 

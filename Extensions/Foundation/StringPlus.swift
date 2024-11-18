@@ -76,16 +76,16 @@ extension Optional where Wrapped == String {
 	}
 	
 	/// 返回有效的字符串或空字符串
-	var validString: Wrapped {
+	var unwrappedValidString: Wrapped {
 		isEmptyString ? "" : unsafelyUnwrapped
 	}
     
-    func validStringOr(_ defaultValue: Wrapped) -> Wrapped {
-        validStringOrNone.or(defaultValue)
+    func unwrappedValidStringOr(_ defaultValue: Wrapped) -> Wrapped {
+        unwrappedValidStringOrNone.or(defaultValue)
     }
 	
 	/// 返回有效的字符串或.none
-	var validStringOrNone: Self {
+	var unwrappedValidStringOrNone: Self {
 		isEmptyString ? .none : unsafelyUnwrapped
 	}
     

@@ -47,8 +47,7 @@ extension ClosedRange where Bound == Int {
     
     /// 返回保留前几个数的Range. 例如: 1...5 保留前三个数 -> 1...3 | 如果截取失败则返回原值
     func keep(first: Int) -> Self {
-        let limit = index(before: endIndex)
-        guard let upperBound = index(startIndex, offsetBy: first - 1, limitedBy: limit) else { return self }
+        guard let upperBound = index(startIndex, offsetBy: first - 1, limitedBy: lastIndex) else { return self }
         return lowerBound...self[upperBound]
     }
     
@@ -284,7 +283,7 @@ extension ClosedRange where Bound: Strideable, Bound.Stride: SignedInteger {
     
     /// 获取指定位置的元素
     public func itemAt(_ offset: Int) -> Bound? {
-        index(startIndex, offsetBy: offset, limitedBy: index(before: endIndex)).map { index in
+        index(startIndex, offsetBy: offset, limitedBy: lastIndex).map { index in
             self[index]
         }
     }

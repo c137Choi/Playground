@@ -18,8 +18,8 @@ extension Range {
 
 extension Range where Bound: Strideable, Bound.Stride: SignedInteger {
     
-    /// 用于数组indices属性,返回最后一个index || 数组非空时有值
-    var lastIndex: Bound? {
+    /// 返回最后一个index | Range非空时有效(如果isEmpty还调用index(before:)方法程序会崩溃)
+    var maybeLastIndex: Index? {
         isEmpty ? nil : index(before: endIndex)
     }
 }

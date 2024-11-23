@@ -106,11 +106,11 @@ extension Optional {
     ///   - transform: 转换解包后的值
     ///   - defaultValue: 默认值
     /// - Returns: 转换后的值
-    func unwrap<T>(_ transform: (Wrapped) -> T, or fallback: @autoclosure () -> T) -> T {
+    func unwrap<T>(_ transform: (Wrapped) throws -> T, or fallback: @autoclosure () -> T) rethrows -> T {
         guard let self else {
             return fallback()
         }
-        return transform(self)
+        return try transform(self)
     }
     
     /// 解包
@@ -123,11 +123,11 @@ extension Optional {
     /// num.or("") { num in
     ///     num.string
     /// }
-    func or<T>(_ fallback: @autoclosure () -> T, map transform: (Wrapped) -> T) -> T {
+    func or<T>(_ fallback: @autoclosure () -> T, map transform: (Wrapped) throws -> T) rethrows -> T {
         guard let self else {
             return fallback()
         }
-        return transform(self)
+        return try transform(self)
     }
     
     /// 解包Optional

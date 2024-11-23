@@ -281,6 +281,17 @@ extension ClosedRange: Comparable where Bound: Comparable {
 
 extension ClosedRange where Bound: Strideable, Bound.Stride: SignedInteger {
     
+    /// Bound类型的最后一个Index
+    /// 例: ClosedRange<Int>(0..<10).lastBoundIndex == Int(9)
+    /// 例: ClosedRange<UInt8>(0..<10).lastBoundIndex == UInt8(9)
+    public var lastBoundIndex: Bound {
+        if case .inRange(let boundIndex) = lastIndex {
+            return boundIndex
+        } else {
+            fatalError("NOT SUPPOSE TO HAPPEN.")
+        }
+    }
+    
     /// 获取指定位置的元素
     public func itemAt(_ offset: Int) -> Bound? {
         index(startIndex, offsetBy: offset, limitedBy: lastIndex).map { index in

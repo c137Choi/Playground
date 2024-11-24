@@ -42,8 +42,8 @@ extension Date {
 	}
     
     /// 毫秒的时间戳
-    var millisecondTimeIntervalSince1970: Int {
-        Int(timeIntervalSince1970 * 1000)
+    var millisecondsSince1970: Int {
+        Int(timeIntervalSince1970 * 1000.0)
     }
 	
     var dateString: String {

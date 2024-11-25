@@ -227,6 +227,8 @@ extension Data {
     /// - Parameter numberType: 整数类型
     /// - Returns: 指定整数类型的整数
     /// - 注: 传入的整数类型占用的二进制数必须和自身的字节数相同
+    /// - 注: 二进制字节数从左至右按顺序从二进制低位到高位填充
+    /// - 如: 二进制Data([0xFD, 0xFC, 0xFB, 0xFA]) -> UInt32二进制: 0xFA_FB_FC_FD
     func binaryInteger<T>(_ numberType: T.Type) -> T? where T: BinaryInteger {
         do {
             return try withUnsafeBytes { rawBufferPointer in

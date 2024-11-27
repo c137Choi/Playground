@@ -354,13 +354,13 @@ extension ObservableConvertibleType {
     }
     
     /// 经过一段时间丢弃序列
-    /// - Parameter timeout: 超时时间
-    /// - Returns: 事件序列
-    func dispose(after timeout: RxTimeInterval) -> Observable<Element> {
-        /// 超时序列
-        let timeout = Observable<Int>
-            .timer(.seconds(30), period: 1, scheduler: MainScheduler.instance)
-            .take(1)
+    /// - Parameter dueTime: 超时时间 | 延迟执行时间
+    /// - Parameter scheduler: 计时器运行Scheduler
+    /// - Returns: 新事件序列
+    func dispose(after dueTime: RxTimeInterval, scheduler: any SchedulerType = MainScheduler.instance) -> Observable<Element> {
+        /// 超时定时器
+        let timeout = Observable<Int>.timer(dueTime, period: .seconds(1), scheduler: scheduler).take(1)
+        /// 返回新的事件序列
         return observable.take(until: timeout)
     }
     

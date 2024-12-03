@@ -24,9 +24,37 @@ extension Array where Element == ControlProperty<Bool> {
 }
 
 extension Array where Element: ObservableConvertibleType {
+    
+    /// 串联事件序列数组(无时间间隔)
     var chained: Completable {
-        reduce(Completable.empty) { completable, next in
-            completable + next.completed
+        chained(pauseInterval: nil)
+    }
+    
+    /// 串联事件序列数组
+    /// - Parameters:
+    ///   - pauseInterval: 序列之间的停顿时间(首尾的序列不添加停顿时间)
+    ///   - scheduler: 执行时间间隔的调度器 | interval非空才有意义
+    /// - Returns: Completable
+    func chained(pauseInterval: RxTimeInterval? = nil, scheduler: SchedulerType = MainScheduler.instance) -> Completable {
+        /// 确保数组非空
+        guard isNotEmpty else {
+            return .empty()
+        }
+        /// 间隔序列
+        let pause = pauseInterval.map {
+            Observable.just(0).delay($0, scheduler: scheduler).completed
+        }
+        return enumerated().reduce(Completable.empty) { completable, tuple in
+            /// 下一个Completable事件序列
+            let nextCompletable = tuple.element.completed
+            /// 中间的序列
+            let isMiddleSequence = tuple.offset != startIndex && tuple.offset != lastIndex
+            /// 不是第一个 && 时间间隔非空
+            if let pause, isMiddleSequence {
+                return completable + pause.andThen(nextCompletable)
+            } else {
+                return completable + nextCompletable
+            }
         }
     }
 }

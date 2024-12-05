@@ -43,14 +43,14 @@ extension Int {
     }
 }
 
-extension UILayoutPriority: ExpressibleByFloatLiteral {
+extension UILayoutPriority: @retroactive ExpressibleByFloatLiteral {
     public typealias FloatLiteralType = Float
     public init(floatLiteral value: FloatLiteralType) {
         self.init(rawValue: value)
     }
 }
 
-extension UILayoutPriority: ExpressibleByIntegerLiteral {
+extension UILayoutPriority: @retroactive ExpressibleByIntegerLiteral {
     public typealias IntegerLiteralType = Int
     public init(integerLiteral value: IntegerLiteralType) {
         self.init(rawValue: value.float)

@@ -112,14 +112,14 @@ final class GCDTimer {
 }
 
 // MARK: - __________ DispatchTime __________
-extension DispatchTime: ExpressibleByIntegerLiteral {
+extension DispatchTime: @retroactive ExpressibleByIntegerLiteral {
 	public typealias IntegerLiteralType = Int
 	public init(integerLiteral value: Self.IntegerLiteralType) {
 		self = .now() + .seconds(value)
 	}
 }
 
-extension DispatchTime: ExpressibleByFloatLiteral {
+extension DispatchTime: @retroactive ExpressibleByFloatLiteral {
 	public typealias FloatLiteralType = Double
 	public init(floatLiteral value: Self.FloatLiteralType) {
 		let nanoseconds = Int(value * 1_000_000_000)
@@ -132,14 +132,14 @@ extension DispatchTime: ExpressibleByFloatLiteral {
 }
 
 // MARK: - __________ DispatchTimeInterval __________
-extension DispatchTimeInterval: ExpressibleByIntegerLiteral {
+extension DispatchTimeInterval: @retroactive ExpressibleByIntegerLiteral {
 	public typealias IntegerLiteralType = Int
 	public init(integerLiteral value: Self.IntegerLiteralType) {
 		self = .seconds(value)
 	}
 }
 
-extension DispatchTimeInterval: ExpressibleByFloatLiteral {
+extension DispatchTimeInterval: @retroactive ExpressibleByFloatLiteral {
 	public typealias FloatLiteralType = Double
 	public init(floatLiteral value: Self.FloatLiteralType) {
 		let nanoseconds = Int(value * 1_000_000_000)

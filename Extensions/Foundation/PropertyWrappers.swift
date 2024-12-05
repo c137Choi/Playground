@@ -159,18 +159,19 @@ import UIKit
         set {
             if overflow {
                 let distance = upperBound - lowerBound
-                do {
+                do throws(RangeBoundError) {
                     super.wrappedValue = try range.constrainedResult(newValue).get()
-                } catch RangeBoundError.tooLow {
-                    let overflow = lowerBound - newValue
-                    let remainder = overflow.truncatingRemainder(dividingBy: distance)
-                    super.wrappedValue = upperBound - remainder
-                } catch RangeBoundError.tooHigh {
-                    let overflow = newValue - upperBound
-                    let remainder = overflow.truncatingRemainder(dividingBy: distance)
-                    super.wrappedValue = lowerBound + remainder
                 } catch {
-                    assertionFailure("Unhandled error.")
+                    switch error {
+                    case .tooLow:
+                        let overflow = lowerBound - newValue
+                        let remainder = overflow.truncatingRemainder(dividingBy: distance)
+                        super.wrappedValue = upperBound - remainder
+                    case .tooHigh:
+                        let overflow = newValue - upperBound
+                        let remainder = overflow.truncatingRemainder(dividingBy: distance)
+                        super.wrappedValue = lowerBound + remainder
+                    }
                 }
             } else {
                 super.wrappedValue = newValue

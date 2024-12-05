@@ -26,27 +26,3 @@ extension UIGestureRecognizer.State {
         self == .ended
     }
 }
-
-extension UIGestureRecognizer.State: CustomStringConvertible {
-    
-    public var description: String {
-        switch self {
-        case .possible:
-            "possible"
-        case .began:
-            "began"
-        case .changed:
-            "changed"
-        case .ended:
-            "ended"
-        case .cancelled:
-            "cancelled"
-        case .failed:
-            "failed"
-        case .recognized:
-            "recognized"
-        @unknown default:
-            ""
-        }
-    }
-}

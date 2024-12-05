@@ -110,7 +110,7 @@ extension UIEdgeInsets {
 		UIEdgeInsets(top: -top, left: -left, bottom: -bottom, right: -right)
 	}
 	
-	@available (iOS 11.0, *)
+	@available(iOS 11.0, *)
 	var directionalEdgeInsets: NSDirectionalEdgeInsets {
 		switch UIApplication.shared.userInterfaceLayoutDirection {
 			case .leftToRight:
@@ -123,21 +123,21 @@ extension UIEdgeInsets {
 	}
 }
 
-extension UIEdgeInsets: ExpressibleByFloatLiteral {
+extension UIEdgeInsets: @retroactive ExpressibleByFloatLiteral {
 	public typealias FloatLiteralType = Double
 	public init(floatLiteral literal: Double) {
 		self.init(top: literal, left: literal, bottom: literal, right: literal)
 	}
 }
 
-extension UIEdgeInsets: ExpressibleByIntegerLiteral {
+extension UIEdgeInsets: @retroactive ExpressibleByIntegerLiteral {
     public typealias IntegerLiteralType = Int
     public init(integerLiteral literal: Int) {
         self.init(floatLiteral: literal.double)
     }
 }
 
-extension UIEdgeInsets: ExpressibleByArrayLiteral {
+extension UIEdgeInsets: @retroactive ExpressibleByArrayLiteral {
     public typealias ArrayLiteralElement = Double
     public init(arrayLiteral literal: Double...) {
         guard literal.count == 4 else {
@@ -147,21 +147,21 @@ extension UIEdgeInsets: ExpressibleByArrayLiteral {
     }
 }
 
-extension NSDirectionalEdgeInsets: ExpressibleByFloatLiteral {
+extension NSDirectionalEdgeInsets: @retroactive ExpressibleByFloatLiteral {
 	public typealias FloatLiteralType = Double
 	public init(floatLiteral literal: Double) {
 		self.init(top: literal, leading: literal, bottom: literal, trailing: literal)
 	}
 }
 
-extension NSDirectionalEdgeInsets: ExpressibleByIntegerLiteral {
+extension NSDirectionalEdgeInsets: @retroactive ExpressibleByIntegerLiteral {
     public typealias IntegerLiteralType = Int
     public init(integerLiteral literal: Int) {
         self.init(floatLiteral: literal.double)
     }
 }
 
-extension NSDirectionalEdgeInsets: ExpressibleByArrayLiteral {
+extension NSDirectionalEdgeInsets: @retroactive ExpressibleByArrayLiteral {
     public typealias ArrayLiteralElement = Double
     public init(arrayLiteral literal: Double...) {
         guard literal.count == 4 else {

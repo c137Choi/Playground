@@ -7,7 +7,7 @@
 
 import CoreBluetooth
 
-extension CBCharacteristicProperties: CustomDebugStringConvertible {
+extension CBCharacteristicProperties: @retroactive CustomDebugStringConvertible {
     
     public var debugDescription: String {
         var abilities: [String] = []

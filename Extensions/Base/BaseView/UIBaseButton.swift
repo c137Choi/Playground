@@ -6,7 +6,7 @@
 
 import UIKit
 
-extension UIButton.State: Hashable {
+extension UIButton.State: @retroactive Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
     }

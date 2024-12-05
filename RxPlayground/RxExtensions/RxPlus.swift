@@ -16,7 +16,7 @@ import RxCocoa
 }
 
 /// 扩展RxSwift.Event遵循Equatable协议 | 其Element同时必须是Equatable
-extension RxSwift.Event: Equatable where Element: Equatable {
+extension RxSwift.Event: @retroactive Equatable where Element: Equatable {
     
     /// 只对比.next和.completed事件, 因为Error协议无法对比, 故其他情况一律返回false
     public static func == (lhs: RxSwift.Event<Element>, rhs: RxSwift.Event<Element>) -> Bool {
@@ -236,16 +236,17 @@ extension DisposeBag {
     override var wrappedValue: T {
         get { super.wrappedValue }
         set {
-            do {
+            do throws(RangeBoundError) {
                 super.wrappedValue = try range.constrainedResult(newValue).get()
-            } catch RangeBoundError.tooLow {
-                self.rangeBoundErrorSubject.onNext(.tooLow)
-                super.wrappedValue = range.upperBound
-            } catch RangeBoundError.tooHigh {
-                self.rangeBoundErrorSubject.onNext(.tooHigh)
-                super.wrappedValue = range.lowerBound
             } catch {
-                fatalError("Never happens")
+                switch error {
+                case .tooLow:
+                    self.rangeBoundErrorSubject.onNext(.tooLow)
+                    super.wrappedValue = range.upperBound
+                case .tooHigh:
+                    self.rangeBoundErrorSubject.onNext(.tooHigh)
+                    super.wrappedValue = range.lowerBound
+                }
             }
         }
     }

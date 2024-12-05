@@ -10,7 +10,7 @@ import Network
 import RxSwift
 import RxCocoa
 
-extension NWPathMonitor: ReactiveCompatible {}
+extension NWPathMonitor: @retroactive ReactiveCompatible {}
 extension Reactive where Base == NWPathMonitor {
     
     private func start() {

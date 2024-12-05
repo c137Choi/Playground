@@ -47,7 +47,7 @@ extension String {
 }
 
 // MARK: - __________ String: LocalizedError __________
-extension String: LocalizedError {
+extension String: @retroactive LocalizedError {
 	public var errorDescription: String? {
 		self
 	}

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension IndexSet: ExpressibleByIntegerLiteral {
+extension IndexSet: @retroactive ExpressibleByIntegerLiteral {
     public typealias IntegerLiteralType = Int
     
     public init(integerLiteral value: Int) {

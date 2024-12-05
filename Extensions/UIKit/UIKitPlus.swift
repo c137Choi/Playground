@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension UIRectCorner: CaseIterable {
+extension UIRectCorner: @retroactive CaseIterable {
 	public static let allCases: [UIRectCorner] = [
 		.topLeft, .topRight, .bottomLeft, .bottomRight
 	]

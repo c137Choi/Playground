@@ -9,7 +9,7 @@ import PhotosUI
 import RxSwift
 import RxCocoa
 
-extension PHAuthorizationStatus: LocalizedError {
+extension PHAuthorizationStatus: @retroactive LocalizedError {
     
     public var errorDescription: String? {
         switch self {

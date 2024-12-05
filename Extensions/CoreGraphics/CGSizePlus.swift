@@ -149,19 +149,19 @@ extension CGSize {
 	}
 }
 
-extension CGSize: ExpressibleByFloatLiteral {
+extension CGSize: @retroactive ExpressibleByFloatLiteral {
 	public init(floatLiteral value: Double) {
 		self.init(width: value, height: value)
 	}
 }
 
-extension CGSize: ExpressibleByIntegerLiteral {
+extension CGSize: @retroactive ExpressibleByIntegerLiteral {
 	public init(integerLiteral value: Int) {
 		self.init(width: value, height: value)
 	}
 }
 
-extension CGSize: Comparable {
+extension CGSize: @retroactive Comparable {
 	public static func < (lhs: CGSize, rhs: CGSize) -> Bool {
 		lhs.width * lhs.height < rhs.width * rhs.height
 	}

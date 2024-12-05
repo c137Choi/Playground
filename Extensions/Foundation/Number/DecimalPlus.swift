@@ -30,7 +30,7 @@ extension Decimal {
     }
 }
 
-extension Decimal: ExpressibleByStringLiteral {
+extension Decimal: @retroactive ExpressibleByStringLiteral {
     
     public init(stringLiteral value: StringLiteralType) {
         if value.containsCharacter(in: .decimals.inverted) {

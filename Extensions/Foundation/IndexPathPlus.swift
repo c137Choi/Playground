@@ -44,7 +44,7 @@ extension IndexPath {
     }
 }
 
-extension IndexPath: ExpressibleByIntegerLiteral {
+extension IndexPath: @retroactive ExpressibleByIntegerLiteral {
     
     /// 通过整型字面量创建IndexPath
     public init(integerLiteral path: IntegerLiteralType) {

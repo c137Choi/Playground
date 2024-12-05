@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension ClosedRange: ExpressibleByIntegerLiteral where Bound == Int {
+extension ClosedRange: @retroactive ExpressibleByIntegerLiteral where Bound == Int {
     public typealias IntegerLiteralType = Bound
     public init(integerLiteral value: IntegerLiteralType) {
         self.init(uncheckedBounds: (lower: value, upper: value))
@@ -90,7 +90,7 @@ extension ClosedRange {
     /// - Parameter value: 传入值
     /// - Returns: 进度百分比<0~1.0>
     public func progress(for value: Bound) -> Bound where Bound: BinaryFloatingPoint {
-        do {
+        do throws(RangeBoundError) {
             /// Range宽度
             let rangeWidth = width
             /// 除数不能为零
@@ -102,12 +102,13 @@ extension ClosedRange {
             let constrainedValue = try constrainedResult(value).get()
             /// 计算进度
             return (constrainedValue - lowerBound) / rangeWidth
-        } catch RangeBoundError.tooLow {
-            return 0.0
-        } catch RangeBoundError.tooHigh {
-            return 1.0
         } catch {
-            fatalError("Never happens")
+            switch error {
+            case .tooLow:
+                return 0.0
+            case .tooHigh:
+                return 1.0
+            }
         }
     }
     
@@ -136,14 +137,15 @@ extension ClosedRange {
     /// - Parameter value: 需要限制的传入值
     /// - Returns: 限制过后的值
     func constrainedValue(_ value: Bound) -> Bound {
-        do {
+        do throws(RangeBoundError) {
             return try constrainedResult(value).get()
-        } catch RangeBoundError.tooLow {
-            return lowerBound
-        } catch RangeBoundError.tooHigh {
-            return upperBound
         } catch {
-            fatalError("Never happens")
+            switch error {
+            case .tooLow:
+                return lowerBound
+            case .tooHigh:
+                return upperBound
+            }
         }
     }
     
@@ -273,7 +275,7 @@ extension ClosedRange where Bound: AdditiveArithmetic {
     }
 }
 
-extension ClosedRange: Comparable where Bound: Comparable {
+extension ClosedRange: @retroactive Comparable where Bound: Comparable {
     public static func < (lhs: ClosedRange<Bound>, rhs: ClosedRange<Bound>) -> Bool {
         lhs.upperBound < rhs.lowerBound
     }
@@ -309,7 +311,7 @@ extension ClosedRange {
 }
 
 // MARK: - 其他
-@frozen enum RangeBoundError: Error {
+enum RangeBoundError: Error {
     case tooLow
     case tooHigh
 }

@@ -9,7 +9,7 @@ import AVFoundation
 import RxSwift
 import RxCocoa
 
-extension AVAuthorizationStatus: CustomStringConvertible {
+extension AVAuthorizationStatus: @retroactive CustomStringConvertible {
     public var description: String {
         switch self {
         case .notDetermined:
@@ -26,7 +26,7 @@ extension AVAuthorizationStatus: CustomStringConvertible {
     }
 }
 
-extension AVAuthorizationStatus: LocalizedError {
+extension AVAuthorizationStatus: @retroactive LocalizedError {
     
     public var errorDescription: String? {
         description

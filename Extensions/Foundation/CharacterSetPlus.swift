@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension CharacterSet: ExpressibleByStringLiteral {
+extension CharacterSet: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: StringLiteralType) {
         self.init(charactersIn: value)
@@ -109,7 +109,7 @@ extension CharacterSet {
 	#endif
 }
 
-extension Unicode.Scalar: ExpressibleByIntegerLiteral {
+extension Unicode.Scalar: @retroactive ExpressibleByIntegerLiteral {
     public init(integerLiteral value: UInt8) {
         self.init(value)
     }

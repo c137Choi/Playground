@@ -53,7 +53,7 @@ extension BehaviorRelay where Element: RangeReplaceableCollection {
     }
 }
 
-extension BehaviorRelay: ObserverType {
+extension BehaviorRelay: @retroactive ObserverType {
     
     public func on(_ event: Event<Element>) {
         switch event {

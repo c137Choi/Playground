@@ -25,10 +25,9 @@ final class PlistDocument: UIDocument {
     }
     
     
-    
-    func syncToiCloud(_ completed: @escaping (Bool) -> Void) {
+    func syncToiCloud(identifier: String?, _ completed: @escaping (Bool) -> Void) {
         let fileName = fileURL.lastPathComponent
-        guard let iCloud = URL.ubiquityContainer(identifier: .icloudContainer) else {
+        guard let iCloud = URL.ubiquityContainer(identifier: identifier) else {
             completed(false)
             return
         }

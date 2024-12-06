@@ -8,6 +8,32 @@
 import RxSwift
 import RxCocoa
 
+/// Rx序列生命周期(简化版)
+public enum RxLifecycleLite {
+    case next
+    case afterNext
+    case error
+    case afterError
+    case completed
+    case afterCompleted
+    case subscribe
+    case subscribed
+    case dispose
+}
+
+///// Rx序列生命周期(暂未启用)
+//public enum RxLifecycle<Element> {
+//    case next(Element)
+//    case afterNext(Element)
+//    case error(Swift.Error)
+//    case afterError(Swift.Error)
+//    case completed
+//    case afterCompleted
+//    case subscribe
+//    case subscribed
+//    case dispose
+//}
+
 /// RxSwift.Event<Element>类型的简化版
 @frozen public enum EventLite {
     case next
@@ -782,6 +808,109 @@ extension ObservableConvertibleType {
 			}
 	}
     
+    // MARK: - 生命周期事件发生时将指定参数发送给Observers
+    public func on<T, Observer>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Observer: ObserverType, Observer.Element == T {
+        on(lifeCycle, assign: designated(), to: observers)
+    }
+    public func on<T, Observer>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Observer: ObserverType, Observer.Element == T? {
+        on(lifeCycle, assign: designated(), to: observers)
+    }
+    
+    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
+        
+        let designated = designated()
+        /// 给observers发送事件
+        let send: (T) -> Void = { element in
+            observers.forEach { observer in
+                observer.onNext(element)
+            }
+        }
+        let onNext: (Element) throws -> Void = { _ in
+            guard lifeCycle == .next else { return }
+            send(designated)
+        }
+        let afterNext: (Element) throws -> Void = { _ in
+            guard lifeCycle == .afterNext else { return }
+            send(designated)
+        }
+        let onError: (Error) throws -> Void = { _ in
+            guard lifeCycle == .error else { return }
+            send(designated)
+        }
+        let afterError: (Error) throws -> Void = { _ in
+            guard lifeCycle == .afterError else { return }
+            send(designated)
+        }
+        let onCompleted: () throws -> Void = {
+            guard lifeCycle == .completed else { return }
+            send(designated)
+        }
+        let afterCompleted: () throws -> Void = {
+            guard lifeCycle == .afterCompleted else { return }
+            send(designated)
+        }
+        let onSubscribe: () -> Void = {
+            guard lifeCycle == .subscribe else { return }
+            send(designated)
+        }
+        let onSubscribed: () -> Void = {
+            guard lifeCycle == .subscribed else { return }
+            send(designated)
+        }
+        let onDispose: () -> Void = {
+            guard lifeCycle == .dispose else { return }
+            send(designated)
+        }
+        return observable.do(onNext: onNext, afterNext: afterNext, onError: onError, afterError: afterError, onCompleted: onCompleted, afterCompleted: afterCompleted, onSubscribe: onSubscribe, onSubscribed: onSubscribed, onDispose: onDispose)
+    }
+    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
+        
+        let designated = designated()
+        /// 给observers发送事件
+        let send: (T?) -> Void = { element in
+            observers.forEach { observer in
+                observer.onNext(element)
+            }
+        }
+        let onNext: (Element) throws -> Void = { _ in
+            guard lifeCycle == .next else { return }
+            send(designated)
+        }
+        let afterNext: (Element) throws -> Void = { _ in
+            guard lifeCycle == .afterNext else { return }
+            send(designated)
+        }
+        let onError: (Error) throws -> Void = { _ in
+            guard lifeCycle == .error else { return }
+            send(designated)
+        }
+        let afterError: (Error) throws -> Void = { _ in
+            guard lifeCycle == .afterError else { return }
+            send(designated)
+        }
+        let onCompleted: () throws -> Void = {
+            guard lifeCycle == .completed else { return }
+            send(designated)
+        }
+        let afterCompleted: () throws -> Void = {
+            guard lifeCycle == .afterCompleted else { return }
+            send(designated)
+        }
+        let onSubscribe: () -> Void = {
+            guard lifeCycle == .subscribe else { return }
+            send(designated)
+        }
+        let onSubscribed: () -> Void = {
+            guard lifeCycle == .subscribed else { return }
+            send(designated)
+        }
+        let onDispose: () -> Void = {
+            guard lifeCycle == .dispose else { return }
+            send(designated)
+        }
+        return observable.do(onNext: onNext, afterNext: afterNext, onError: onError, afterError: afterError, onCompleted: onCompleted, afterCompleted: afterCompleted, onSubscribe: onSubscribe, onSubscribed: onSubscribed, onDispose: onDispose)
+    }
+    
     // MARK: - 指定事件(EventLite)发生时将指定参数发送给Observers
     public func on<T, Observer: ObserverType>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Observer.Element == T {
         on(event: event, assign: designated(), to: observers)
@@ -793,7 +922,7 @@ extension ObservableConvertibleType {
         let designated = designated()
         let onNextEvent: (Event<Self.Element>) throws -> Void = { rxEvent in
             /// 给observers发送事件
-            let onNext: (T) -> Void = { element in
+            let send: (T) -> Void = { element in
                 observers.forEach { observer in
                     observer.onNext(element)
                 }
@@ -801,11 +930,11 @@ extension ObservableConvertibleType {
             /// 事件匹配
             switch (event, rxEvent) {
             case (.next, .next):
-                onNext(designated)
+                send(designated)
             case (.completed, .completed):
-                onNext(designated)
+                send(designated)
             case (.error, .error):
-                onNext(designated)
+                send(designated)
             default:
                 break
             }
@@ -819,7 +948,7 @@ extension ObservableConvertibleType {
         let designated = designated()
         let onNextEvent: (Event<Self.Element>) throws -> Void = { rxEvent in
             /// 给observers发送事件
-            let onNext: (T?) -> Void = { element in
+            let send: (T?) -> Void = { element in
                 observers.forEach { observer in
                     observer.onNext(element)
                 }
@@ -827,11 +956,11 @@ extension ObservableConvertibleType {
             /// 事件匹配
             switch (event, rxEvent) {
             case (.next, .next):
-                onNext(designated)
+                send(designated)
             case (.completed, .completed):
-                onNext(designated)
+                send(designated)
             case (.error, .error):
-                onNext(designated)
+                send(designated)
             default:
                 break
             }
@@ -851,7 +980,7 @@ extension ObservableConvertibleType {
     }
     public func on<T, Observers: Sequence>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Element: Equatable, Observers.Element.Element == T {
         let designated = designated()
-        let onNextEvent: (Event<Element>) throws -> Void = { rxEvent in
+        let nextEvent: (Event<Element>) throws -> Void = { rxEvent in
             if event == rxEvent {
                 observers.forEach { observer in
                     observer.onNext(designated)
@@ -860,12 +989,12 @@ extension ObservableConvertibleType {
         }
         return observable
             .materialize()
-            .do(onNext: onNextEvent)
+            .do(onNext: nextEvent)
             .dematerialize()
     }
     public func on<T, Observers: Sequence>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Element: Equatable, Observers.Element.Element == T? {
         let designated = designated()
-        let onNextEvent: (Event<Element>) throws -> Void = { rxEvent in
+        let nextEvent: (Event<Element>) throws -> Void = { rxEvent in
             if event == rxEvent {
                 observers.forEach { observer in
                     observer.onNext(designated)
@@ -874,7 +1003,7 @@ extension ObservableConvertibleType {
         }
         return observable
             .materialize()
-            .do(onNext: onNextEvent)
+            .do(onNext: nextEvent)
             .dematerialize()
     }
     

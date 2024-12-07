@@ -10,18 +10,18 @@ import UIKit
 
 public struct ChangedBytes: CustomStringConvertible {
     /// 字节在二进制中的索引
-    var lowerBound: Data.Index
+    var indexLowerBound: Data.Index
     /// 字节在二进制中的索引
-    var upperBound: Data.Index
+    var indexUpperBound: Data.Index
     /// 改动的字节数组
     var bytes: [Data.Element]
     
     public var description: String {
-        "changed: \(lowerBound) - \(upperBound): \(bytes)"
+        "changed: \(indexLowerBound) - \(indexUpperBound): \(bytes)"
     }
     
     var indexRange: ClosedRange<Data.Index> {
-        lowerBound...upperBound
+        indexLowerBound...indexUpperBound
     }
     
     /// 合并字节变动数组 | 如果是连续的字节变动则合并
@@ -37,9 +37,9 @@ public struct ChangedBytes: CustomStringConvertible {
             return [nextChangedBytes]
         }
         /// 如果新的字节变动的下限等于上一次字节变动的上线+1, 说明是连续的字节变动
-        if nextChangedBytes.lowerBound == lastChangedBytes.upperBound + 1 {
+        if nextChangedBytes.indexLowerBound == lastChangedBytes.indexUpperBound + 1 {
             /// 更新上限
-            lastChangedBytes.upperBound = nextChangedBytes.upperBound
+            lastChangedBytes.indexUpperBound = nextChangedBytes.indexUpperBound
             /// 重新添加回数组
             tempResults.append(lastChangedBytes)
         }
@@ -171,43 +171,55 @@ extension Data {
         binaryInteger(UInt8.self).orZero
     }
     
-    /// 比较相同数量的二进制对象, 返回变化的字节数组
+    /// 比较字节数相同的两个二进制对象, 返回变化的字节数组
     /// 注: 如果是连续的字节变化会进行合并操作
     /// - Parameter newData: 新二进制
     /// - Returns: 变化的数组,带变化的索引
     /// 实例: [0,0,0,0,0,0,0,0,0,0] -> [255,255,255,0,0,255,255,0,0,255]
     /// 结果: [changed: 0 - 2: [255, 255, 255], changed: 5 - 6: [255, 255], changed: 9 - 9: [255]
     func changedBytes(newData: Data) -> [ChangedBytes] {
-        /// 字节数较小的二进制
-        let minData = count < newData.count ? self : newData
+        /// 确保字节数一致
+        guard self.count == newData.count else {
+            assertionFailure("两个二进制字节数不一致")
+            return .empty
+        }
+        /// 旧二进制对象
+        let oldData = self
         /// 临时二进制变化数组
         var changedBytesArray = [ChangedBytes].empty
-        /// 遍历较小个数的二进制的每个字节
-        for byteIndex in minData.indices {
+        /// 遍历较小字节数Data的索引范围
+        for index in oldData.indices {
             /// 旧字节
-            let oldByte = self[byteIndex]
+            let oldByte = oldData[index]
             /// 新字节
-            let newByte = newData[byteIndex]
+            let newByte = newData[index]
             /// 确保字节有变动; 否则继续循环
             guard newByte != oldByte else { continue }
+            
             /// 取出上一段变动的字节模型 | 如果不为空(数组中有之前的字节变动)
             if var lastChangedBytes = changedBytesArray.popLast() {
-                /// 上一次的字节变动有值
-                let nextUpperBound = lastChangedBytes.upperBound + 1
-                /// 如果当前的Index等于上一次变动的上限+1(连续的字节变动)
-                if byteIndex == nextUpperBound {
-                    /// 更新上一次字节变动的上限 | 并添加新的字节 | 重新添加回数组
-                    lastChangedBytes.upperBound = nextUpperBound
+                
+                let nextIndexUpperBound = lastChangedBytes.indexUpperBound + 1
+                /// 如果当前的offset等于上一次字节变动的indexUpperBound + 1, 即为连续的字节变动
+                if index == nextIndexUpperBound {
+                    /// 更新上一次字节变动的上限
+                    lastChangedBytes.indexUpperBound = nextIndexUpperBound
+                    /// 添加新的字节
                     lastChangedBytes.bytes.append(newByte)
+                    /// 重新添加回数组
                     changedBytesArray.append(lastChangedBytes)
                 }
                 /// 否则为不连续的字节变动
                 else {
                     /// 将之前移除的字节变动重新添加回数组元素
                     changedBytesArray.append(lastChangedBytes)
-                    /// 创建新值并添加到数组
-                    let newItem = ChangedBytes(lowerBound: byteIndex, upperBound: byteIndex, bytes: [newByte])
-                    changedBytesArray.append(newItem)
+                    
+                    /// 将字节放入数组
+                    let bytes = [newByte]
+                    /// 初始化一个新的ChangedBytes对象
+                    let changedBytes = ChangedBytes(indexLowerBound: index, indexUpperBound: index, bytes: bytes)
+                    /// 并添加到数组
+                    changedBytesArray.append(changedBytes)
                 }
             }
             /// 数组中没有之前的字节变动(第一个字节变动)
@@ -215,9 +227,9 @@ extension Data {
                 /// 将字节放入数组
                 let bytes = [newByte]
                 /// 初始化一个新的ChangedBytes对象
-                let newItem = ChangedBytes(lowerBound: byteIndex, upperBound: byteIndex, bytes: bytes)
+                let changedBytes = ChangedBytes(indexLowerBound: index, indexUpperBound: index, bytes: bytes)
                 /// 并添加到数组
-                changedBytesArray.append(newItem)
+                changedBytesArray.append(changedBytes)
             }
         }
         return changedBytesArray

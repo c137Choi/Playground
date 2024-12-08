@@ -113,8 +113,16 @@ extension Data {
 
 extension Data {
     
+    /// 打印每个字节的数字值
     var rawBytes: String {
         map(\.string).joined(separator: "|")
+    }
+    
+    /// DMX通道描述(每个字节打印:通道编号_通道值)
+    var dmxDescription: String {
+        enumerated().reduce(into: "") { desc, next in
+            desc += "\(next.offset.number)_\(next.element)\(next.offset == lastIndex ? "" : "|")"
+        }
     }
     
     func jsonString(_ options: JSONSerialization.WritingOptions = []) -> String? {

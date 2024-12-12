@@ -980,7 +980,7 @@ extension ObservableConvertibleType {
             .dematerialize()
     }
     
-    // MARK: - 指定事件发生时将指定参数发送给Observers
+    // MARK: - 指定事件发生时将指定参数发送给Observers | 只匹配.next和.completed事件(参见RxSwift.Event的Equatable协议实现)
     public func on<T, Observer: ObserverType>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Element: Equatable, Observer.Element == T {
         on(event: event, assign: designated(), to: observers)
     }

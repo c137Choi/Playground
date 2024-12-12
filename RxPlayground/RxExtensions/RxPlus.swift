@@ -414,6 +414,15 @@ extension ObservableConvertibleType {
         return observable.take(until: timeout)
     }
     
+    /// 发生错误时使用应急方案
+    /// - Parameter fallback: 应急方案序列
+    /// - Returns: 事件序列
+    func `catch`<T>(fallback: T) -> Observable<Element> where T: ObservableConvertibleType, T.Element == Element {
+        observable.catch { _ in
+            fallback.asObservable()
+        }
+    }
+    
     /// Observable 稳定性测试 | 指定时间内是否发出指定个数的事件
     /// - Parameters:
     ///   - timeSpan: 经过的时间 | 默认不检查时间 0 纳秒

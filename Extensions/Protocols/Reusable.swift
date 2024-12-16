@@ -7,13 +7,16 @@
 
 import UIKit
 
-public protocol Reusable: AnyObject {
+public protocol Reusable {
     static var reuseIdentifier: String { get }
 }
-extension UICollectionReusableView: Reusable {}
-extension UITableViewHeaderFooterView: Reusable {}
-extension UITableViewCell: Reusable {}
-extension Reusable {
+public protocol ReusableObject: Reusable, AnyObject {
+    
+}
+extension UICollectionReusableView: ReusableObject {}
+extension UITableViewHeaderFooterView: ReusableObject {}
+extension UITableViewCell: ReusableObject {}
+extension ReusableObject {
     
     public static var reuseIdentifier: String {
         String(describing: self)

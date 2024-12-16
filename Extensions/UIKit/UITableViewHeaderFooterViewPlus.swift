@@ -34,9 +34,9 @@ extension UITableViewHeaderFooterView {
 
 extension UITableViewHeaderFooterView {
     static func registerTo(_ tableView: UITableView) {
-        tableView.register(self, forHeaderFooterViewReuseIdentifier: reuseId)
+        tableView.register(self, forHeaderFooterViewReuseIdentifier: reuseIdentifier)
     }
     static func dequeueReusableHeaderFooterView(from tableView: UITableView) -> Self? {
-        tableView.dequeueReusableHeaderFooterView(withIdentifier: reuseId) as? Self
+        tableView.dequeueReusableHeaderFooterView(withIdentifier: reuseIdentifier) as? Self
     }
 }

@@ -10,7 +10,9 @@ import UIKit
 public protocol Reusable: AnyObject {
     static var reuseIdentifier: String { get }
 }
-
+extension UICollectionReusableView: Reusable {}
+extension UITableViewHeaderFooterView: Reusable {}
+extension UITableViewCell: Reusable {}
 extension Reusable {
     
     public static var reuseIdentifier: String {
@@ -21,7 +23,3 @@ extension Reusable {
         layout.register(self, forDecorationViewOfKind: reuseIdentifier)
     }
 }
-
-extension UICollectionReusableView: Reusable {}
-extension UITableViewHeaderFooterView: Reusable {}
-extension UITableViewCell: Reusable {}

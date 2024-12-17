@@ -613,15 +613,15 @@ extension UIColor {
         return UIColor(patternImage: uiImage)
     }
     
-    func uiImage(size: CGSize = CGSize(width: 1, height: 1)) -> UIImage? {
-        let rect = CGRect(origin: .zero, size: size)
-        UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-        defer {
-            UIGraphicsEndImageContext()
+    func uiImage(size: CGSize = 1) -> UIImage {
+        let fillColor = self
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        
+        return UIGraphicsImageRenderer(size: size, format: format).image { context in
+            fillColor.setFill()
+            context.fill(context.format.bounds)
         }
-        setFill()
-        UIRectFill(rect)
-        return UIGraphicsGetImageFromCurrentImageContext()
     }
     
     func viewWithSize(_ size: CGFloat, constrained: Bool = true) -> UIView {

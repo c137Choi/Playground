@@ -9,37 +9,31 @@ import SpriteKit
 
 extension SKLabelNode {
     
+    /// SKLabelNode | 内部使用init(attributedText:)方法初始化
     convenience init(text: String, textColor: UIColor = .white, fontSize: CGFloat, fontWeight: UIFont.Weight = .regular) {
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: fontSize, weight: fontWeight),
-            .foregroundColor: textColor
-        ]
-        let attrbutedString = NSAttributedString(string: text, attributes: attributes)
-        self.init(attributedText: attrbutedString)
+        var attributes = [NSAttributedString.Key: Any].empty
+        attributes[.font] = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
+        attributes[.foregroundColor] = textColor
+        
+        let attributedText = NSAttributedString(string: text, attributes: attributes)
+        self.init(attributedText: attributedText)
     }
     
-    /// 更新文字
-    /// - Parameters:
-    ///   - text: 新文本
-    ///   - textColor: 文本颜色
-    ///   - fontSize: 字体大小
-    ///   - fontWeight: 字重
+    /// 更新attributedText
     func updateAttributedText(_ text: String, textColor: UIColor, fontSize: CGFloat, fontWeight: UIFont.Weight = .regular) {
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: fontSize, weight: fontWeight),
-            .foregroundColor: textColor
-        ]
+        var attributes = [NSAttributedString.Key: Any].empty
+        attributes[.font] = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
+        attributes[.foregroundColor] = textColor
+        
         attributedText = NSAttributedString(string: text, attributes: attributes)
     }
     
-    /// 更新字体颜色
-    /// - Parameter textColor: 新的字体颜色
-    func updateAttributedTextColor(_ textColor: UIColor?) {
-        guard let textColor else { return }
-        guard let oldAttributedText = attributedText else { return }
-        var updatedAttributes = oldAttributedText.attributes(at: 0, effectiveRange: nil)
-        guard updatedAttributes.isNotEmpty else { return }
-        updatedAttributes[.foregroundColor] = textColor
-        attributedText = NSAttributedString(string: oldAttributedText.string, attributes: updatedAttributes)
+    func updateAttributedTextColor(_ textColor: UIColor) {
+        guard let currentAttributedText = attributedText else { return }
+        var attributes = currentAttributedText.attributes(at: 0, effectiveRange: nil)
+        guard attributes[.foregroundColor].isValid else { return }
+        attributes[.foregroundColor] = textColor
+        
+        attributedText = NSAttributedString(string: currentAttributedText.string, attributes: attributes)
     }
 }

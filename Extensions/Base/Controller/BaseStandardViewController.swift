@@ -20,7 +20,10 @@ class BaseStandardViewController<MainView: ViewModelConfigurableView>: BaseViewC
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        mainView.setupViewModel(viewModel)
+        /// 尝试转换成MainView -> 如果转换成功说明MainView被实例化,继续执行if语句中的逻辑
+        if defaultMainView.as(MainView.self).isValid {
+            mainView.setupViewModel(viewModel)
+        }
     }
     
     /// Override point

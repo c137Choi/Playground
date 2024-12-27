@@ -44,8 +44,8 @@ extension InstanceFactory where Self: SimpleConfigurable {
 
 extension ClassConfigurable {
     @discardableResult
-    func configure(_ configurator: (Self) -> Void) -> Self {
-        configurator(self)
+    func configure(_ configurator: (Self) throws -> Void) rethrows -> Self {
+        try configurator(self)
         return self
     }
 }

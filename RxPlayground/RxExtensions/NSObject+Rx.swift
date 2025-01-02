@@ -4,7 +4,7 @@
 //  Created by Choi on 2022/8/4.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 import RxCocoa
 import ObjectiveC

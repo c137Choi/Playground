@@ -5,6 +5,7 @@
 //  Created by Choi on 2024/4/1.
 //
 
+import CoreImage
 import AVFoundation
 import RxSwift
 import RxCocoa

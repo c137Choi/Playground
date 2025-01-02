@@ -20,10 +20,14 @@ extension URL {
     }
     
     static var documentDirectory: URL {
-        guard let url = url(for: .documentDirectory) else {
-            fatalError("NOT OK")
+        if #available(iOS 16.0, *) {
+            return URL.documentsDirectory
+        } else {
+            guard let url = url(for: .documentDirectory) else {
+                fatalError("🤯")
+            }
+            return url
         }
-        return url
     }
     
     static func url(for path: FileManager.SearchPathDirectory) -> URL? {

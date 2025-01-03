@@ -47,6 +47,14 @@ extension Array {
         return self[cycledIndex]
     }
     
+    /// 拼接元素
+    /// - Parameter element: Optional<Element>类型元素, 有值时才拼接
+    public mutating func append(_ element: Optional<Element>) {
+        if let element {
+            append(element)
+        }
+    }
+    
     /// 获取指定位置的元素
     /// - Parameter index: 元素位置
     /// - Returns: 如果下标合规则返回相应元素

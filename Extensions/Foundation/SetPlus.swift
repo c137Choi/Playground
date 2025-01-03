@@ -19,6 +19,14 @@ extension Set {
         Array(self)
     }
     
+    /// 拼接元素
+    /// - Parameter element: Optional<Element>类型元素, 有值时才拼接
+    public mutating func insert(_ element: Element?) {
+        if let element {
+            insert(element)
+        }
+    }
+    
     public mutating func insert(@ArrayBuilder<Element> _ builder: () -> [Element]) {
         let elements = builder()
         formUnion(elements)

@@ -30,9 +30,9 @@ extension NWPath {
     
     /// 广播地址强制改成全域发送广播地址
     var allFieldBroadcastIPv4Config: IPv4Config? {
-        guard let config = ipv4Config else { return nil }
-        let allFieldBroadcast = IPv4Address("255.255.255.255")
-        return IPv4Config(ip: config.ip, subnetMask: config.subnetMask, broadCastIP: allFieldBroadcast)
+        ipv4Config.map { config in
+            IPv4Config(ip: config.ip, subnetMask: config.subnetMask, broadCastIP: .broadcast)
+        }
     }
     
     var ipv4Config: IPv4Config? {

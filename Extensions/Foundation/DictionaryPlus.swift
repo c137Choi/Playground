@@ -8,6 +8,10 @@ import Foundation
 
 extension Dictionary {
     
+    func valueForKey(_ key: Key) -> Value? {
+        self[key]
+    }
+    
     /// 替换键
     /// - Parameters:
     ///   - oldKey: 旧键

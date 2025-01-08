@@ -22,6 +22,20 @@ extension Dictionary {
         /// 使用新键保存旧值
         updateValue(value, forKey: newKey)
     }
+    
+    /// 下标支持Optional<Key>类型
+    subscript(key: Key?) -> Value? {
+        get {
+            key.flatMap {
+                self[$0]
+            }
+        }
+        set {
+            if let key {
+                self[key] = newValue
+            }
+        }
+    }
 }
 
 // MARK: - Optional Value Dictionary

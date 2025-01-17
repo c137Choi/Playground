@@ -17,4 +17,5 @@ public typealias IntRanges = Array<IntRange>
 public typealias DoubleRange = ClosedRange<Double>
 public typealias IndexPathSet = Set<IndexPath>
 public typealias SimpleCallback = () -> Void
+public typealias ThrowsSimpleCallback = () throws -> Void
 public typealias CompletedCallback = (Swift.Error?) -> Void

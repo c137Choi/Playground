@@ -11,6 +11,7 @@ import ObjectiveC
 
 enum Rx {
     @UniqueAddress static var disposeBag
+    @UniqueAddress static var cancellableBag
     @UniqueAddress static var activityTrackingDisposeBag
     @UniqueAddress static var anyUpdateRelay
 }
@@ -74,6 +75,26 @@ public extension Reactive where Base: AnyObject {
         nonmutating set(newBag) {
             synchronized(lock: base) {
                 setAssociatedObject(base, Rx.disposeBag, newBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            }
+        }
+    }
+    
+    /// 供Combine框架使用的CancellableBag
+    var cancellableBag: CancellableBag {
+        get {
+            synchronized(lock: base) {
+                guard let existedBag = associated(CancellableBag.self, base, Rx.cancellableBag) else {
+                    let newBag = CancellableBag()
+                    setAssociatedObject(base, Rx.cancellableBag, newBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                    return newBag
+                }
+                return existedBag
+            }
+        }
+        
+        nonmutating set(newBag) {
+            synchronized(lock: base) {
+                setAssociatedObject(base, Rx.cancellableBag, newBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
     }

@@ -14,7 +14,9 @@ import Foundation
 infix operator <<- : MultiplicationPrecedence
 infix operator <-- : MultiplicationPrecedence
 infix operator --> : MultiplicationPrecedence
+infix operator <-> : MultiplicationPrecedence
 infix operator +> : MultiplicationPrecedence
+infix operator +- : MultiplicationPrecedence
 infix operator ??= : AssignmentPrecedence
 infix operator ?= : AssignmentPrecedence
 

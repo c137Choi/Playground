@@ -6,8 +6,6 @@
 
 import Foundation
 
-infix operator +- : MultiplicationPrecedence
-
 extension Set {
     
     init(@ArrayBuilder<Element> _ builder: () -> [Element]) {
@@ -52,6 +50,12 @@ extension Set {
 
 
 extension Set where Element: Hashable {
+    
+    /// 对比两个集合(左面为旧集合, 右面是新集合)
+    /// - Returns: 对比两个集合的结果(新增的元素, 删除的元素)
+    static func <-> (lhs: Self, rhs: Self) -> (newElements: Self, removedElements: Self) {
+        (rhs - lhs, lhs - rhs)
+    }
     
     static func + (lhs: Set<Element>, rhs: Element) -> Set<Element> {
         var copy = lhs

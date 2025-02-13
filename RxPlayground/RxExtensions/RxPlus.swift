@@ -1109,8 +1109,6 @@ extension ObservableConvertibleType {
     
 }
 
-infix operator <-> : DefaultPrecedence
-
 #if os(iOS)
 func <-> <Base>(textInput: TextInput<Base>, relay: BehaviorRelay<String>) -> Disposable {
     let bindToProperty = relay.bind(to: textInput.text)

@@ -8,6 +8,11 @@ import Foundation
 
 extension Bool {
     
+    /// 返回Int值 | true ? 1 : 0
+    var intValue: Int {
+        self ? 1 : 0
+    }
+    
     var toggled: Bool {
         !self
     }

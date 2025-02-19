@@ -22,7 +22,7 @@ extension UITableView {
     
     /// 执行TableView的reloadData并保持之前的contentOffset
     /// 实现手指下拉时刷新保持页面流畅
-    public func reloadDataWhileKeepPreviousLocation() {
+    public func reloadDataWhileKeepContentOffset() {
         UIView.performWithoutAnimation {
             let previousLocation = contentOffset
             reloadData()

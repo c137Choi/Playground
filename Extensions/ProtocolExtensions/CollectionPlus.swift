@@ -30,7 +30,7 @@ extension Collection {
     
     /// 如果为空则返回nil
     var filledOrNil: Self? {
-        isNotEmpty ? self : nil
+        isEmpty ? nil : self
     }
     
     var isNotEmpty: Bool {

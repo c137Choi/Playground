@@ -13,7 +13,7 @@ extension Bool {
         self ? 1 : 0
     }
     
-    var toggled: Bool {
+    var opposite: Bool {
         !self
     }
     

@@ -17,7 +17,7 @@ extension Array where Element == ControlProperty<Bool> {
             var currentExcluded = self
             currentExcluded.remove(at: index)
             return currentExcluded.map { otherControlProperty in
-                property.filter(\.itself).map(\.toggled).bind(to: otherControlProperty)
+                property.filter(\.itself).map(\.opposite).bind(to: otherControlProperty)
             }
         }
         return Disposables.create(disposables)

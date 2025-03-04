@@ -8,7 +8,7 @@
 import Foundation
 
 extension Notification.Name {
-    static var make: Notification.Name {
+    static var randomUUID: Notification.Name {
         Notification.Name(.randomUUID)
     }
 }

@@ -49,13 +49,24 @@ extension Optional {
         try self.map(transform) ?? fallback()
     }
     
-    /// 映射,失败后返回默认值
+    /// 映射 | 将默认值放入第一个参数, 使transform作为尾随闭包, 使方法调用看起来更美观
+    public func map<U>(fallback: @autoclosure () -> U, _ transform: (Wrapped) throws -> U) rethrows -> U {
+        try self.map(transform) ?? fallback()
+    }
+    
+    /// 映射 | 失败后返回默认值
     public func flatMap<U>(_ transform: (Wrapped) throws -> U?, fallback: @autoclosure () -> U) rethrows -> U {
         try self.flatMap(transform) ?? fallback()
     }
     
+    /// 此方法看起来和上面的方法差不多, 但是有必要保留, 方便在某些情况下将fallback作为尾随闭包调用, 使方法看起来更美观
     public func flatMap<U>(_ transform: (Wrapped) throws -> U?, fallback: () -> U) rethrows -> U {
         try self.flatMap(transform) ?? fallback()
+    }
+    
+    /// 映射 | 将默认值放入第一个参数, 使transform作为尾随闭包, 使方法调用看起来更美观
+    public func flatMap<U>(fallback: @autoclosure () -> U, _ transform: (Wrapped) throws -> U?) rethrows -> U {
+        try self.flatMap(transform, fallback: fallback)
     }
     
     /// 解包->执行Closure->更新自身的值

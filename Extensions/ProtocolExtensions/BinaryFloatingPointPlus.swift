@@ -7,6 +7,11 @@
 
 import Foundation
 
+extension Optional where Wrapped: BinaryFloatingPoint {
+    
+    var orZero: Wrapped { self ?? 0.0 }
+}
+
 extension BinaryFloatingPoint {
     
     /// 分割百分比: self必须在0...1.0之间, 返回左右两个百分比

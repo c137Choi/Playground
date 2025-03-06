@@ -8,12 +8,6 @@
 
 import UIKit
 
-// MARK: - Optional<Int>
-extension Optional where Wrapped: BinaryInteger {
-    
-    var orZero: Wrapped { self ?? 0 }
-}
-
 extension Int {
 	
 	// 获取一个整形数字个十百千...位上的数字. 例如:

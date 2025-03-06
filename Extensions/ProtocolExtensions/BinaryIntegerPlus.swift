@@ -7,6 +7,11 @@
 
 import Foundation
 
+extension Optional where Wrapped: BinaryInteger {
+    
+    var orZero: Wrapped { self ?? 0 }
+}
+
 extension BinaryInteger {
     
     /// 带正负号的字符串

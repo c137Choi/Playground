@@ -31,7 +31,7 @@ struct PercentClip<T: BinaryFloatingPoint> {
     
     /// 分割百分比(带符号): 左侧百分比为负数
     var signedLower: T? {
-        lower.map(\.negation)
+        lower.map(\.negative)
     }
     
     /// 解包并回调相应的半边百分比

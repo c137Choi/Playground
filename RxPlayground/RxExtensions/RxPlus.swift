@@ -580,10 +580,19 @@ extension ObservableConvertibleType where Element: Collection {
 // MARK: - Observable of OptionalType
 extension ObservableConvertibleType where Element: OptionalType {
     
-    func or(_ validElement: Element.Wrapped) -> Observable<Element.Wrapped> {
+    /// 将元素转换为指定的类型,如果转换失败则使用备选值
+    func or<Result>(_ fallback: Result, transform: @escaping (Element.Wrapped) throws -> Result) -> Observable<Result> {
         asObservable()
-            .map { optionalElement in
-                optionalElement.optionalValue ?? validElement
+            .map { element in
+                try element.optionalValue.or(fallback, map: transform)
+            }
+    }
+    
+    /// 元素如果为空则使用备选值
+    func or(_ fallback: Element.Wrapped) -> Observable<Element.Wrapped> {
+        asObservable()
+            .map { element in
+                element.optionalValue.or(fallback)
             }
     }
     

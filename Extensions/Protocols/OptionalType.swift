@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol OptionalType {
+protocol OptionalType<Wrapped> {
     associatedtype Wrapped
     var optionalValue: Wrapped? { get }
 }

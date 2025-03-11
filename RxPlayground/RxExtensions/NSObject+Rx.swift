@@ -14,26 +14,40 @@ enum Rx {
     @UniqueAddress static var cancellableBag
     @UniqueAddress static var activityTrackingDisposeBag
     @UniqueAddress static var anyUpdateRelay
+    @UniqueAddress static var isPrepared
+}
+
+extension NSObject {
+    
+    /// 标记(是否准备好) | 单独为NSObject写一个计算属性
+    /// 避免某些情况下使用keyPath特性时,由于计算属性太深(?)导致的编译错误
+    /// 如: XX.filter(\.0.rx.isPrepared)可能会编译不过
+    var isPrepared: Bool {
+        get { rx.isPrepared }
+        set { rx.isPrepared = newValue }
+    }
 }
 
 public extension Reactive where Base: AnyObject {
     
-    /// 标记是否准备好
+    /// 标记(是否准备好) | 默认初始值为false
     var isPrepared: Bool {
         get {
-            let maybePrepared = anyUpdateRelay.value as? Bool
-            return maybePrepared ?? false
+            synchronized(lock: base) {
+                guard let existedValue = associated(Bool.self, base, Rx.isPrepared) else {
+                    let initialValue = false
+                    setAssociatedObject(base, Rx.isPrepared, initialValue, .OBJC_ASSOCIATION_ASSIGN)
+                    return initialValue
+                }
+                return existedValue
+            }
         }
-        nonmutating set {
-            anyUpdateRelay.accept(newValue)
+        
+        nonmutating set(newValue) {
+            synchronized(lock: base) {
+                setAssociatedObject(base, Rx.isPrepared, newValue, .OBJC_ASSOCIATION_ASSIGN)
+            }
         }
-    }
-    
-    /// 常用于事件绑定之前的约束, 如利用.skip(until: rx.prepared)操作符
-    /// 数据填充之后设置isPrepared为true以接收事件
-    /// 内部使用了.take(until: deallocated)
-    var prepared: Observable<Bool> {
-        anyNewUpdate.asOptional(Bool.self).unwrapped
     }
     
     /// 更新数据流(跳过初始值) | 内部使用了.take(until: deallocated)
@@ -46,7 +60,7 @@ public extension Reactive where Base: AnyObject {
         anyUpdateRelay.take(until: deallocated)
     }
     
-    /// 通用的任意类型数据更新的BehaviorRelay | 包含初始值
+    /// 通用的任意类型数据更新的BehaviorRelay | 初始值为()/Void
     var anyUpdateRelay: BehaviorRelay<Any> {
         synchronized(lock: base) {
             guard let existedRelay = associated(BehaviorRelay<Any>.self, base, Rx.anyUpdateRelay) else {

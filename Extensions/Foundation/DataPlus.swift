@@ -115,7 +115,14 @@ extension Data {
     
     /// 打印每个字节的数字值
     var rawBytes: String {
-        map(\.string).joined(separator: "|")
+        guard isNotEmpty else { return "" }
+        let indices = indices
+        let lastIndex = indices.lastIndex
+        return indices.reduce(into: "") { result, index in
+            let byte = self[index]
+            let isLastIndex = index == lastIndex
+            result.append("\(byte.string)\(isLastIndex ? "" : "|")")
+        }
     }
     
     /// DMX通道描述(每个字节打印:通道编号_通道值)

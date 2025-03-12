@@ -8,21 +8,27 @@
 
 import UIKit
 
+func lprint(_ items: Any...) {
+#if DEBUG
+    print(items)
+#endif
+}
+
 func dprint(_ items: Any..., file: String = #fileID, function: String = #function, line: Int = #line) {
-	#if DEBUG
+#if DEBUG
     let now = Date()
     var fileName = (file as NSString).lastPathComponent
     let swiftExtension = ".swift"
     if fileName.hasSuffix(swiftExtension) {
         fileName.removeLast(swiftExtension.count)
     }
-	let threadWarning = Thread.isMainThread ? "" : " | NOT-MAIN-THREAD"
+    let threadWarning = Thread.isMainThread ? "" : " | NOT-MAIN-THREAD"
     let queueWarning = isMainQueue ? "" : " | NOT-MAIN-QUEUE"
-	print("🌿 @Time \(now.debugTimeString) \(fileName).\(function) @Line:\(line)\(threadWarning)\(queueWarning)")
-	for (idx, item) in items.enumerated() {
-		print("\(idx) ➜ \(item)")
-	}
-	#endif
+    print("🌿 @Time \(now.debugTimeString) \(fileName).\(function) @Line:\(line)\(threadWarning)\(queueWarning)")
+    for (idx, item) in items.enumerated() {
+        print("\(idx) ➜ \(item)")
+    }
+#endif
 }
 
 var isDebugging: Bool {

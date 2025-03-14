@@ -18,10 +18,20 @@ extension UIGestureRecognizer {
 
 extension UIGestureRecognizer.State {
     
-    /// 用于过滤手指停止事件
+    /// 正在交互的状态
+    var isInteracting: Bool {
+        switch self {
+        case .began, .changed:
+            true
+        default:
+            false
+        }
+    }
+    
     var isBegan: Bool {
         self == .began
     }
+    
     var isEnded: Bool {
         self == .ended
     }

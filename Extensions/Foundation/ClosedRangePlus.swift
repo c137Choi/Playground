@@ -69,6 +69,13 @@ extension ClosedRange where Bound == Int {
 
 extension ClosedRange {
     
+    public init(lowerBound: Bound, upperBound: Bound) throws {
+        if upperBound < lowerBound {
+            throw "UpperBound is less than lowerBound."
+        }
+        self.init(uncheckedBounds: (lowerBound, upperBound))
+    }
+    
     /// 求与另一个范围的交集
     /// - Parameter other: 传入的闭合范围
     /// - Returns: 两个范围的交集

@@ -234,7 +234,7 @@ extension BinaryFloatingPoint {
     ///   - roundingMode: 进位模式
     ///   - roundingIncrement: 进位精度
     /// - Returns: 格式化后的字符串
-    func f(_ fractionsRange: IntRange, roundingMode: NumberFormatter.RoundingMode = .down, roundingIncrement: NSNumber? = nil) -> String {
+    func f(_ fractionsRange: ClosedIntRange, roundingMode: NumberFormatter.RoundingMode = .down, roundingIncrement: NSNumber? = nil) -> String {
         decimalFormatter.configure { fmt in
             fmt.minimumFractionDigits = fractionsRange.lowerBound
             fmt.maximumFractionDigits = fractionsRange.upperBound

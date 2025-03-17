@@ -10,7 +10,9 @@ import UIKit
 
 func lprint(_ items: Any...) {
 #if DEBUG
-    print(items)
+    for item in items {
+        print(item)
+    }
 #endif
 }
 
@@ -25,8 +27,8 @@ func dprint(_ items: Any..., file: String = #fileID, function: String = #functio
     let threadWarning = Thread.isMainThread ? "" : " | NOT-MAIN-THREAD"
     let queueWarning = isMainQueue ? "" : " | NOT-MAIN-QUEUE"
     print("🌿 @Time \(now.debugTimeString) \(fileName).\(function) @Line:\(line)\(threadWarning)\(queueWarning)")
-    for (idx, item) in items.enumerated() {
-        print("\(idx) ➜ \(item)")
+    for (offset, item) in items.enumerated() {
+        print("\(offset) → \(item)")
     }
 #endif
 }

@@ -77,7 +77,7 @@ extension Sequence where Element: Hashable {
     }
 }
 
-extension Sequence where Element: OptionalType {
+extension Sequence where Element: OptionalConvertible {
     var unwrapped: [Element.Wrapped] {
         compactMap(\.optionalValue)
     }

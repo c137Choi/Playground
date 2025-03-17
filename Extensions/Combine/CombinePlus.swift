@@ -9,9 +9,8 @@
 import Foundation
 import Combine
 
-extension Publisher where Output: OptionalType {
+extension Publisher where Output: OptionalConvertible {
     var unwrapped: AnyPublisher<Output.Wrapped, Failure> {
-        compactMap(\.optionalValue)
-            .eraseToAnyPublisher()
+        compactMap(\.optionalValue).eraseToAnyPublisher()
     }
 }

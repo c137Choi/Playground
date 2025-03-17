@@ -468,10 +468,6 @@ extension String {
 	var validStringOrNone: String? {
 		isEmptyString ? .none : self
 	}
-	
-	var optional: String? {
-		self
-	}
 }
 
 extension Substring {

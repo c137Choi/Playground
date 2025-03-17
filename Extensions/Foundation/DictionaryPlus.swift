@@ -37,13 +37,3 @@ extension Dictionary {
         }
     }
 }
-
-// MARK: - Optional Value Dictionary
-extension Dictionary where Value: OptionalType {
-    var unwrapped: Dictionary<Key, Value.Wrapped> {
-        reduce(into: [Key:Value.Wrapped]()) { partialResult, tuple in
-            guard let value = tuple.value.optionalValue else { return }
-            partialResult[tuple.key] = value
-        }
-    }
-}

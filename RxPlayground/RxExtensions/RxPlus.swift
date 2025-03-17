@@ -577,8 +577,8 @@ extension ObservableConvertibleType where Element: Collection {
     }
 }
 
-// MARK: - Observable of OptionalType
-extension ObservableConvertibleType where Element: OptionalType {
+// MARK: - Observable of OptionalConvertible
+extension ObservableConvertibleType where Element: OptionalConvertible {
     
     /// 将元素转换为指定的类型,如果转换失败则使用备选值
     func or<Result>(_ fallback: Result, transform: @escaping (Element.Wrapped) throws -> Result) -> Observable<Result> {

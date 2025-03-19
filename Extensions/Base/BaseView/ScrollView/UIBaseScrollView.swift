@@ -79,8 +79,8 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
         addSubview(contentView)
     }
     
-    func prepareConstraints() {
-        contentView.snp.makeConstraints { content in
+    override func updateConstraints() {
+        contentView.snp.remakeConstraints { content in
             content.edges.equalToSuperview()
             switch scrollableAxis {
             case .horizontal:
@@ -91,7 +91,10 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
                 fatalError("Unhandled condition")
             }
         }
+        super.updateConstraints()
     }
+    
+    func prepareConstraints() { }
     
     func makeContentView() -> UIView {
         UIView(color: defaultBackgroundColor)

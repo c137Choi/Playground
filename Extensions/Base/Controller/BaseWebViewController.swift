@@ -45,14 +45,14 @@ class BaseWebViewController: BaseViewController, WKUIDelegate, WKNavigationDeleg
     }
     
     override func updateViewConstraints() {
-        super.updateViewConstraints()
-        webview.snp.updateConstraints { make in
+        webview.snp.remakeConstraints { make in
             make.edges.equalToSuperview()
         }
-        progressView.snp.updateConstraints { make in
+        progressView.snp.remakeConstraints { make in
             make.top.left.right.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(1.0)
         }
+        super.updateViewConstraints()
     }
     
     func makeWebView() -> WKWebView {

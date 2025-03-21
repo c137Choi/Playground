@@ -33,7 +33,7 @@ extension Decimal {
 extension Decimal: @retroactive ExpressibleByStringLiteral {
     
     public init(stringLiteral value: StringLiteralType) {
-        if value.containsCharacter(in: .decimals.inverted) {
+        if value.containsCharacter(in: .realNumber.inverted) {
             self.init(0)
         } else {
             self.init(string: value)!

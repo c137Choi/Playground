@@ -52,20 +52,20 @@ extension CharacterSet {
     /// 十六进制字符集(大写)
     static let hexadecimalUppercase = CharacterSet(charactersIn: "0123456789ABCDEF")
     
-	/// 阿拉伯数字
+	/// 阿拉伯数字 | 0-9
 	static let arabicNumbers = CharacterSet(charactersIn: "0123456789")
     
-    /// 点
+    /// 点 | 小数点 | 英文句号
     static let dot = CharacterSet(charactersIn: ".")
     
-    /// 整数(阿拉伯数字 + 负号)
+    /// 整数(正整数\0\负整数) | 阿拉伯数字 + 负号("-")
     static let integer = arabicNumbers.union("-")
     
-    /// 小数(正数) | 阿拉伯数字加小数点
-    static let decimals = arabicNumbers.union(.dot)
+    /// 非负实数(0\正整数\正小数) | 阿拉伯数字 + 小数点
+    static let nonNegativeRealNumber = arabicNumbers.union(.dot)
     
-    /// 实数(小数 + 负号)
-    static let realNumber = decimals.union("-")
+    /// 实数 | 阿拉伯数字 + 小数点 + 负号("-")
+    static let realNumber = nonNegativeRealNumber.union("-")
 	
 	#if DEBUG
 	

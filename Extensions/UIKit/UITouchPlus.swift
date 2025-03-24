@@ -27,6 +27,10 @@ extension UITouch.Phase {
         self == .began
     }
     
+    var isMoved: Bool {
+        self == .moved
+    }
+    
     var isEnded: Bool {
         self == .ended
     }

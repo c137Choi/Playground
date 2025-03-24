@@ -18,6 +18,21 @@ extension UIGestureRecognizer {
 
 extension UIGestureRecognizer.State {
     
+    var phase: UITouch.Phase {
+        switch self {
+        case .began:
+            return .began
+        case .changed:
+            return .moved
+        case .ended:
+            return .ended
+        case .cancelled:
+            return .cancelled
+        default:
+            return .ended
+        }
+    }
+    
     /// 正在交互的状态
     var isInteracting: Bool {
         switch self {

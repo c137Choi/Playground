@@ -1,15 +1,15 @@
 //
-//  UIResponder+Rx.swift
+//  UIGestureRecognizer+Rx.swift
 //  KnowLED
 //
-//  Created by Choi on 2024/4/22.
+//  Created by Choi on 2025/3/24.
 //
 
 import UIKit
 import RxSwift
 import RxCocoa
 
-extension Reactive where Base: UIResponder {
+extension Reactive where Base: UIGestureRecognizer {
     
     var mergedTouchesWithEvent: Observable<TouchesWithEvent> {
         Observable<TouchesWithEvent>.merge {

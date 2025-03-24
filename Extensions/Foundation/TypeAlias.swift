@@ -19,3 +19,4 @@ public typealias IndexPathSet = Set<IndexPath>
 public typealias SimpleCallback = () -> Void
 public typealias ThrowsSimpleCallback = () throws -> Void
 public typealias CompletedCallback = (Swift.Error?) -> Void
+public typealias TouchesWithEvent = (Set<UITouch>, UIEvent?)

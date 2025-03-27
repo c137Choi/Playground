@@ -77,14 +77,8 @@ extension DisposeBag {
 @propertyWrapper class Variable<Wrapped>: ObservableType {
     /// ObservableConvertibleType序列元素
     typealias Element = Wrapped
-    /// 旧新值元组
-    typealias ValueTuple = (oldValue: Wrapped, newValue: Wrapped)
     /// 核心Relay对象
     let relay: BehaviorRelay<Wrapped>
-    /// 赋值前通知
-    private let willSetValueNotifier = PublishSubject<ValueTuple>()
-    /// 赋值后通知
-    private let didSetValueNotifier = PublishSubject<ValueTuple>()
     /// 设置为true,则订阅的conditionalValue事件序列不发送事件
     private var blockEvents = false
     
@@ -123,11 +117,7 @@ extension DisposeBag {
     var wrappedValue: Wrapped {
         get { relay.value }
         set {
-            let oldValue = relay.value
-            let values = (oldValue, newValue)
-            willSetValueNotifier.onNext(values)
             relay.accept(newValue)
-            didSetValueNotifier.onNext(values)
         }
     }
     
@@ -135,20 +125,6 @@ extension DisposeBag {
     /// 实现值变化后取消订阅的效果
     var changed: Observable<Wrapped> {
         relay.skip(1)
-    }
-    
-    /// 将要设置值时发送通知
-    /// 注: 只有调用了wrappedValue的setter方法时,此序列才会触发.
-    /// 直接引用relay对象进行双向绑定的情况此序列不调用
-    var willSetValue: Observable<ValueTuple> {
-        willSetValueNotifier.observable
-    }
-    
-    /// 设置完值时发送通知
-    /// 注: 只有调用了wrappedValue的setter方法时,此序列才会触发.
-    /// 直接引用relay对象进行双向绑定的情况此序列不调用
-    var didSetValue: Observable<ValueTuple> {
-        didSetValueNotifier.observable
     }
     
     func asObservable() -> RxSwift.Observable<Wrapped> {

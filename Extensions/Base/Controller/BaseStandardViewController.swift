@@ -5,8 +5,6 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
 
 class BaseStandardViewController<MainView: ViewModelConfigurableView>: BaseViewController, ViewModelAccessible {
     

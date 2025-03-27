@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import RxSwift
 
 class BaseStaticTableViewController<StaticTable: UIBaseStaticTable>: BaseTableViewController {
     

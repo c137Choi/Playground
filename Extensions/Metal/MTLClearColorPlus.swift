@@ -8,7 +8,7 @@
 import Metal
 import MetalKit
 
-extension MTLClearColor: ExpressibleByIntegerLiteral {
+extension MTLClearColor: @retroactive ExpressibleByIntegerLiteral {
     
     public init(integerLiteral value: Int) {
         guard let argb = value.aRGB else {

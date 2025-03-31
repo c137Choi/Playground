@@ -6,7 +6,7 @@
 
 import UIKit
 
-class BaseStandardViewController<MainView: ViewModelConfigurableView>: BaseViewController, ViewModelAccessible {
+class BaseStandardViewController<MainView: ViewModelSetupView>: BaseViewController, ViewModelAccessible {
     
     lazy var mainView = initializeMainView()
     
@@ -26,7 +26,7 @@ class BaseStandardViewController<MainView: ViewModelConfigurableView>: BaseViewC
     
     /// Override point
     /// 子类可重写此方法使用自己定义的主视图初始化方法创建主视图
-    /// 例如: UIControllerView需要使用init(controller: ViewController)方法创建主视图
+    /// 例如: BaseControllerView需要使用init(controller: ViewController)方法创建主视图
     func initializeMainView() -> MainView {
         MainView()
     }

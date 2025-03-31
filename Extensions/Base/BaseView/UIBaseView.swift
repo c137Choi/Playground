@@ -23,22 +23,17 @@ protocol PagableViewModelType: ViewModelType {
     init(delegate: PagableViewModelDelegate)
 }
 
-protocol ViewControllerView {
-    associatedtype ViewController: UIViewController
-    var viewController: ViewController { get set }
-}
-
 protocol ViewModelAccessible {
-    associatedtype ViewModel
+    associatedtype ViewModel: ViewModelType
     var viewModel: ViewModel { get set }
 }
 
-protocol ViewModelConfigurable {
+protocol ViewModelSetup {
     associatedtype ViewModel: ViewModelType
     func setupViewModel(_ viewModel: ViewModel)
 }
 
-extension ViewModelConfigurable {
+extension ViewModelSetup {
     func setupViewModel(_ viewModel: ViewModel) {}
 }
 
@@ -59,7 +54,7 @@ extension PagableViewModelDelegate {
     }
 }
 
-typealias ViewModelConfigurableView = ViewModelConfigurable & StandardLayoutLifeCycle
+typealias ViewModelSetupView = ViewModelSetup & StandardLayoutLifeCycle
 
 // MARK: - 基类
 /// 使用NSObject子类实现ViewModel
@@ -158,9 +153,9 @@ class UIBaseView: UIView {
 
 typealias ViewModelAccessibleViewController = UIViewController & ViewModelAccessible
 /// 控制器主视图基类 | 可获取到ViewController对象、ViewController.ViewModel对象
-class UIControllerView<ViewController: ViewModelAccessibleViewController>: UIBaseView, ViewControllerView {
+class BaseControllerView<ViewController: ViewModelAccessibleViewController>: UIBaseView {
     
-    private weak var innerController: ViewController?
+    private weak var weakController: ViewController?
     
     var viewModel: ViewController.ViewModel {
         get { viewController.viewModel }
@@ -168,8 +163,8 @@ class UIControllerView<ViewController: ViewModelAccessibleViewController>: UIBas
     }
     
     var viewController: ViewController {
-        get { innerController ?? neverController }
-        set { innerController = newValue }
+        get { weakController ?? neverController }
+        set { weakController = newValue }
     }
     
     convenience init(controller: ViewController) {
@@ -177,20 +172,28 @@ class UIControllerView<ViewController: ViewModelAccessibleViewController>: UIBas
         attach(controller: controller)
     }
     
-    @discardableResult func attach(controller: ViewController) -> Self {
-        viewController = controller
+    @discardableResult
+    func attach(controller: ViewController) -> Self {
+        weakController = controller
         return self
     }
     
     override func didMoveToWindow() {
         super.didMoveToWindow()
-        if innerController.isVoid, let retreiveController = qmui_viewController as? ViewController {
-            innerController = retreiveController
+        /// 引用的控制器为空时, 尝试推断所属的控制器并储存到属性
+        if weakController.isVoid, let inferredController = qmui_viewController.as(ViewController.self) {
+            weakController = inferredController
         }
     }
     
     private var neverController: ViewController {
-        fatalError("Should not happen! Check your logic.")
+        /// 推断所属的控制器, 储存到属性并返回控制器
+        if let inferredController = qmui_viewController.as(ViewController.self) {
+            weakController = inferredController
+            return inferredController
+        } else {
+            fatalError("Should not happen! Check your logic.")
+        }
     }
 }
 

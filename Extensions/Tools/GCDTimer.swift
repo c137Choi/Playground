@@ -10,7 +10,18 @@ import Foundation
 
 final class GCDTimer {
 	
+    /// 定时器回调
 	typealias TickTock = (GCDTimer) -> Void
+    
+    /// 定时器状态
+    enum State {
+        /// 起始状态/计时器销毁状态
+        case initial
+        /// 运行中
+        case running
+        /// 挂起中
+        case suspended
+    }
 	
     /// 定时器回调间隔
 	let timeInterval: DispatchTimeInterval
@@ -20,17 +31,13 @@ final class GCDTimer {
 	let tickTock: TickTock
     /// GCD定时器
     private var _timer: DispatchSourceTimer?
-    /// 是否正运行
-    private var isTicking = false
+    /// 状态
+    private var state = State.initial
     /// 返回定时器 | 如果不存在则创建一个并存入属性中以便后续使用
     private var timer: DispatchSourceTimer {
         guard let existingTimer = _timer else {
             let babyTimer = DispatchSource.makeTimerSource(flags: .strict, queue: queue)
-            babyTimer.setEventHandler(qos: .userInitiated) {
-                [weak self] in
-                guard let self else { return }
-                self.trigger()
-            }
+            babyTimer.setEventHandler(handler: timerTicking)
             _timer = babyTimer
             return babyTimer
         }
@@ -66,39 +73,47 @@ final class GCDTimer {
 		return timer
 	}
     
-	/// 定时器调用方法
-	private func trigger() {
-		tickTock(self)
-		/// 只执行一次
-		if timeInterval == .never {
-			invalidate()
-		}
-	}
-	
-	/// 销毁定时器
-	func invalidate() {
-		if let timer = _timer {
-			timer.cancel()
-			_timer = .none
-			isTicking = false
-		}
-	}
+    /// 定时器调用方法
+    private var timerTicking: DispatchWorkItem {
+        DispatchWorkItem {
+            [weak self] in
+            guard let self else { return }
+            /// 执行回调
+            tickTock(self)
+            /// 只执行一次
+            if timeInterval == .never {
+                invalidate()
+            }
+        }
+    }
+    
+    /// 开启/继续执行定时器
+    func resume() {
+        if let timer = _timer, state != .running {
+            timer.resume()
+            state = .running
+        }
+    }
 	
 	/// 挂起定时器
-	func suspend() {
-		if let timer = _timer && isTicking {
+    func suspend() {
+        if let timer = _timer, state == .running {
 			timer.suspend()
-			isTicking = false
+            state = .suspended
 		}
 	}
-	
-	/// 继续执行定时器
-	func resume() {
-		if let timer = _timer && !isTicking {
-			timer.resume()
-			isTicking = true
-		}
-	}
+    
+    /// 销毁定时器
+    func invalidate() {
+        guard let timer = _timer else { return }
+        /// 如果为挂起状态, 则需要先开启再销毁, 否则会导致崩溃
+        if state == .suspended {
+            timer.resume()
+        }
+        timer.cancel()
+        _timer = .none
+        state = .initial
+    }
 	
 	/// 启动定时器
 	/// - Parameter delay: 延迟时间

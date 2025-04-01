@@ -12,33 +12,30 @@ final class GCDTimer {
 	
 	typealias TickTock = (GCDTimer) -> Void
 	
-	/// GCD定时器
-	private var _timer: DispatchSourceTimer?
-	
-	/// 返回定时器 | 如果不存在则创建一个
-	private var timer: DispatchSourceTimer {
-		guard let existingTimer = _timer else {
-			let babyTimer = DispatchSource.makeTimerSource(flags: .strict, queue: queue)
-            babyTimer.setEventHandler(qos: .unspecified) {
+    /// 定时器回调间隔
+	let timeInterval: DispatchTimeInterval
+    /// 执行队列
+	let queue: DispatchQueue
+    /// 供外部使用的定时器回调
+	let tickTock: TickTock
+    /// GCD定时器
+    private var _timer: DispatchSourceTimer?
+    /// 是否正运行
+    private var isTicking = false
+    /// 返回定时器 | 如果不存在则创建一个并存入属性中以便后续使用
+    private var timer: DispatchSourceTimer {
+        guard let existingTimer = _timer else {
+            let babyTimer = DispatchSource.makeTimerSource(flags: .strict, queue: queue)
+            babyTimer.setEventHandler(qos: .userInitiated) {
                 [weak self] in
                 guard let self else { return }
                 self.trigger()
             }
-			_timer = babyTimer
-			return babyTimer
-		}
-		return existingTimer
-	}
-	
-	/// 是否正运行
-	private var isTicking = false
-	/// 定时器是否有效
-	private var isValid: Bool { _timer != nil }
-	
-	let timeInterval: DispatchTimeInterval
-	let queue: DispatchQueue
-	let tickTock: TickTock
-	
+            _timer = babyTimer
+            return babyTimer
+        }
+        return existingTimer
+    }
 	/// 定时器初始化方法
 	/// - Parameters:
 	///   - timeInterval: 时间间隔
@@ -68,11 +65,11 @@ final class GCDTimer {
 		timer.fire(delay)
 		return timer
 	}
-	
+    
 	/// 定时器调用方法
 	private func trigger() {
 		tickTock(self)
-		// 只执行一次
+		/// 只执行一次
 		if timeInterval == .never {
 			invalidate()
 		}
@@ -80,7 +77,7 @@ final class GCDTimer {
 	
 	/// 销毁定时器
 	func invalidate() {
-		if isValid {
+		if let timer = _timer {
 			timer.cancel()
 			_timer = .none
 			isTicking = false
@@ -89,7 +86,7 @@ final class GCDTimer {
 	
 	/// 挂起定时器
 	func suspend() {
-		if isValid && isTicking {
+		if let timer = _timer && isTicking {
 			timer.suspend()
 			isTicking = false
 		}
@@ -97,7 +94,7 @@ final class GCDTimer {
 	
 	/// 继续执行定时器
 	func resume() {
-		if isValid && !isTicking {
+		if let timer = _timer && !isTicking {
 			timer.resume()
 			isTicking = true
 		}

@@ -19,6 +19,14 @@ extension Reactive where Base: UIButton {
         title(for: .normal)
     }
     
+    var selectedTitle: Binder<String?> {
+        title(for: .selected)
+    }
+    
+    var highlightedTitle: Binder<String?> {
+        title(for: .highlighted)
+    }
+    
     var normalImage: Binder<UIImage?> {
         image(for: .normal)
     }

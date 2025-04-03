@@ -773,7 +773,7 @@ extension ObservableConvertibleType where Element: Equatable {
 
 extension ObservableConvertibleType {
     /// 串联Observables
-    static func +(lhs: any ObservableConvertibleType, rhs: any ObservableConvertibleType) -> Completable {
+    static func +(lhs: Self, rhs: any ObservableConvertibleType) -> Completable {
         lhs.completed + rhs.completed
     }
 }

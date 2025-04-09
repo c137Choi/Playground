@@ -14,8 +14,8 @@ public extension Reactive where Base: UIViewController {
     var viewWillTransitionTo: ControlEvent<(CGSize, UIViewControllerTransitionCoordinator)> {
         let events = methodInvoked(#selector(Base.viewWillTransition(to:with:))).compactMap {
             parameters -> (CGSize, UIViewControllerTransitionCoordinator)? in
-            guard let targetSize = parameters.itemAt(0) as? CGSize else { return nil }
-            guard let coordinator = parameters.itemAt(1) as? UIViewControllerTransitionCoordinator else { return nil }
+            guard let targetSize = parameters.element(at: 0) as? CGSize else { return nil }
+            guard let coordinator = parameters.element(at: 1) as? UIViewControllerTransitionCoordinator else { return nil }
             return (targetSize, coordinator)
         }
         return ControlEvent(events: events)

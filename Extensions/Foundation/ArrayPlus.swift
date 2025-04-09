@@ -30,11 +30,6 @@ extension Array {
         append(contentsOf: elements)
     }
     
-    /// 下标方式获取指定位置的元素
-    subscript (itemAt index: Index) -> Element? {
-        itemAt(index)
-    }
-    
     /// 对Index求余,得出有效Index之后获取元素
     subscript (modElement inputIndex: Self.Index) -> Element? {
         guard let modIndex = indices[modIndex: inputIndex] else { return nil }
@@ -53,14 +48,6 @@ extension Array {
         if let element {
             append(element)
         }
-    }
-    
-    /// 获取指定位置的元素
-    /// - Parameter index: 元素位置
-    /// - Returns: 如果下标合规则返回相应元素
-    public func itemAt(_ index: Index) -> Element? {
-        guard isValidIndex(index) else { return nil }
-        return self[index]
     }
     
     /// 替换指定位置的元素
@@ -84,13 +71,10 @@ extension Array {
         return remove(at: index)
     }
     
-    private func isValidIndex(_ index: Index) -> Bool {
-        indices ~= index
-    }
-    
     public init(generating elementGenerator: (Int) -> Element, count: Int) {
         self = (0..<count).map(elementGenerator)
     }
+    
     public init(generating elementGenerator: () -> Element, count: Int) {
         self = (0..<count).map { _ in
             elementGenerator()
@@ -103,7 +87,7 @@ extension Array {
     public static func * (lhs: Double, rhs: Self) -> Element? { rhs * lhs }
     public static func * (lhs: Self, rhs: Double) -> Element? {
         (lhs.indices * rhs).flatMap { index in
-            lhs.itemAt(index)
+            lhs.element(at: index)
         }
     }
 }

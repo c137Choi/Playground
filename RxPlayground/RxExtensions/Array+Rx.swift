@@ -96,7 +96,7 @@ extension Array where Element: UIButton {
     /// - Returns: 选中按钮的事件序列
     func switchSelectedButton(startIndex firstSelection: Self.Index? = nil, toggleSelectedButton: Bool = false) -> Observable<Element> {
         if let firstSelection {
-            guard let selectedButton = itemAt(firstSelection) else {
+            guard let selectedButton = element(at: firstSelection) else {
                 return switchSelectedButton(startButton: nil, toggleSelectedButton: toggleSelectedButton)
             }
             return switchSelectedButton(startButton: selectedButton, toggleSelectedButton: toggleSelectedButton)

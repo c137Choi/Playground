@@ -48,7 +48,7 @@ extension Reactive where Base: UIApplication {
         methodInvoked(#selector(UIApplication.sendAction))
             .compactMap { args in
                 /// 取第三个参数
-                guard let thirdParameter = args.itemAt(2) else { return nil }
+                guard let thirdParameter = args.element(at: 2) else { return nil }
                 /// 如果是手势则返回其view(点击输入框时是一个UITextMultiTapRecognizer手势)
                 /// 否则尝试转换为UIResponder再返回
                 if let gesture = thirdParameter as? UIGestureRecognizer {

@@ -401,7 +401,7 @@ extension UIBaseTableViewCell {
         /// 得出下一个可见Cell的下标
         let nextIndex = visibleCells.index(myIndex, offsetBy: 1)
         /// 类型转换并返回
-        return visibleCells.itemAt(nextIndex) as? UIBaseTableViewCell
+        return visibleCells.element(at: nextIndex) as? UIBaseTableViewCell
     }
     
     /// 可见的邻居(本Cell上面的)Cell(可能是不同分组的Cell)
@@ -414,7 +414,7 @@ extension UIBaseTableViewCell {
         /// 得出上一个可见Cell的下标
         let lastIndex = visibleCells.index(myIndex, offsetBy: -1)
         /// 类型转换并返回
-        return visibleCells.itemAt(lastIndex) as? UIBaseTableViewCell
+        return visibleCells.element(at: lastIndex) as? UIBaseTableViewCell
     }
     
     /// 按indexPath -> inferredIndexPath获取IndexPath

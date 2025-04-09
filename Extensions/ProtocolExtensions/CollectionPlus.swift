@@ -9,6 +9,24 @@ import Foundation
 
 extension Collection {
     
+    /// 下标方式获取指定位置的元素
+    subscript (elementAt index: Index) -> Element? {
+        element(at: index)
+    }
+    
+    /// 获取指定位置的元素
+    /// - Parameter index: 元素位置
+    /// - Returns: 如果下标合规则返回相应元素
+    public func element(at index: Index) -> Element? {
+        guard isValidIndex(index) else { return nil }
+        return self[index]
+    }
+    
+    /// 验证是否为有效的Index
+    public func isValidIndex(_ index: Index) -> Bool {
+        indices.contains(index)
+    }
+    
     func filled(or defaultCollection: Self) -> Self {
         isNotEmpty ? self : defaultCollection
     }

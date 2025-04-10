@@ -9,12 +9,12 @@ import Foundation
 
 enum RangeDirection: CustomStringConvertible {
     case forward
-    case reverse
+    case backward
     
     var description: String {
         switch self {
         case .forward: "正向"
-        case .reverse: "反向"
+        case .backward: "反向"
         }
     }
 }
@@ -30,7 +30,7 @@ extension DirectionalRange {
     
     /// 根据起止值初始化
     init(from start: Bound, to end: Bound) {
-        self.direction = end >= start ? .forward : .reverse
+        self.direction = end >= start ? .forward : .backward
         self.range = min(start, end)...max(start, end)
     }
     
@@ -68,11 +68,13 @@ extension DirectionalRange where Bound: BinaryFloatingPoint {
     /// - Returns: 范围内的值
     static func * (lhs: Bound, rhs: Self) -> Bound { rhs * lhs }
     static func * (lhs: Self, rhs: Bound) -> Bound {
-        var rectified = Bound.hotPercentRange << rhs
-        if case .reverse = lhs.direction {
-            rectified = 1.0 - rectified
+        let percent = switch lhs.direction {
+        case .forward:
+            Bound.hotPercentRange << rhs
+        case .backward:
+            1.0 - (Bound.hotPercentRange << rhs)
         }
-        return lhs.range * rectified
+        return lhs.range * percent
     }
 }
 
@@ -85,10 +87,12 @@ extension DirectionalRange where Bound: BinaryInteger {
     /// - Returns: 范围内的值
     static func * (lhs: Double, rhs: Self) -> Bound { rhs * lhs }
     static func * (lhs: Self, rhs: Double) -> Bound {
-        var rectified = Double.percentRange << rhs
-        if case .reverse = lhs.direction {
-            rectified = 1.0 - rectified
+        let percent = switch lhs.direction {
+        case .forward:
+            Double.percentRange << rhs
+        case .backward:
+            1.0 - (Double.percentRange << rhs)
         }
-        return lhs.range * rectified
+        return lhs.range * percent
     }
 }

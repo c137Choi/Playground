@@ -32,7 +32,7 @@ final class GCDTimer {
     /// GCD定时器
     private var _timer: DispatchSourceTimer?
     /// 状态
-    private var state = State.initial
+    private(set) var state = State.initial
     /// 返回定时器 | 如果不存在则创建一个并存入属性中以便后续使用
     private var timer: DispatchSourceTimer {
         guard let existingTimer = _timer else {

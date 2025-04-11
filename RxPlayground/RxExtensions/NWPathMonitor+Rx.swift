@@ -23,6 +23,8 @@ extension Reactive where Base == NWPathMonitor {
         return currentPath.map(satisfiedEthernetPath)
     }
     
+    /// 注: 这里不使用.distinctUntilChanged()过滤重复项
+    /// 因为外部可能需要在网络接口变化时重新建立网络连接(即使是重复的Path也代表着网络接口的变化)
     var currentPath: Observable<NWPath> {
         Observable.create {
             [weak monitor = base] observer in
@@ -40,7 +42,5 @@ extension Reactive where Base == NWPathMonitor {
                 [weak monitor] in monitor?.cancel()
             }
         }
-        .distinctUntilChanged()
-        .share(replay: 1, scope: .whileConnected)
     }
 }

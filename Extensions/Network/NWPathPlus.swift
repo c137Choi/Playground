@@ -28,13 +28,6 @@ struct IPv4Config: CustomStringConvertible {
 
 extension NWPath {
     
-    /// 广播地址强制改成全域发送广播地址
-    var allFieldBroadcastIPv4Config: IPv4Config? {
-        ipv4Config.map { config in
-            IPv4Config(ip: config.ip, subnetMask: config.subnetMask, broadCastIP: .broadcast)
-        }
-    }
-    
     var ipv4Config: IPv4Config? {
         
         guard let interfaceName = availableInterfaces.map(\.name).first else { return nil }

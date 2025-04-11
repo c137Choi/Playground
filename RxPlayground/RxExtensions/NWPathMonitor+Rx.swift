@@ -36,7 +36,7 @@ extension Reactive where Base == NWPathMonitor {
             monitor.pathUpdateHandler = { path in
                 observer.onNext(path)
             }
-            let queue = DispatchQueue(label: "com.nw.path.monitor", qos: .userInitiated)
+            let queue = DispatchQueue(label: "com.nw.path.monitor", qos: .userInitiated, autoreleaseFrequency: .workItem)
             monitor.start(queue: queue)
             return Disposables.create {
                 [weak monitor] in monitor?.cancel()

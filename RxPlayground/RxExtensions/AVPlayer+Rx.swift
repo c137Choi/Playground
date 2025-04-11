@@ -26,7 +26,7 @@ extension Reactive where Base == AVPlayer {
             /// 关键帧序列
             return Observable.create { observer in
                 /// 观测队列
-                let queue = DispatchQueue(label: "com.observing.playback", qos: .userInitiated)
+                let queue = DispatchQueue(label: "com.observing.playback", qos: .userInitiated, autoreleaseFrequency: .workItem)
                 /// 采样间隔(按60fps计算)
                 let interval = CMTime(value: 1, timescale: preferredFPS)
                 /// 观察者

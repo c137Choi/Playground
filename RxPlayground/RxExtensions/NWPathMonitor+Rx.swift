@@ -14,13 +14,15 @@ extension NWPathMonitor: @retroactive ReactiveCompatible {}
 extension Reactive where Base == NWPathMonitor {
     
     var satisfiedEthernetPath: Observable<NWPath?> {
-        func satisfiedEthernetPath(_ path: NWPath) -> NWPath? {
-            (path.status == .satisfied ? path : nil).flatMap { path in
-                guard path.usesInterfaceType(.wifi) || path.usesInterfaceType(.wiredEthernet) else { return nil }
-                return path
-            }
+        satisfiedPath.map {
+            $0.usesInterfaceType(.wifi) || $0.usesInterfaceType(.wiredEthernet) ? $0 : nil
         }
-        return currentPath.map(satisfiedEthernetPath)
+    }
+    
+    var satisfiedPath: Observable<NWPath> {
+        currentPath.filter {
+            $0.status == .satisfied
+        }
     }
     
     /// 注: 这里不使用.distinctUntilChanged()过滤重复项

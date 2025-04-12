@@ -113,6 +113,12 @@ extension Data {
 
 extension Data {
     
+    /// 字节直接创建Data
+    /// - Parameter bytes: 字节序列
+    init(_ bytes: Element...) {
+        self.init(bytes)
+    }
+    
     /// 打印每个字节的数字值
     var rawBytes: String {
         guard isNotEmpty else { return "" }

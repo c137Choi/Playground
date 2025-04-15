@@ -37,24 +37,18 @@ import UIKit
 
 @propertyWrapper struct Clampped<T: Comparable> {
     
-    var wrappedValue: T {
-        get { _wrappedValue }
-        set {
-            if newValue > range.upperBound {
-                _wrappedValue = range.upperBound
-            } else if newValue < range.lowerBound {
-                _wrappedValue = range.lowerBound
-            } else {
-                _wrappedValue = newValue
-            }
-        }
-    }
-    
-    private var _wrappedValue: T!
     let range: ClosedRange<T>
+    
+    private var innerValue: T
+    
     init(wrappedValue: T, range: ClosedRange<T>) {
         self.range = range
-        self.wrappedValue = wrappedValue
+        self.innerValue = range << wrappedValue
+    }
+    
+    var wrappedValue: T {
+        get { innerValue }
+        set { innerValue = range << newValue }
     }
 }
 extension Clampped: Equatable where T: Equatable {}

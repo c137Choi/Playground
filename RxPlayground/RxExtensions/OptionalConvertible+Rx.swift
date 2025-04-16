@@ -42,3 +42,31 @@ extension OptionalConvertible {
         return self
     }
 }
+
+// MARK: - Reactive<OptionalConvertible>
+// 任意NSObject及其子类都可以用NSObject().rx.assign(to: Observer...)的方式给Observer赋值
+extension Reactive where Base: OptionalConvertible {
+    
+    @discardableResult func assign<Observer: ObserverType>(to observers: Observer...) -> Base where Observer.Element == Base? {
+        assign(to: observers)
+    }
+    @discardableResult func assign<Observer: ObserverType>(to observers: [Observer]) -> Base where Observer.Element == Base? {
+        /// 依次通知Observer
+        observers.forEach { observer in
+            observer.onNext(base)
+        }
+        return base
+    }
+    
+    
+    @discardableResult func assign<Observer: ObserverType>(to observers: Observer...) -> Base where Observer.Element == Base {
+        assign(to: observers)
+    }
+    @discardableResult func assign<Observer: ObserverType>(to observers: [Observer]) -> Base where Observer.Element == Base {
+        /// 依次通知Observer
+        observers.forEach { observer in
+            observer.onNext(base)
+        }
+        return base
+    }
+}

@@ -121,9 +121,7 @@ extension DisposeBag {
         }
     }
     
-    /// 跳过初始值后续的事件序列 | 常和.take(until: _someProperty.changed)配合使用
-    /// 实现值变化后取消订阅的效果
-    var changed: Observable<Wrapped> {
+    var skipFirst: Observable<Wrapped> {
         relay.skip(1)
     }
     

@@ -20,17 +20,8 @@ extension Double {
     /// 这里储存一份静态属性,避免重复创建Range
     static let percentRange = Double.hotPercentRange
     
-    /// 返回时长的描述(时分秒)
     var durationDescription: String {
-        let totalSeconds = self.int
-        let hours = totalSeconds / 3600
-        let minutes = totalSeconds % 3600 / 60
-        let seconds = totalSeconds % 3600 % 60
-        if hours > 0 {
-            return String(format: "%i:%02i:%02i", hours, minutes, seconds)
-        } else {
-            return String(format: "%02i:%02i", minutes, seconds)
-        }
+        int.durationDescription
     }
     
     /// 返回毫秒数

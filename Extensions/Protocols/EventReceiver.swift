@@ -12,12 +12,7 @@ protocol EventReceiver {
     func addEvents(_ events: UIControl.Event, _ callback: ((Control) -> Void)?) -> String
 }
 
-extension UIControl: EventReceiver {
-    
-    enum Associated {
-        @UniqueAddress static var blockIsSelectedEvent
-    }
-}
+extension UIControl: EventReceiver {}
 
 extension EventReceiver where Self: UIControl {
     

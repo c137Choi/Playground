@@ -28,22 +28,18 @@ extension Reactive where Base: UIControl {
     }
     
     public var isSelected: ControlProperty<Bool> {
-        /// 属性变化序列
-        let observeIsSelected = observe(\.isSelected, options: .live)
-            .withUnretained(base)
-            .filter(\.0.blockIsSelectedEvent.isFalse)
-            .map(\.1)
-        let binder = Binder(base, scheduler: MainScheduler.instance) { control, isSelected in
+        /// KVO观察属性变化
+        let values = observe(\.isSelected, options: .live)
+            .removeDuplicates //避免循环赋值
+            .share(replay: 1, scope: .whileConnected)
+        /// 接收属性变化
+        let valueSink = Binder(base, scheduler: MainScheduler.instance) { control, isSelected in
             /// 确保值不同的时候才执行后续操作
             guard isSelected != control.isSelected else { return }
-            /// 阻断事件发送
-            control.blockIsSelectedEvent = true
             /// 设置新值
             control.isSelected = isSelected
-            /// 之后恢复事件发送
-            control.blockIsSelectedEvent = false
         }
-        return ControlProperty(values: observeIsSelected, valueSink: binder)
+        return ControlProperty(values: values, valueSink: valueSink)
     }
     
     public var isEnabled: ControlProperty<Bool> {
@@ -53,17 +49,5 @@ extension Reactive where Base: UIControl {
             control.isEnabled = isEnabled
         }
         return ControlProperty(values: observeIsEnabled, valueSink: binder)
-    }
-}
-
-extension UIControl {
-    
-    fileprivate var blockIsSelectedEvent: Bool {
-        get {
-            associated(Bool.self, self, Associated.blockIsSelectedEvent).or(false)
-        }
-        set {
-            setAssociatedObject(self, Associated.blockIsSelectedEvent, newValue, .OBJC_ASSOCIATION_ASSIGN)
-        }
     }
 }

@@ -8,6 +8,10 @@
 import UIKit
 
 extension IndexPath {
+    /// 第一行
+    static let firstRow = IndexPath(row: 0, section: 0)
+    /// 第一项
+    static let firstItem = IndexPath(item: 0, section: 0)
     
     /// section转换成IndexSet
     var sectionIndexSet: IndexSet {
@@ -45,11 +49,8 @@ extension IndexPath {
 }
 
 extension IndexPath: @retroactive ExpressibleByIntegerLiteral {
-    
-    /// 通过整型字面量创建IndexPath
-    public init(integerLiteral path: IntegerLiteralType) {
-        /// 通过数组字面量创建IndexPath: [0, 1] 注: 只能是两个整型元素, 表示第0组第1个
-        self.init(arrayLiteral: 0, path)
+    public init(integerLiteral element: Element) {
+        self.init(index: element)
     }
 }
 

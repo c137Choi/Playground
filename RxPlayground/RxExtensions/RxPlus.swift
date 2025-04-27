@@ -7,6 +7,7 @@
 
 import RxSwift
 import RxCocoa
+import Combine
 
 /// Rx序列生命周期(简化版)
 public enum RxLifecycleLite {
@@ -74,7 +75,8 @@ extension DisposeBag {
     }
 }
 
-@propertyWrapper class Variable<Wrapped>: ObservableType {
+@propertyWrapper
+class Variable<Wrapped>: ObservableType {
     /// ObservableConvertibleType序列元素
     typealias Element = Wrapped
     /// 核心Relay对象
@@ -129,12 +131,13 @@ extension DisposeBag {
         relay.asObservable()
     }
     
-    func subscribe<Observer>(_ observer: Observer) -> any Disposable where Observer : ObserverType, Wrapped == Observer.Element {
+    func subscribe<Observer>(_ observer: Observer) -> any Disposable where Observer: ObserverType, Observer.Element == Wrapped {
         asObservable().subscribe(observer)
     }
 }
 
-@propertyWrapper final class ClamppedVariable<T>: Variable<T> where T: Comparable {
+@propertyWrapper
+final class ClamppedVariable<T>: Variable<T> where T: Comparable {
     
     let range: ClosedRange<T>
     
@@ -163,7 +166,8 @@ extension DisposeBag {
     }
 }
 
-@propertyWrapper final class CycledCase<Case: Equatable>: Variable<Case> {
+@propertyWrapper
+final class CycledCase<Case: Equatable>: Variable<Case> {
     typealias CaseArray = [Case]
     /// 元素数组
     let cases: CaseArray
@@ -217,7 +221,8 @@ extension DisposeBag {
     }
 }
 
-@propertyWrapper final class CycledVariable<T>: Variable<T> where T: Comparable {
+@propertyWrapper
+final class CycledVariable<T>: Variable<T> where T: Comparable {
     /// 范围
     let range: ClosedRange<T>
     /// 用于发送范围错误事件
@@ -253,6 +258,35 @@ extension DisposeBag {
     
     var rangeBoundError: Observable<RangeBoundError> {
         rangeBoundErrorSubject.observable
+    }
+}
+
+@propertyWrapper
+struct WeakVariable<Wrapped: AnyObject>: ObservableType {
+    /// ObservableConvertibleType序列元素
+    typealias Element = Wrapped?
+    /// 弱引用
+    private weak var weakReference: Wrapped?
+    /// 发布者
+    private let subject = PublishSubject<Wrapped?>()
+    
+    var wrappedValue: Wrapped? {
+        get { weakReference }
+        set { weakReference = newValue
+            subject.onNext(newValue)
+        }
+    }
+    
+    init(wrappedValue: Wrapped?) {
+        self.weakReference = wrappedValue
+    }
+    
+    func asObservable() -> RxSwift.Observable<Wrapped?> {
+        subject.asObservable()
+    }
+    
+    func subscribe<Observer>(_ observer: Observer) -> any Disposable where Observer : ObserverType, Observer.Element == Wrapped? {
+        asObservable().subscribe(observer)
     }
 }
 

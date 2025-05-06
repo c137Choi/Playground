@@ -29,9 +29,7 @@ extension LocationManager {
     
     var authorizationStatus: CLAuthorizationStatus {
         get { authorizationStatusRelay.value }
-        set {
-            authorizationStatusRelay.accept(newValue)
-        }
+        set { authorizationStatusRelay << newValue }
     }
     
     /// 请求位置权限

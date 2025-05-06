@@ -24,6 +24,9 @@ extension BehaviorRelay {
         accept(update(value))
     }
 
+    static func <<(lhs: BehaviorRelay<Element>, rhs: Element) {
+        lhs.accept(rhs)
+    }
 }
 
 extension BehaviorRelay where Element: RangeReplaceableCollection {

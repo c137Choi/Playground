@@ -118,9 +118,7 @@ class Variable<Wrapped>: ObservableType {
     
     var wrappedValue: Wrapped {
         get { relay.value }
-        set {
-            relay.accept(newValue)
-        }
+        set { relay << newValue }
     }
     
     var skipFirst: Observable<Wrapped> {

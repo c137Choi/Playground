@@ -18,12 +18,19 @@ extension DateInterval {
 
 extension Date {
     
-    /// 从毫秒数创建日期
+    static func millisecondsSince1970(_ interval: Int) -> Date {
+        Date(millisecondsSince1970: interval.double)
+    }
+    
+    static func millisecondsSince1970(_ interval: TimeInterval) -> Date {
+        Date(millisecondsSince1970: interval)
+    }
+    
     init(millisecondsSince1970: Int) {
         self.init(millisecondsSince1970: millisecondsSince1970.double)
     }
     
-    init(millisecondsSince1970: Double) {
+    init(millisecondsSince1970: TimeInterval) {
         self.init(timeIntervalSince1970: millisecondsSince1970 / 1000.0)
     }
     

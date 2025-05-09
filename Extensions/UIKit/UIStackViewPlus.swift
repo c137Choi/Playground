@@ -89,7 +89,7 @@ extension UIStackView {
     }
     
     func reArrange<T>(_ arrangedSubviews: T) where T: Sequence, T.Element: UIView {
-        purgeArrangedSubviews()
+        clearArrangedSubviews()
         arrange(arrangedSubviews: arrangedSubviews)
     }
     
@@ -104,16 +104,15 @@ extension UIStackView {
         }
     }
     
-    /// Remove all of the arranged subviews
-    func purgeArrangedSubviews() {
-        arrangedSubviews.forEach(purgeArrangedSubview)
+    /// 清除所有的arrangedSubview
+    func clearArrangedSubviews() {
+        arrangedSubviews.forEach(clearArrangedSubview)
     }
     
-    /// 清除指定的arrangedSubview
-    /// - Parameter view: 指定的arrangedSubview
-    func purgeArrangedSubview(_ view: UIView) {
-        removeArrangedSubview(view)
-        view.removeFromSuperview()
+    /// 清除StackView中指定的arrangedSubview
+    func clearArrangedSubview(_ arrangedSubview: UIView) {
+        removeArrangedSubview(arrangedSubview)
+        arrangedSubview.removeFromSuperview()
     }
     
     /// 设置背景色

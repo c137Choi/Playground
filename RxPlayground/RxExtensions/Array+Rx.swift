@@ -75,33 +75,15 @@ extension Observable where Element: UIButton {
 
 extension Array where Element: UIButton {
     
-    /// 返回选中按钮ControlProperty
-    /// - Parameter firstSelected: 首次选中的按钮
-    /// - Returns: ControlProperty<Element?>
-    func selectedButton(startWith firstSelected: Element?) -> ControlProperty<Element?> {
-        let values = switchSelectedButton(startButton: firstSelected).optionalElement
-        let observer = AnyObserver<Element?> { event in
-            switch event {
-            case .next(let button) where button.isVoid:
-                first(where: \.isSelected)?.isSelected = false
-            default:
-                break
-            }
-        }
-        return ControlProperty(values: values, valueSink: observer)
-    }
-    
     /// 切换选中的按钮
-    /// - Parameter firstSelection: 按钮在数组中的索引
+    /// - Parameter startIndex: 初次选中的按钮索引
+    /// - Parameter toggleSelectedButton: 重复点击按钮是否切换选中状态
     /// - Returns: 选中按钮的事件序列
-    func switchSelectedButton(startIndex firstSelection: Self.Index? = nil, toggleSelectedButton: Bool = false) -> Observable<Element> {
-        if let firstSelection {
-            guard let selectedButton = element(at: firstSelection) else {
-                return switchSelectedButton(startButton: nil, toggleSelectedButton: toggleSelectedButton)
-            }
-            return switchSelectedButton(startButton: selectedButton, toggleSelectedButton: toggleSelectedButton)
+    func switchSelectedButton(startIndex: Self.Index? = nil, toggleSelectedButton: Bool = false) -> Observable<Element> {
+        if let startIndex, let startButton = element(at: startIndex) {
+            switchSelectedButton(startButton: startButton, toggleSelectedButton: toggleSelectedButton)
         } else {
-            return switchSelectedButton(startButton: nil, toggleSelectedButton: toggleSelectedButton)
+            switchSelectedButton(startButton: nil, toggleSelectedButton: toggleSelectedButton)
         }
     }
     
@@ -109,7 +91,7 @@ extension Array where Element: UIButton {
     /// - Parameter firstSelected: 第一个选中的按钮
     /// - Returns: 选中按钮的事件序列
     func switchSelectedButton(startButton firstSelected: Element? = nil, toggleSelectedButton: Bool = false) -> Observable<Element> {
-        let selectedButton = tapButton
+        let selectedButton = mergeTappedButton
             .optionalElement
             .startWith(firstSelected)
             .unwrapped
@@ -121,19 +103,19 @@ extension Array where Element: UIButton {
     /// - Parameter selectedButton: 选中按钮的事件序列
     /// - Returns: Disposable
     private func handleSelectedButton(_ selectedButton: Observable<Element>, toggleSelectedButton: Bool = false) -> Disposable {
-        selectedButton.scan([]) { lastResult, button -> [Element] in
+        selectedButton.scan([]) { lastResult, nextButton -> [Element] in
             
             /// 处理最新点击的按钮
             if toggleSelectedButton {
-                button.isSelected.toggle()
+                nextButton.isSelected.toggle()
             } else {
-                button.isSelected = true
+                nextButton.isSelected = true
             }
             
             var buttons = lastResult
             /// 按钮数组不包含按钮的时候,将点击的按钮添加到数组
-            if buttons.contains(button).isFalse {
-                buttons.append(button)
+            if !buttons.contains(nextButton) {
+                buttons.append(nextButton)
             }
             if buttons.count == 2 {
                 /// 移除上一个按钮并取消选中
@@ -146,9 +128,11 @@ extension Array where Element: UIButton {
     }
     
     /// 合并所有按钮的点击事件 | 按钮点击之后发送按钮对象自己
-    public var tapButton: Observable<Element> {
-        /// 写成map(\.rx.tapButton)这种形式编译出错(2024年10月16日14:11:19)
-        let tappedButtonSequences = map { $0.rx.tapButton }
-        return Observable.from(tappedButtonSequences).merge()
+    public var mergeTappedButton: Observable<Element> {
+        /// 写成.map(\.rx.tapButton)这种形式会编译出错(2024年10月16日14:11:19)
+        let tappedButtonEvents = self.map { element in
+            element.rx.tapButton
+        }
+        return tappedButtonEvents.merged
     }
 }

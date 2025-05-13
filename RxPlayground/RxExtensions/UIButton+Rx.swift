@@ -11,8 +11,7 @@ import RxCocoa
 extension Reactive where Base: UIButton {
     
     var tapButton: ControlEvent<Base> {
-        let tappedButton = tap.withUnretained(base).map(\.0)
-        return ControlEvent(events: tappedButton)
+        ControlEvent(events: tap.withUnretained(base).map(\.0))
     }
     
     var normalTitle: Binder<String?> {

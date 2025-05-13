@@ -11,6 +11,6 @@ extension AVAsset {
     
     /// 判断是否为HDR视频
     var isHDRVideo: Bool {
-        tracks(withMediaType: .video).lazy.first.or(false, map: \.isHDRVideo)
+        tracks(withMediaType: .video).contains(where: \.isHDRVideo)
     }
 }

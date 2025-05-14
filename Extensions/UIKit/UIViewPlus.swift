@@ -773,30 +773,46 @@ extension UIView {
 	/// - Returns: 控件本身
 	/// - Tips: 谨慎使用这个方法: 调用这四个方法之后, 会导致UIButtonPlus分类中重写的intrinsicContentSize返回的size失效
 	@discardableResult
-	func harden(axis: NSLayoutConstraint.Axis? = nil, intensity: UILayoutPriority = .required) -> Self {
-		func hardenVertical() {
-			setContentCompressionResistancePriority(intensity, for: .vertical)
-			setContentHuggingPriority(intensity, for: .vertical)
-		}
-		func hardenHorizontal() {
-			setContentCompressionResistancePriority(intensity, for: .horizontal)
-			setContentHuggingPriority(intensity, for: .horizontal)
-		}
-		guard let axis = axis else {
-			hardenVertical()
-			hardenHorizontal()
-			return self
-		}
-		switch axis {
-		case .horizontal:
-			hardenHorizontal()
-		case .vertical:
-			hardenVertical()
-		@unknown default:
-			break
-		}
+    func harden(axis: NSLayoutConstraint.Axis? = nil, intensity: UILayoutPriority = .required) -> Self {
+        if let axis {
+            switch axis {
+            case .horizontal:
+                hardenHorizontal(intensity)
+            case .vertical:
+                hardenVertical(intensity)
+            @unknown default:
+                break
+            }
+        } else {
+            hardenVertical(intensity)
+            hardenHorizontal(intensity)
+        }
+        
 		return self
 	}
+    
+    
+    /// 垂直方向硬化
+    /// - Parameter intensity: 硬化强度
+    @discardableResult
+    func hardenVertical(_ intensity: UILayoutPriority) -> Self {
+        /// 压缩
+        setContentCompressionResistancePriority(intensity, for: .vertical)
+        /// 拉伸
+        setContentHuggingPriority(intensity, for: .vertical)
+        return self
+    }
+    
+    /// 水平方向硬化
+    /// - Parameter intensity: 硬化强度
+    @discardableResult
+    func hardenHorizontal(_ intensity: UILayoutPriority) -> Self {
+        /// 压缩
+        setContentCompressionResistancePriority(intensity, for: .horizontal)
+        /// 拉伸
+        setContentHuggingPriority(intensity, for: .horizontal)
+        return self
+    }
 	
 	// MARK: - __________ 圆角 + 阴影 __________
 	var shadowView: _ShadowView {

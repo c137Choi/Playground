@@ -10,8 +10,10 @@ import RxCocoa
 
 extension Reactive where Base: UIButton {
     
-    var tapButton: ControlEvent<Base> {
-        ControlEvent(events: tap.withUnretained(base).map(\.0))
+    var tapButton: Observable<Base> {
+        tap.compactMap {
+            [weak base] _ in base
+        }
     }
     
     var normalTitle: Binder<String?> {

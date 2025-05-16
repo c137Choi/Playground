@@ -26,6 +26,10 @@ extension Array where Element == ControlProperty<Bool> {
 
 extension Array where Element: ObservableConvertibleType {
     
+    var merged: Observable<Element.Element> {
+        Observable.from(self).merge()
+    }
+    
     /// 串联事件序列数组(无时间间隔)
     var chained: Completable {
         chained(pauseInterval: nil)
@@ -60,94 +64,71 @@ extension Array where Element: ObservableConvertibleType {
     }
 }
 
-extension Array where Element: ObservableConvertibleType {
-    var merged: Observable<Element.Element> {
-        Observable.from(self).merge()
-    }
-}
-
-// MARK: - __________ UIButton+Rx __________
-extension Observable where Element: UIButton {
-    func matches(button: UIButton) -> Observable<Bool> {
-        map { $0 == button }
-    }
-}
-
 extension Array where Element: UIButton {
     
     /// 点击事件过滤
     typealias TapEventFilter = (Int, Element) -> Bool
+    
     /// 切换选中的按钮
-    /// - Parameter startIndex: 初次选中的按钮索引
-    /// - Parameter toggleSelectedButton: 重复点击按钮是否切换选中状态
-    /// - Returns: 选中按钮的事件序列
-    func switchSelectedButton(startIndex: Index?, toggleSelectedButton: Bool = false, eventFilter: TapEventFilter? = nil) -> Observable<Element> {
-        switchSelectedButton(
-            startButton: startIndex.flatMap { index in
-                element(at: index)
-            },
-            toggleSelectedButton: toggleSelectedButton,
-            eventFilter: eventFilter
-        )
+    /// - Parameters:
+    ///   - startIndex: 第一个选中的按钮索引
+    ///   - eventFilter: 事件过滤闭包
+    /// - Returns: 选中的按钮事件序列
+    func switchSelectedButton(startIndex: Index?, eventFilter: TapEventFilter? = nil) -> Observable<Element> {
+        switchSelectedButton(startWith: startIndex.flatMap(element(at:)), eventFilter: eventFilter)
     }
     
     /// 切换选中的按钮
-    /// - Parameter firstSelected: 第一个选中的按钮
-    /// - Returns: 选中按钮的事件序列
-    func switchSelectedButton(startButton firstSelected: Element? = nil, toggleSelectedButton: Bool = false, eventFilter: TapEventFilter? = nil) -> Observable<Element> {
-        let selectedButton = mergeTappedButton(eventFilter)
-            .optionalElement
-            .startWith(firstSelected)
-            .unwrapped
-        let disposable = handleSelectedButton(selectedButton, toggleSelectedButton: toggleSelectedButton)
-        return selectedButton.do(onDispose: disposable.dispose)
-    }
-    
-    /// 处理按钮选中/反选
-    /// - Parameter selectedButton: 选中按钮的事件序列
-    /// - Returns: Disposable
-    private func handleSelectedButton(_ selectedButton: Observable<Element>, toggleSelectedButton: Bool = false) -> Disposable {
-        selectedButton.scan([]) { lastResult, nextButton -> [Element] in
-            
-            /// 处理最新点击的按钮
-            if toggleSelectedButton {
-                nextButton.isSelected.toggle()
-            } else {
-                nextButton.isSelected = true
+    /// - Parameters:
+    ///   - first: 第一个要选中的按钮
+    ///   - eventFilter: 事件过滤闭包
+    /// - Returns: 选中的按钮事件序列
+    func switchSelectedButton(startWith first: Element? = nil, eventFilter: TapEventFilter? = nil) -> Observable<Element> {
+        tappedButton(startWith: first, eventFilter: eventFilter).lastAndLatest.compactMap { lastButton, button -> Element? in
+            /// 上一个按钮取消选中
+            if let lastButton {
+                if button === lastButton {
+                    return nil
+                } else {
+                    lastButton.isSelected = false
+                }
             }
-            
-            var buttons = lastResult
-            /// 按钮数组不包含按钮的时候,将点击的按钮添加到数组
-            if !buttons.contains(nextButton) {
-                buttons.append(nextButton)
-            }
-            if buttons.count == 2 {
-                /// 移除上一个按钮并取消选中
-                let lastSelected = buttons.removeFirst()
-                lastSelected.isSelected = false
-            }
-            return buttons
+            /// 选中最新的按钮
+            button.isSelected = true
+            /// 返回最新按钮
+            return button
         }
-        .subscribe()
     }
     
     /// 合并所有按钮的点击事件 | 按钮点击之后发送按钮对象自己
-    /// - Parameter eventFilter: 事件过滤闭包
-    func mergeTappedButton(_ eventFilter: TapEventFilter?) -> Observable<Element> {
-        let tappedButtonEvents = enumerated().map { iteratorElement -> Observable<Element> in
-            /// 数组中的索引
-            let offset = iteratorElement.offset
-            /// 按钮对象
-            let button = iteratorElement.element
-            /// 事件过滤
+    /// - Parameters:
+    ///   - first: 第一个要选中的按钮
+    ///   - eventFilter: 事件过滤闭包
+    /// - Returns: 按钮事件序列
+    fileprivate func tappedButton(startWith first: Element?, eventFilter: TapEventFilter?) -> Observable<Element> {
+        /// 第一个发送的按钮
+        let startButton = first.flatMap { firstButton -> Element? in
+            /// 查找第一个按钮在数组中的索引. 如果不在数组中则返回空
+            guard let firstButtonIndex = firstIndex(of: firstButton) else { return nil }
+            /// 如果有事件过滤
             if let eventFilter {
-                return button.rx.tapButton.compactMap { btn in
-                    eventFilter(offset, btn) ? btn : nil
-                }
+                /// 调用: 评估通过后返回第一个按钮, 否则返回空
+                return eventFilter(firstButtonIndex, firstButton) ? firstButton : nil
             } else {
-                return button.rx.tapButton.observable
+                /// 无事件过滤, 直接返回第一个按钮
+                return firstButton
+            }
+        }
+        let tappedButtonEvents = enumerated().map { offset, button -> Observable<Element> in
+            eventFilter.map(fallback: button.rx.tapButton) { filter in
+                button.rx.tapButton.filter { btn in
+                    filter(offset, btn)
+                }
             }
         }
         return tappedButtonEvents.merged
+            .optionalElement
+            .startWith(startButton)
+            .unwrapped
     }
 }

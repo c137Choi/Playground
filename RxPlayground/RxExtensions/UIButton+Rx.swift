@@ -11,7 +11,9 @@ import RxCocoa
 extension Reactive where Base: UIButton {
     
     var tapButton: Observable<Base> {
-        tap.withUnretained(base).map(\.0)
+        tap.compactMap {
+            [weak base] in base
+        }
     }
     
     var normalTitle: Binder<String?> {

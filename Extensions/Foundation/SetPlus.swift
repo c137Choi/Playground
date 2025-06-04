@@ -17,6 +17,16 @@ extension Set {
         Array(self)
     }
     
+    /// 对比两个集合, 返回对比后的结果
+    /// - Parameter updated: 新集合
+    /// - Returns: 元组(移除的元素, 不变的元素, 新增的元素)
+    /// let old: Set<Int> = [1, 2, 3]
+    /// let new: Set<Int> = [2, 3, 4]
+    /// old.compare(new) // (removedElements: Set([1]), remainedElements: Set([2, 3]), addedElements: Set([4]))
+    public func compare(_ updated: Self) -> (removedElements: Self, remainedElements: Self, addedElements: Self) {
+        (self - updated, self ^ updated, updated - self)
+    }
+    
     /// 拼接元素
     /// - Parameter element: Optional<Element>类型元素, 有值时才拼接
     public mutating func insert(_ element: Element?) {
@@ -49,12 +59,12 @@ extension Set {
 }
 
 
-extension Set where Element: Hashable {
+extension Set {
     
-    /// 对比两个集合,返回新增的元素和删除的元素
+    /// 对比两个集合, 返回变动的元素
     /// - Returns: 对比两个集合的结果(新增的元素, 删除的元素)
-    static func <-> (old: Self, new: Self) -> (newElements: Self, removedElements: Self) {
-        (new - old, old - new)
+    static func <-> (oldSet: Self, updatedSet: Self) -> (removedElements: Self, remainedElements: Self, addedElements: Self) {
+        oldSet.compare(updatedSet)
     }
     
     static func + (lhs: Set<Element>, rhs: Element) -> Set<Element> {

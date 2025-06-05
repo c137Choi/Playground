@@ -82,19 +82,3 @@ extension Sequence where Element: OptionalConvertible {
         compactMap(\.optionalValue)
     }
 }
-
-extension Sequence where Self: ExpressibleByArrayLiteral {
-    
-    /// 空序列
-    static var empty: Self {
-        []
-    }
-}
-
-extension Sequence where Self: ExpressibleByDictionaryLiteral {
-    
-    /// 空字典
-    static var empty: Self {
-        [:]
-    }
-}

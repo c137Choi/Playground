@@ -132,11 +132,13 @@ extension UIStackView {
             self.layer.borderWidth = borderWidth.or(0)
         } else {
             if let backgroundColor {
-                addBackgroundView(color: backgroundColor,
-                                  cornerRadius: cornerRadius,
-                                  maskedCorners: maskedCorners,
-                                  borderWidth: borderWidth,
-                                  borderColor: borderColor)
+                insertBackgroundView(
+                    color: backgroundColor,
+                    cornerRadius: cornerRadius,
+                    maskedCorners: maskedCorners,
+                    borderWidth: borderWidth,
+                    borderColor: borderColor
+                )
             } else {
                 kk.backgroundView = nil
             }

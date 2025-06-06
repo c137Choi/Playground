@@ -294,24 +294,25 @@ extension UIView {
     func addBackgroundColor(_ backgroundColor: UIColor) {
         let background = UIView(frame: bounds)
         background.backgroundColor = backgroundColor
-        addBackgroundView(background)
+        insertBackgroundView(background)
     }
     
     
     /// 添加背景
-    func addBackgroundView(color: UIColor,
-                           insets: UIEdgeInsets = .zero,
-                           cornerRadius: CGFloat?,
-                           maskedCorners: CACornerMask = .allCorners,
-                           borderWidth: CGFloat? = nil,
-                           borderColor: UIColor? = nil)
+    func insertBackgroundView(
+        color: UIColor,
+        insets: UIEdgeInsets = .zero,
+        cornerRadius: CGFloat?,
+        maskedCorners: CACornerMask = .allCorners,
+        borderWidth: CGFloat? = nil,
+        borderColor: UIColor? = nil)
     {
         let background = _BackgroundView(color: color)
         background.layer.maskedCorners = maskedCorners
         background.layer.cornerRadius = cornerRadius.or(0)
         background.layer.borderColor = borderColor.map(\.cgColor)
         background.layer.borderWidth = borderWidth.or(0)
-        addBackgroundView(background, insets: insets)
+        insertBackgroundView(background, insets: insets)
     }
     
     /// 添加背景
@@ -319,22 +320,20 @@ extension UIView {
     ///   - background: 背景子视图
     ///   - insets: 缩进边距
     ///   - configure: 其他设置
-    func addBackgroundView(_ background: UIView, insets: UIEdgeInsets = 0, configure: ((UIView) -> Void)? = nil) {
+    func insertBackgroundView(_ background: UIView, insets: UIEdgeInsets = 0, configure: (UIView) -> Void = { _ in }) {
         /// 按Bounds缩进
         let frame = bounds.inset(by: insets)
         /// 其他配置
-        if let configure {
-            configure(background)
-        }
+        configure(background)
         /// 添加背景图
-        addBackgroundView(background, frame: frame)
+        insertBackgroundView(background, frame: frame)
     }
     
     /// 添加背景子视图
     /// - Parameters:
     ///   - background: 背景子视图
     ///   - frame: 背景图位置
-    func addBackgroundView(_ background: UIView, frame: CGRect) {
+    func insertBackgroundView(_ background: UIView, frame: CGRect) {
         background.frame = frame
         background.autoresizingMask = .autoResize
         insertSubview(background, at: 0)

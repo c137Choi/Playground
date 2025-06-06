@@ -117,6 +117,12 @@ extension UIView {
         !isHidden && window.isValid && alpha >= 0.01
     }
     
+    /// 是否透明
+    var isTransparent: Bool {
+        get { alpha == 0 }
+        set { alpha = newValue ? 0 : 1 }
+    }
+    
     /// 返回在Window中的frame
     var frameInWindow: CGRect {
         convert(bounds, to: nil)

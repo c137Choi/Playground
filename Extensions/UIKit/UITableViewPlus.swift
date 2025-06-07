@@ -70,21 +70,24 @@ extension UITableView {
         }
     }
     
-	/// 在视图控制器的viewDidLayoutSubviews()方法里调用此方法以自动布局HeaderFooterView
+    /// 在视图控制器的viewDidLayoutSubviews方法里调用此方法
+    /// 可以对内部添加了约束的tableHeaderView/tableFooterView根据其约束调整尺寸
 	func layoutHeaderFooterViewIfNeeded() {
 		if let headerView = tableHeaderView {
-			let fitSize = CGSize(width: bounds.size.width, height: UIView.layoutFittingCompressedSize.height)
-			let layoutSize = headerView.systemLayoutSizeFitting(fitSize)
-			guard headerView.frame.size != layoutSize else { return }
-			headerView.frame.size = layoutSize
-			tableHeaderView = headerView
+			let targetSize = CGSize(width: bounds.size.width, height: UIView.layoutFittingCompressedSize.height)
+			let compressedSize = headerView.systemLayoutSizeFitting(targetSize)
+            if headerView.frame.size != compressedSize {
+                headerView.frame.size = compressedSize
+                tableHeaderView = headerView
+            }
 		}
 		if let footerView = tableFooterView {
-			let fitSize = CGSize(width: bounds.size.width, height: UIView.layoutFittingCompressedSize.height)
-			let layoutSize = footerView.systemLayoutSizeFitting(fitSize)
-			guard footerView.frame.size != layoutSize else { return }
-			footerView.frame.size = layoutSize
-			tableFooterView = footerView
+			let targetSize = CGSize(width: bounds.size.width, height: UIView.layoutFittingCompressedSize.height)
+			let compressedSize = footerView.systemLayoutSizeFitting(targetSize)
+            if footerView.frame.size != compressedSize {
+                footerView.frame.size = compressedSize
+                tableFooterView = footerView
+            }
 		}
 	}
 }

@@ -86,13 +86,20 @@ class Variable<Wrapped>: ObservableType {
     
     /// 有条件的事件序列 | blockEvents为true时不发送事件
     /// 常用于控件之间的双向绑定
+    /// 配合setValue(:sendEvent:)方法使用
     var conditionalValue: Observable<Wrapped> {
-        relay.withUnretained(self).filter(\.0.passCondition).map(\.1)
-    }
-    
-    /// 可发送事件的条件
-    var passCondition: Bool {
-        blockEvents.isFalse
+        relay.withUnretained(self).compactMap { weakSelf, element in
+            /// 始终取消阻断事件
+            defer {
+                weakSelf.blockEvents = false
+            }
+            /// 如果阻断事件则返回空(不发送事件)
+            if weakSelf.blockEvents {
+                return nil
+            } else {
+                return element
+            }
+        }
     }
     
     /// 更新值
@@ -100,12 +107,10 @@ class Variable<Wrapped>: ObservableType {
     ///   - newValue: 新值
     ///   - sendEvent: 是否发送事件 | 外部需要订阅conditionalValue
     func setValue(_ newValue: Wrapped, sendEvent: Bool) {
-        /// 设置是否阻断事件发送
+        /// 设置是否阻断事件发送 | 在上面的conditionalValue属性中设置取消事件阻断
         blockEvents = !sendEvent
         /// 设置值, 外部如果订阅的话会收到通知
         wrappedValue = newValue
-        /// 最后始终取消阻断事件
-        blockEvents = false
     }
     
     var projectedValue: Variable<Wrapped> {

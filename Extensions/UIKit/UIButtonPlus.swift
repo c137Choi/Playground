@@ -106,11 +106,7 @@ extension UIButton {
 	
 	var titleFont: UIFont? {
 		get { titleLabel?.font }
-		set {
-			/// 因为UILabel的font属性为UIFont!类型,所以加上下面的判断
-			guard let font = newValue else { return }
-			titleLabel?.font = font
-		}
+		set { titleLabel?.font = newValue }
 	}
 	
 	var imageSize: CGSize { currentImage?.size ?? .zero }

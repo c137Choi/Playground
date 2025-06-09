@@ -81,9 +81,12 @@ class Variable<Wrapped>: ObservableType {
     typealias Element = Wrapped
     /// 核心Relay对象
     let relay: BehaviorRelay<Wrapped>
+    /// 数据访问锁
+    private lazy var dataAccessLock = NSLock()
     /// 设置为true,则订阅的conditionalValue事件序列不发送事件
     private var blockEvents = false
-    
+    /// 数据访问是否加锁
+    private let withAccessLock: Bool
     /// 有条件的事件序列 | blockEvents为true时不发送事件
     /// 常用于控件之间的双向绑定
     /// 配合setValue(:sendEvent:)方法使用
@@ -117,13 +120,38 @@ class Variable<Wrapped>: ObservableType {
         self
     }
     
-    init(wrappedValue: Wrapped) {
-        relay = BehaviorRelay(value: wrappedValue)
+    /// 初始化
+    /// - Parameters:
+    ///   - wrappedValue: 初始值
+    ///   - withAccessLock: 数据访问是否加锁
+    init(wrappedValue: Wrapped, withAccessLock: Bool = false) {
+        self.relay = BehaviorRelay(value: wrappedValue)
+        self.withAccessLock = withAccessLock
     }
     
     var wrappedValue: Wrapped {
-        get { relay.value }
-        set { relay << newValue }
+        get {
+            if withAccessLock {
+                dataAccessLock.lock()
+                defer {
+                    dataAccessLock.unlock()
+                }
+                return relay.value
+            } else {
+                return relay.value
+            }
+        }
+        set {
+            if withAccessLock {
+                dataAccessLock.lock()
+                defer {
+                    dataAccessLock.unlock()
+                }
+                relay << newValue
+            } else {
+                relay << newValue
+            }
+        }
     }
     
     var skipFirst: Observable<Wrapped> {

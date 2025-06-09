@@ -83,14 +83,6 @@ extension CGSize {
         CGSize(width: width + widthOffset, height: height)
     }
     
-    func newHeight(_ newHeight: CGFloat) -> CGSize {
-        CGSize(width: width, height: newHeight)
-    }
-    
-    func newWidth(_ newWidth: CGFloat) -> CGSize {
-        CGSize(width: newWidth, height: height)
-    }
-    
 	/// 给CGSize加另外的宽高
 	/// - Parameters:
 	///   - lhs: CGSize

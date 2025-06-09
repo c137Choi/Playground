@@ -8,7 +8,7 @@
 import Foundation
 
 @dynamicMemberLookup
-struct Configurator<Object> {
+fileprivate struct Configurator<Object> {
     
     var stabilized: Object { target }
     
@@ -35,18 +35,16 @@ struct Configurator<Object> {
     }
 }
 
-protocol Chainable {}
+fileprivate protocol Chainable {}
 
 extension Chainable {
-    var set: Configurator<Self> {
+    fileprivate var set: Configurator<Self> {
         Configurator(self)
     }
 }
 
 extension Chainable where Self: SimpleInitializer {
-    static var make: Configurator<Self> {
+    fileprivate static var make: Configurator<Self> {
         self.init().set
     }
 }
-
-extension NSObject: Chainable { }

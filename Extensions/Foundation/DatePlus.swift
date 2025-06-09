@@ -62,24 +62,21 @@ extension Date {
     }
     
 	func string(dateFormat: String) -> String {
-		DateFormatter.shared.set
-			.dateFormat(dateFormat)
-			.stabilized
-			.transform(transformer)
+        DateFormatter.shared
+            .with(new: \.dateFormat, dateFormat)
+            .transform(transformer)
 	}
 	
 	var beijingTimeString: String {
-		DateFormatter.shared.set
-			.dateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-			.timeZone(.beijing)
-			.stabilized
+		DateFormatter.shared
+            .with(new: \.dateFormat, "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+            .with(new: \.timeZone, .beijing)
 			.transform(transformer)
 	}
 	
 	var debugTimeString: String {
-		DateFormatter.shared.set
-			.dateFormat("HH:mm:ss.SSS")
-			.stabilized
+		DateFormatter.shared
+            .with(new: \.dateFormat, "HH:mm:ss.SSS")
 			.transform(transformer)
 	}
 	

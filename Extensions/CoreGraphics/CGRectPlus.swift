@@ -50,30 +50,6 @@ extension CGRect {
         return CGRect(origin: origin, size: fixSize)
     }
     
-    func withNew(x: CGFloat) -> CGRect {
-        CGRect(x: x, y: minY, width: width, height: height)
-    }
-    
-    func withNew(y: CGFloat) -> CGRect {
-        CGRect(x: minX, y: y, width: width, height: height)
-    }
-    
-    func withNew(size: CGSize) -> CGRect {
-        CGRect(origin: origin, size: size)
-    }
-    
-    func withNew(origin: CGPoint) -> CGRect {
-        CGRect(origin: origin, size: size)
-    }
-    
-    /// 传入新的中心点 | 计算出新的frame
-    /// - Parameter center: 新的中心点
-    /// - Returns: 新的frame
-    func withNew(center: CGPoint) -> CGRect {
-        let newOrigin = CGPoint(x: center.x - width.half, y: center.y - height.half)
-        return CGRect(origin: newOrigin, size: size)
-    }
-    
     /// 以像素为单位的Rect
     var pixelRect: CGRect {
         let scale = UIScreen.main.scale
@@ -96,7 +72,12 @@ extension CGRect {
     
 	/// 中心点
 	var center: CGPoint {
-		CGPoint(x: midX, y: midY)
+        get {
+            CGPoint(x: midX, y: midY)
+        }
+        set {
+            origin = CGPoint(x: newValue.x - width.half, y: newValue.y - height.half)
+        }
 	}
     
     /// SpriteKit节点Frame的中心点

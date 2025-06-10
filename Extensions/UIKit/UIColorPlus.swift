@@ -465,14 +465,6 @@ extension UIColor {
         lhs.withAlphaComponent(rhs)
     }
     
-	/// 生成一个随机颜色
-    static var random: UIColor {
-        let randomRed = Double.random(in: .percentRange)
-        let randomGreen = Double.random(in: .percentRange)
-        let randomBlue = Double.random(in: .percentRange)
-        return UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1)
-    }
-    
     static func hex(_ hexValue: Int) -> UIColor {
         hexValue.uiColor
     }

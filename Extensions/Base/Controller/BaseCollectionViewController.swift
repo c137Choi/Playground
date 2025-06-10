@@ -54,7 +54,7 @@ class BaseCollectionViewController: BaseViewController, UICollectionViewDelegate
         }
         /// 使用isVisible + flatMapLatest监听屏幕方向改变
         /// 是因为view不在视图层级中时,布局更新会失败
-        rx.isVisible.flatMapLatest(isLandscape)
+        rx.viewDidVisible.flatMapLatest(isLandscape)
             .delay(.milliseconds(50), scheduler: MainScheduler.instance)
             .startWith(UIDevice.current.orientation.isScreenLandscape)
             .removeDuplicates

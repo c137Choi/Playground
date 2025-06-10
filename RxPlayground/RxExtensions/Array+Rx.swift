@@ -82,12 +82,17 @@ fileprivate final class ButtonPropertyObserver<Button, T>: ObserverType, Reactiv
         if case .next(let key) = event {
             DispatchQueue.main.async {
                 [weak self] in
+                guard let self else { return }
+                /// 目标按钮
+                let targetButton = keyButtonMap[key]
+                /// 相同的按钮直接跳过
+                if lastButton === targetButton { return }
                 /// 上一个按钮取消选中
-                self?.lastButton?.isSelected = false
+                lastButton?.isSelected = false
                 /// 选中目标按钮
-                self?.keyButtonMap[key].unwrap { button in
-                    button.isSelected = true
-                }
+                targetButton?.isSelected = true
+                /// 标记为上一个按钮
+                lastButton = targetButton
             }
         }
     }

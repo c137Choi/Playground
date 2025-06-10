@@ -20,21 +20,26 @@ public extension Reactive where Base: UIViewController {
         }
         return ControlEvent(events: events)
     }
+    
 	var viewDidLoad: ControlEvent<Void> {
 		let source = methodInvoked(#selector(Base.viewDidLoad)).map { _ in }
 		return ControlEvent(events: source)
 	}
+    
     var viewWillAppearOnce: Observable<Bool> {
         viewWillAppear.take(1)
     }
+    
 	var viewWillAppear: ControlEvent<Bool> {
 		let source = methodInvoked(#selector(Base.viewWillAppear))
 			.map { $0.first as? Bool ?? false }
 		return ControlEvent(events: source)
 	}
+    
     var viewDidAppearOnce: Observable<Bool> {
         viewDidAppear.take(1)
     }
+    
 	var viewDidAppear: ControlEvent<Bool> {
 		let source = methodInvoked(#selector(Base.viewDidAppear))
 			.map { $0.first as? Bool ?? false }
@@ -46,6 +51,7 @@ public extension Reactive where Base: UIViewController {
 			.map { $0.first as? Bool ?? false }
 		return ControlEvent(events: source)
 	}
+    
 	var viewDidDisappear: ControlEvent<Bool> {
 		let source = methodInvoked(#selector(Base.viewDidDisappear))
 			.map { $0.first as? Bool ?? false }
@@ -57,6 +63,7 @@ public extension Reactive where Base: UIViewController {
 			.map { _ in }
 		return ControlEvent(events: source)
 	}
+    
 	var viewDidLayoutSubviews: ControlEvent<Void> {
 		let source = methodInvoked(#selector(Base.viewDidLayoutSubviews))
 			.map { _ in }
@@ -68,6 +75,7 @@ public extension Reactive where Base: UIViewController {
 			.map { $0.first as? UIViewController }
 		return ControlEvent(events: source)
 	}
+    
 	var didMoveToParentViewController: ControlEvent<UIViewController?> {
 		let source = methodInvoked(#selector(Base.didMove))
 			.map { $0.first as? UIViewController }
@@ -80,13 +88,18 @@ public extension Reactive where Base: UIViewController {
 		return ControlEvent(events: source)
 	}
 	
-	//表示视图是否显示的可观察序列，当VC显示状态改变时会触发
-	var isVisible: Observable<Bool> {
-		let viewDidAppearObservable = viewDidAppear.map { _ in true }
-		let viewWillDisappearObservable = viewWillDisappear.map { _ in false }
-		return Observable<Bool>
-            .merge(viewDidAppearObservable, viewWillDisappearObservable)
-            .startWith(false)
+    /// 视图控制器的viewWillAppear/viewWillDisappear方法映射出view是否可见的序列 | 比viewDidVisible提前一些
+    var viewWillVisible: Observable<Bool> {
+        let willAppear = viewWillAppear.mapDesignated(true)
+        let willDisappear = viewWillDisappear.mapDesignated(false)
+        return Observable<Bool>.merge(willAppear, willDisappear).startWith(base.view.isVisible)
+    }
+    
+	/// 视图控制器的viewDidAppear/viewDidDisappear方法映射出view是否可见的序列
+	var viewDidVisible: Observable<Bool> {
+		let didAppear = viewDidAppear.mapDesignated(true)
+        let didDisappear = viewDidDisappear.mapDesignated(false)
+		return Observable<Bool>.merge(didAppear, didDisappear).startWith(base.view.isVisible)
 	}
 	
 	//表示页面被释放的可观察序列，当VC被dismiss时会触发

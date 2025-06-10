@@ -64,10 +64,47 @@ extension Array where Element: ObservableConvertibleType {
     }
 }
 
+fileprivate final class ButtonPropertyObserver<Button, T>: ObserverType, ReactiveCompatible where Button: UIButton, T: Hashable {
+    typealias Element = T
+    
+    var lastButton: Button?
+    
+    private var keyButtonMap: [T: Button]
+    
+    init(buttons: [Button], keyPath: ReferenceWritableKeyPath<Button, T>) {
+        keyButtonMap = buttons.reduce(into: [T: Button].empty) { dict, button in
+            let key = button[keyPath: keyPath]
+            dict[key] = button
+        }
+    }
+    
+    func on(_ event: Event<T>) {
+        if case .next(let key) = event {
+            DispatchQueue.main.async {
+                [weak self] in
+                /// 上一个按钮取消选中
+                self?.lastButton?.isSelected = false
+                /// 选中目标按钮
+                self?.keyButtonMap[key].unwrap { button in
+                    button.isSelected = true
+                }
+            }
+        }
+    }
+}
+
 extension Array where Element: UIButton {
     
     /// 点击事件过滤
     typealias TapEventFilter = (Int, Element) -> Bool
+    
+    func controlPropertySwitchSelectedButton<T: Hashable>(startIndex: Index?, keyPath: ReferenceWritableKeyPath<Element, T>, eventFilter: TapEventFilter? = nil) -> ControlProperty<T> {
+        let observer = ButtonPropertyObserver<Element, T>(buttons: self, keyPath: keyPath)
+        let values = switchSelectedButton(startIndex: startIndex, eventFilter: eventFilter).assign(to: observer.rx.lastButton).map { button in
+            button[keyPath: keyPath]
+        }
+        return ControlProperty(values: values, valueSink: observer)
+    }
     
     /// 切换选中的按钮
     /// - Parameters:

@@ -149,7 +149,7 @@ extension Array where Element: UIButton {
     /// - Parameters:
     ///   - initialValue: 初始值
     ///   - keyPath: KeyPath
-    ///   - eventFilter: 时间过滤闭包
+    ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: ControlProperty
     func controlPropertySwitchingButtons<Property: Hashable>(
         startWith initialValue: Property? = nil,
@@ -163,7 +163,7 @@ extension Array where Element: UIButton {
     /// 切换选中的按钮
     /// - Parameters:
     ///   - startIndex: 第一个选中的按钮索引
-    ///   - eventFilter: 事件过滤闭包
+    ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: 选中的按钮事件序列
     func switchSelectedButton(startIndex: Index?, eventFilter: TapEventFilter? = nil) -> Observable<Element> {
         switchSelectedButton(startWith: startIndex.flatMap(element(at:)), eventFilter: eventFilter)
@@ -172,7 +172,7 @@ extension Array where Element: UIButton {
     /// 切换选中的按钮
     /// - Parameters:
     ///   - first: 第一个要选中的按钮
-    ///   - eventFilter: 事件过滤闭包
+    ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: 选中的按钮事件序列
     func switchSelectedButton(startWith first: Element? = nil, eventFilter: TapEventFilter? = nil) -> Observable<Element> {
         tappedButton(startWith: first, eventFilter: eventFilter).lastAndLatest.compactMap { lastButton, button -> Element? in
@@ -194,7 +194,7 @@ extension Array where Element: UIButton {
     /// 合并所有按钮的点击事件 | 按钮点击之后发送按钮对象自己
     /// - Parameters:
     ///   - first: 第一个要选中的按钮
-    ///   - eventFilter: 事件过滤闭包
+    ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: 按钮事件序列
     fileprivate func tappedButton(startWith first: Element?, eventFilter: TapEventFilter?) -> Observable<Element> {
         /// 第一个发送的按钮

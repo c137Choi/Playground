@@ -66,7 +66,7 @@ extension Array where Element: ObservableConvertibleType {
     }
 }
 
-final class RxButtonControlPropertyCoordinator<Button: UIButton, Property: Hashable>: ObserverType, ObservableType {
+final class RxButtonControlPropertyCoordinator<Button: UIButton, Property: Hashable>: ObservableType {
     /// [属性:按钮]字典
     typealias PropertyButtonMap = [Property: Button]
     /// 合并Button的.valueChanged事件(用于表示用户交互状态下发送出的Property)
@@ -75,6 +75,10 @@ final class RxButtonControlPropertyCoordinator<Button: UIButton, Property: Hasha
     private let propertyButtonMap: PropertyButtonMap
     /// DisposeBag
     private let disposeBag = DisposeBag()
+    /// 接收并更新属性
+    private lazy var propertyBinder = Binder<Property>(self) { weakSelf, property in
+        weakSelf.setProperty(property, sendEvent: false, isUserInteractive: false)
+    }
     /// 储存元素
     @Variable private var property: Property?
     
@@ -122,15 +126,8 @@ final class RxButtonControlPropertyCoordinator<Button: UIButton, Property: Hasha
         self.disposeBag.insert {
             buttons.switchSelectedButton(startWith: firstSelectedButton, eventFilter: eventFilter).bind {
                 [unowned self] button in
+                /// 更新属性并发送事件
                 setProperty(button[keyPath: keyPath], sendEvent: true, isUserInteractive: true)
-            }
-        }
-    }
-    
-    func on(_ event: Event<Property>) {
-        if case .next(let property) = event {
-            DispatchQueue.main.async {
-                [weak self] in self?.setProperty(property, sendEvent: false, isUserInteractive: false)
             }
         }
     }
@@ -167,11 +164,11 @@ final class RxButtonControlPropertyCoordinator<Button: UIButton, Property: Hasha
     
     /// 生成ControlProperty(使用计算属性而不是lazy var避免循环引用)
     var controlProperty: ControlProperty<Property> {
-        ControlProperty(values: self, valueSink: self)
+        ControlProperty(values: self, valueSink: propertyBinder)
     }
     
     var userInteractiveControlProperty: ControlProperty<Property> {
-        ControlProperty(values: userInteractivePropertySequence, valueSink: self)
+        ControlProperty(values: userInteractivePropertySequence, valueSink: propertyBinder)
     }
     
     deinit {

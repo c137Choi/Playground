@@ -9,6 +9,8 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+typealias RxButtonEventFilter<T> = (Int, T) -> Bool where T: UIButton
+
 extension Array where Element == ControlProperty<Bool> {
     
     /// 让数组里的ControlProperty<Bool>互斥(开启一个的时候其它的全部关闭)
@@ -64,118 +66,120 @@ extension Array where Element: ObservableConvertibleType {
     }
 }
 
-extension Array where Element: UIButton {
+final class RxButtonControlPropertyCoordinator<Button: UIButton, Property: Hashable>: ObserverType, ObservableType {
+    /// [属性:按钮]字典
+    typealias PropertyButtonMap = [Property: Button]
+    /// 合并Button的.valueChanged事件(用于表示用户交互状态下发送出的Property)
+    private let userInteractivePropertySequence: Observable<Property>
+    /// 按钮映射字典
+    private let propertyButtonMap: PropertyButtonMap
+    /// DisposeBag
+    private let disposeBag = DisposeBag()
+    /// 储存元素
+    @Variable private var property: Property?
     
-    typealias ArrayElement = Element
-    /// 点击事件过滤
-    typealias TapEventFilter = (Int, ArrayElement) -> Bool
-    /// ControlProperty调度器
-    final class ControlPropertyCoordinator<Property: Hashable>: ObserverType, ObservableType, ReactiveCompatible {
-        /// [属性:按钮]字典
-        typealias PropertyButtonMap = [Property: ArrayElement]
-        /// 合并Button的.valueChanged事件(用于表示用户交互状态下发送出的Property)
-        let userInteractiveProperty: Observable<Property>
-        /// 按钮映射字典
-        private let propertyButtonMap: PropertyButtonMap
-        /// 储存元素
-        @Variable private var property: Property?
-        
-        /// 初始化
-        /// - Parameters:
-        ///   - initialValue: 初始值
-        ///   - buttons: 按钮数组
-        ///   - keyPath: KeyPath
-        ///   - eventFilter: 事件过滤闭包
-        init(startWith initialValue: Property?,
-             buttons: [ArrayElement],
-             keyPath: ReferenceWritableKeyPath<ArrayElement, Property>,
-             eventFilter: TapEventFilter? = nil)
-        {
-            /// 建立映射
-            var propertyButtonMap = PropertyButtonMap.empty
-            /// 储存用户点击(.valueChanged事件)发出的Property事件
-            var userInteractiveButtonPropertyEvents = [Observable<Property>].empty
-            /// 找出第一个需要选中的按钮
-            var firstSelectedButton: ArrayElement?
-            /// 遍历按钮
-            for button in buttons {
-                /// 从buttons中找到指定值
-                let property = button[keyPath: keyPath]
-                /// 更新键值映射
-                propertyButtonMap[property] = button
-                /// 储存用户点击按钮发送Property事件序列加入数组
-                userInteractiveButtonPropertyEvents.append {
-                    button.rx.controlEvent(.valueChanged).withUnretained(button).map { weakButton, _ in
-                        weakButton[keyPath: keyPath]
-                    }
-                }
-                /// 如果和初始值匹配则储存为第一个选中按钮
-                if initialValue == property {
-                    firstSelectedButton = button
+    /// 初始化
+    /// - Parameters:
+    ///   - initialValue: 初始值
+    ///   - buttons: 按钮数组
+    ///   - keyPath: KeyPath
+    ///   - eventFilter: 事件过滤闭包
+    init(startWith initialValue: Property?,
+         buttons: [Button],
+         keyPath: ReferenceWritableKeyPath<Button, Property>,
+         eventFilter: RxButtonEventFilter<Button>? = nil)
+    {
+        /// 建立映射
+        var propertyButtonMap = PropertyButtonMap.empty
+        /// 储存用户点击(.valueChanged事件)发出的Property事件
+        var userInteractiveButtonPropertyEvents = [Observable<Property>].empty
+        /// 找出第一个需要选中的按钮
+        var firstSelectedButton: Button?
+        /// 遍历按钮
+        for button in buttons {
+            /// 从buttons中找到指定值
+            let property = button[keyPath: keyPath]
+            /// 更新键值映射
+            propertyButtonMap[property] = button
+            /// 储存用户点击按钮发送Property事件序列加入数组
+            userInteractiveButtonPropertyEvents.append {
+                button.rx.controlEvent(.valueChanged).withUnretained(button).map { weakButton, _ in
+                    weakButton[keyPath: keyPath]
                 }
             }
-            /// 更新映射属性
-            self.propertyButtonMap = propertyButtonMap
-            /// 设置初始值
-            self.property = initialValue
-            /// 储存为用户交互状态下发出的Property事件
-            self.userInteractiveProperty = userInteractiveButtonPropertyEvents.merged
-            /// 订阅按钮切换逻辑
-            self.rx.disposeBag.insert {
-                buttons.switchSelectedButton(startWith: firstSelectedButton, eventFilter: eventFilter).bind {
-                    [unowned self] button in
-                    setProperty(button[keyPath: keyPath], sendEvent: true, isUserInteractive: true)
-                }
+            /// 如果和初始值匹配则储存为第一个选中按钮
+            if initialValue == property {
+                firstSelectedButton = button
             }
         }
-        
-        func on(_ event: Event<Property>) {
-            if case .next(let property) = event {
-                DispatchQueue.main.async {
-                    [weak self] in self?.setProperty(property, sendEvent: false, isUserInteractive: false)
-                }
+        /// 更新映射属性
+        self.propertyButtonMap = propertyButtonMap
+        /// 设置初始值
+        self.property = initialValue
+        /// 储存为用户交互状态下发出的Property事件
+        self.userInteractivePropertySequence = userInteractiveButtonPropertyEvents.merged
+        /// 订阅按钮切换逻辑
+        self.disposeBag.insert {
+            buttons.switchSelectedButton(startWith: firstSelectedButton, eventFilter: eventFilter).bind {
+                [unowned self] button in
+                setProperty(button[keyPath: keyPath], sendEvent: true, isUserInteractive: true)
             }
-        }
-        
-        func asObservable() -> Observable<Property> {
-            _property.conditionalValue.unwrapped.removeDuplicates
-        }
-        
-        func subscribe<Observer>(_ observer: Observer) -> any Disposable where Observer : ObserverType, Property == Observer.Element {
-            asObservable().subscribe(observer)
-        }
-        
-        /// 更新属性
-        /// - Parameters:
-        ///   - property: 属性新值
-        ///   - sendEvent: 是否发送事件
-        private func setProperty(_ property: Property, sendEvent: Bool, isUserInteractive: Bool) {
-            /// property有变动才执行后续操作
-            guard self.property != property else { return }
-            /// 更新property
-            _property.setValue(property, sendEvent: sendEvent)
-            /// 取出目标按钮
-            guard let targetButton = propertyButtonMap[property] else { return }
-            /// 发送用户交互事件(注意调用顺序)
-            if isUserInteractive {
-                targetButton.sendActions(for: .valueChanged)
-            }
-            /// 如果目标按钮未选中, 则执行按钮点击(让switchSelectedButton序列内部处理按钮选中和上一个按钮反选的操作)
-            if !targetButton.isSelected {
-                /// 执行点击事件
-                targetButton.sendActions(for: .touchUpInside)
-            }
-        }
-        
-        /// 生成ControlProperty(使用计算属性而不是lazy var避免循环引用)
-        var controlProperty: ControlProperty<Property> {
-            ControlProperty(values: self, valueSink: self)
-        }
-        
-        deinit {
-            dprint("销毁: ControlPropertyCoordinator")
         }
     }
+    
+    func on(_ event: Event<Property>) {
+        if case .next(let property) = event {
+            DispatchQueue.main.async {
+                [weak self] in self?.setProperty(property, sendEvent: false, isUserInteractive: false)
+            }
+        }
+    }
+    
+    func asObservable() -> Observable<Property> {
+        _property.conditionalValue.unwrapped.removeDuplicates
+    }
+    
+    func subscribe<Observer>(_ observer: Observer) -> any Disposable where Observer : ObserverType, Property == Observer.Element {
+        asObservable().subscribe(observer)
+    }
+    
+    /// 更新属性
+    /// - Parameters:
+    ///   - property: 属性新值
+    ///   - sendEvent: 是否发送事件
+    private func setProperty(_ property: Property, sendEvent: Bool, isUserInteractive: Bool) {
+        /// property有变动才执行后续操作
+        guard self.property != property else { return }
+        /// 更新property
+        _property.setValue(property, sendEvent: sendEvent)
+        /// 取出目标按钮
+        guard let targetButton = propertyButtonMap[property] else { return }
+        /// 发送用户交互事件(注意调用顺序)
+        if isUserInteractive {
+            targetButton.sendActions(for: .valueChanged)
+        }
+        /// 如果目标按钮未选中, 则执行按钮点击(让switchSelectedButton序列内部处理按钮选中和上一个按钮反选的操作)
+        if !targetButton.isSelected {
+            /// 执行点击事件
+            targetButton.sendActions(for: .touchUpInside)
+        }
+    }
+    
+    /// 生成ControlProperty(使用计算属性而不是lazy var避免循环引用)
+    var controlProperty: ControlProperty<Property> {
+        ControlProperty(values: self, valueSink: self)
+    }
+    
+    var userInteractiveControlProperty: ControlProperty<Property> {
+        ControlProperty(values: userInteractivePropertySequence, valueSink: self)
+    }
+    
+    deinit {
+        dprint("销毁: ControlPropertyCoordinator")
+    }
+}
+
+extension Array where Element: UIButton {
     
     /// 按钮数组转换为ControlProperty
     /// - Parameters:
@@ -186,9 +190,9 @@ extension Array where Element: UIButton {
     func controlPropertyCoordinatorSwitchingButtons<Property: Hashable>(
         startWith initialValue: Property? = nil,
         keyPath: ReferenceWritableKeyPath<Element, Property>,
-        eventFilter: TapEventFilter? = nil) -> ControlPropertyCoordinator<Property>
+        eventFilter: RxButtonEventFilter<Element>? = nil) -> RxButtonControlPropertyCoordinator<Element, Property>
     {
-        ControlPropertyCoordinator<Property>(startWith: initialValue, buttons: self, keyPath: keyPath)
+        RxButtonControlPropertyCoordinator(startWith: initialValue, buttons: self, keyPath: keyPath)
     }
     
     /// 切换选中的按钮
@@ -196,7 +200,7 @@ extension Array where Element: UIButton {
     ///   - startIndex: 第一个选中的按钮索引
     ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: 选中的按钮事件序列
-    func switchSelectedButton(startIndex: Index?, eventFilter: TapEventFilter? = nil) -> Observable<Element> {
+    func switchSelectedButton(startIndex: Index?, eventFilter: RxButtonEventFilter<Element>? = nil) -> Observable<Element> {
         switchSelectedButton(startWith: startIndex.flatMap(element(at:)), eventFilter: eventFilter)
     }
     
@@ -205,7 +209,7 @@ extension Array where Element: UIButton {
     ///   - first: 第一个要选中的按钮
     ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: 选中的按钮事件序列
-    func switchSelectedButton(startWith first: Element? = nil, eventFilter: TapEventFilter? = nil) -> Observable<Element> {
+    func switchSelectedButton(startWith first: Element? = nil, eventFilter: RxButtonEventFilter<Element>? = nil) -> Observable<Element> {
         tappedButton(startWith: first, eventFilter: eventFilter).lastAndLatest.compactMap { lastButton, button -> Element? in
             /// 上一个按钮取消选中
             if let lastButton {
@@ -227,7 +231,7 @@ extension Array where Element: UIButton {
     ///   - first: 第一个要选中的按钮
     ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: 按钮事件序列
-    fileprivate func tappedButton(startWith first: Element?, eventFilter: TapEventFilter?) -> Observable<Element> {
+    fileprivate func tappedButton(startWith first: Element?, eventFilter: RxButtonEventFilter<Element>?) -> Observable<Element> {
         /// 第一个发送的按钮
         let startButton = first.flatMap { firstButton -> Element? in
             /// 查找第一个按钮在数组中的索引. 如果不在数组中则返回空

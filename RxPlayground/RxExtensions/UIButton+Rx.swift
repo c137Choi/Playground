@@ -11,7 +11,7 @@ import RxCocoa
 extension Reactive where Base: UIButton {
     
     var tapButton: Observable<Base> {
-        tap.compactMap {
+        controlEvent(.touchUpInside).compactMap {
             [weak base] in base
         }
     }

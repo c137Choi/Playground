@@ -57,6 +57,17 @@ extension UIImage {
         self.init(cgImage: image)
     }
     
+    /// 源SVG图片要显示到MTKView上时需要重绘
+    var redrewImage: UIImage? {
+        let canvas = CGRect(origin: .zero, size: size)
+        UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
+        defer {
+            UIGraphicsEndImageContext()
+        }
+        draw(in: canvas)
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+    
     var skTexture: SKTexture {
         SKTexture(image: self)
     }

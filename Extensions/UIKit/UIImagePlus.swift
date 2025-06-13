@@ -62,6 +62,7 @@ extension UIImage {
         let canvas = CGRect(origin: .zero, size: size)
         let format = UIGraphicsImageRendererFormat()
         format.opaque = false
+        format.preferredRange = .extended
         let renderer = UIGraphicsImageRenderer(bounds: canvas, format: format)
         let pngData = renderer.pngData { _ in
             self.draw(in: canvas)

@@ -189,7 +189,7 @@ extension Array where Element: UIButton {
         keyPath: ReferenceWritableKeyPath<Element, Property>,
         eventFilter: RxButtonEventFilter<Element>? = nil) -> RxButtonControlPropertyCoordinator<Element, Property>
     {
-        RxButtonControlPropertyCoordinator(startWith: initialValue, buttons: self, keyPath: keyPath)
+        RxButtonControlPropertyCoordinator(startWith: initialValue, buttons: self, keyPath: keyPath, eventFilter: eventFilter)
     }
     
     /// 切换选中的按钮

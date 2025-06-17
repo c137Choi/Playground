@@ -330,6 +330,10 @@ extension ObservableType {
         map { _ in designated() }
     }
     
+    var shortHistory: Observable<ShortHistory<Element>> {
+        lastAndLatest.map(ShortHistory.init)
+    }
+    
     /// 获取非空的上一个元素 和 当前元素
     var lastAndLatestBothUnwrapped: Observable<(Element, Element)> {
         lastAndLatest.compactMap { last, latest in

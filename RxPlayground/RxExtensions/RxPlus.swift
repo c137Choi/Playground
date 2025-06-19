@@ -309,7 +309,7 @@ struct WeakVariable<Wrapped: AnyObject>: ObservableType {
     }
     
     func asObservable() -> RxSwift.Observable<Wrapped?> {
-        subject.asObservable()
+        subject.startWith(weakReference)
     }
     
     func subscribe<Observer>(_ observer: Observer) -> any Disposable where Observer : ObserverType, Observer.Element == Wrapped? {

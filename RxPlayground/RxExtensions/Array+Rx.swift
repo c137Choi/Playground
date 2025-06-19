@@ -170,10 +170,6 @@ final class RxButtonControlPropertyCoordinator<Button: UIButton, Property: Hasha
     var userInteractiveControlProperty: ControlProperty<Property> {
         ControlProperty(values: userInteractivePropertySequence, valueSink: propertyBinder)
     }
-    
-    deinit {
-        dprint("销毁: ControlPropertyCoordinator")
-    }
 }
 
 extension Array where Element: UIButton {

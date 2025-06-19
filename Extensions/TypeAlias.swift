@@ -11,6 +11,7 @@ import UIKit
 public typealias UIViewArray = [UIView]
 public typealias Byte = UInt8
 public typealias UUIDArray = Array<UUID>
+public typealias IntSet = Set<Int>
 public typealias UUIDSet = Set<UUID>
 public typealias ClosedIntRange = ClosedRange<Int>
 public typealias ClosedIntRanges = Array<ClosedIntRange>

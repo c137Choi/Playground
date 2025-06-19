@@ -132,22 +132,18 @@ class Variable<Wrapped>: ObservableType {
     var wrappedValue: Wrapped {
         get {
             if withAccessLock {
-                dataAccessLock.lock()
-                defer {
-                    dataAccessLock.unlock()
+                return dataAccessLock.withLock {
+                    relay.value
                 }
-                return relay.value
             } else {
                 return relay.value
             }
         }
         set {
             if withAccessLock {
-                dataAccessLock.lock()
-                defer {
-                    dataAccessLock.unlock()
+                dataAccessLock.withLock {
+                    relay << newValue
                 }
-                relay << newValue
             } else {
                 relay << newValue
             }

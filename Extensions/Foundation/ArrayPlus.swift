@@ -42,6 +42,15 @@ extension Array {
         return self[cycledIndex]
     }
     
+    /// 拼接元素并返回最新的数组
+    /// - Parameter element: 新元素
+    /// - Returns: 拼接后的数组
+    public func appending(_ element: Element) -> [Element] {
+        var newArray = self
+        newArray.append(element)
+        return newArray
+    }
+    
     /// 拼接元素
     /// - Parameter element: Optional<Element>类型元素, 有值时才拼接
     public mutating func append(_ element: Element?) {
@@ -89,6 +98,10 @@ extension Array {
         (lhs.indices * rhs).flatMap { index in
             lhs.element(at: index)
         }
+    }
+    
+    public static func + (lhs: Self, rhs: Element) -> [Element] {
+        lhs.appending(rhs)
     }
 }
 

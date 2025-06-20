@@ -343,12 +343,22 @@ extension ObservableType {
     
     /// 获取上一个元素 和 当前元素
     var lastAndLatest: Observable<(Element?, Element)> {
-        scan(into: [Element].empty) { array, next in
-            array.append(next)
-            array = array.suffix(2)
+        scan(Array<Element>.empty) { history, next in
+            history.appending(next).suffix(2)
         }
-        .map { lastTwo in
-            (lastTwo.count > 1 ? lastTwo.first : nil, lastTwo.last.unsafelyUnwrapped)
+        .map { history in
+            /// 确保元素数量至少有一个, 但不超过两个
+            guard (1...2).contains(history.count), let last = history.last else {
+                throw "ILLEGAL ELEMENTS"
+            }
+            /// 一个元素
+            if history.count == 1 {
+                return (nil, last)
+            }
+            /// 两个元素
+            else {
+                return (history.first, last)
+            }
         }
     }
     

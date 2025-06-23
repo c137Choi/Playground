@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ShortHistory<T> {
-    let last: T?
-    let latest: T
+struct ShortHistory<T>: Configurable {
+    var last: T?
+    var latest: T
 }

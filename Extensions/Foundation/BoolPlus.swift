@@ -25,3 +25,14 @@ extension Bool {
         self == false
     }
 }
+
+extension Optional where Wrapped == Bool {
+    
+    var isTrue: Bool {
+        self == true
+    }
+    
+    var isFalse: Bool {
+        self == false
+    }
+}

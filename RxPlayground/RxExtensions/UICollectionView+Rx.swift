@@ -86,7 +86,8 @@ extension Reactive where Base: UICollectionView {
             }
     }
     
-    /// 非实时的
+    /// 非实时的: 代码执行选中/取消选中 & 代理执行选中/取消选中之后
+    /// 映射indexPathsForSelectedItems属性. 如果为空则返回空数组
     var selectedIndexPaths: Observable<[IndexPath]> {
         itemSelectionChanged
             .withUnretained(base)
@@ -96,25 +97,29 @@ extension Reactive where Base: UICollectionView {
     
     var itemSelectionChanged: Observable<IndexPath> {
         Observable<IndexPath>.merge {
-            invokedSelectItemAtIndexPath
-            invokedDeselectItemAtIndexPath
-            delegateInvokedItemSelected
-            delegateInvokedItemDeselected
+            /// 代码执行选中
+            selectItemAtIndexPath
+            /// 代码执行取消选中
+            deselectItemAtIndexPath
+            /// 代理执行选中
+            delegateDidSelectItemAtIndexPath
+            /// 代理执行取消选中
+            delegateDidDeselectItemAtIndexPath
         }
     }
     
-    private var delegateInvokedItemSelected: Observable<IndexPath> {
+    var delegateDidSelectItemAtIndexPath: Observable<IndexPath> {
         itemSelected.observable
     }
     
-    private var delegateInvokedItemDeselected: Observable<IndexPath> {
+    var delegateDidDeselectItemAtIndexPath: Observable<IndexPath> {
         itemDeselected.observable
     }
     
     /// Instance method selectItem(at:animated:scrollPosition:) invoked
     /// Element: The input indexPath
     /// Tip: The method doesn’t cause any selection-related delegate methods to be called.
-    private var invokedSelectItemAtIndexPath: Observable<IndexPath> {
+    var selectItemAtIndexPath: Observable<IndexPath> {
         methodInvoked(#selector(UICollectionView.selectItem(at:animated:scrollPosition:)))
             .map(\.first)
             .unwrapped
@@ -124,7 +129,7 @@ extension Reactive where Base: UICollectionView {
     /// Instance method deselectItem(at:animated:) invoked
     /// Element: The input deselected indexPath
     /// Tip: The method doesn’t cause any selection-related delegate methods to be called.
-    private var invokedDeselectItemAtIndexPath: Observable<IndexPath> {
+    var deselectItemAtIndexPath: Observable<IndexPath> {
         methodInvoked(#selector(UICollectionView.deselectItem(at:animated:)))
             .map(\.first)
             .unwrapped

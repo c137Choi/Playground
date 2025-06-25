@@ -40,8 +40,9 @@ extension IndexPath {
     }
     
     /// 验证IndexPath在指定CollectionView中是否有效
-    /// - Returns: 有效的IndexPath
-    func validIndexPath(for collectionView: UICollectionView) -> IndexPath? {
+    /// - Parameter collectionView: 目标CollectionView
+    /// - Returns: CollectionView中有效的IndexPath
+    func validIndexPath(in collectionView: UICollectionView) -> IndexPath? {
         guard section >= 0, item >= 0 else { return nil }
         guard section < collectionView.numberOfSections, item < collectionView.numberOfItems(inSection: section) else { return nil }
         return self

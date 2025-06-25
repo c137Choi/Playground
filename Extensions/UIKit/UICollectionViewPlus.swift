@@ -81,10 +81,17 @@ extension UICollectionView {
     
     /// 选中前检查IndexPath
     func safeSelectItem(at indexPath: IndexPath?, animated: Bool, scrollPosition: UICollectionView.ScrollPosition) {
-        let checkedIndexPath = indexPath.flatMap {
-            $0.validIndexPath(for: self)
+        /// 非空IndexPath
+        if let indexPath {
+            /// 检测IndexPath
+            guard let validIndexPath = indexPath.validIndexPath(in: self) else { return }
+            /// 检测通过后设置选中项
+            selectItem(at: validIndexPath, animated: animated, scrollPosition: scrollPosition)
         }
-        selectItem(at: checkedIndexPath, animated: animated, scrollPosition: scrollPosition)
+        /// 如果为空则表示要清空当前选中项, 直接调用方法
+        else {
+            selectItem(at: nil, animated: animated, scrollPosition: scrollPosition)
+        }
     }
     
     /// 刷新项目

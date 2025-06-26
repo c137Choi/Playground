@@ -51,6 +51,15 @@ extension Array {
         return newArray
     }
     
+    /// 拼接Sequence并返回最新的数组
+    /// - Parameter newElements: 元素Sequence
+    /// - Returns: 拼接后的数组
+    public func appending<S>(contentsOf newElements: S) -> [Element] where Element == S.Element, S : Sequence {
+        var newArray = self
+        newArray.append(contentsOf: newElements)
+        return newArray
+    }
+    
     /// 拼接元素
     /// - Parameter element: Optional<Element>类型元素, 有值时才拼接
     public mutating func append(_ element: Element?) {

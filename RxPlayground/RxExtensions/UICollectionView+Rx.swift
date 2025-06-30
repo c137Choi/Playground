@@ -123,7 +123,7 @@ extension Reactive where Base: UICollectionView {
         methodInvoked(#selector(UICollectionView.selectItem(at:animated:scrollPosition:)))
             .map(\.first)
             .unwrapped
-            .as(IndexPath.self)
+            .compactMap(IndexPath.self)
     }
     
     /// Instance method deselectItem(at:animated:) invoked
@@ -133,6 +133,6 @@ extension Reactive where Base: UICollectionView {
         methodInvoked(#selector(UICollectionView.deselectItem(at:animated:)))
             .map(\.first)
             .unwrapped
-            .as(IndexPath.self)
+            .compactMap(IndexPath.self)
     }
 }

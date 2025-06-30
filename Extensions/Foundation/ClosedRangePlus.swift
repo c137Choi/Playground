@@ -38,7 +38,7 @@ extension ClosedRange where Bound == Int {
     /// - Parameter another: 要计算的Range
     /// - Returns: 索引范围
     func indexRange(of another: ClosedRange<Bound>) -> Range<Int>? {
-        guard self ~= another else { return nil }
+        guard self.contains(another) else { return nil }
         let startIndex = lowerBound.distance(to: another.lowerBound)
         let endIndex = lowerBound.distance(to: another.upperBound) + 1
         guard startIndex < endIndex else { return nil }
@@ -119,12 +119,6 @@ extension ClosedRange {
         }
     }
     
-    /// 判断左面的范围是否包含右面
-    /// - Returns: 包含则返回true, 否则返回false
-    static func ~=(lhs: Self, rhs: Self) -> Bool {
-        lhs.contains(rhs)
-    }
-    
     /// 返回限制后的值
     /// - Parameters:
     ///   - lhs: ClosedRange
@@ -132,12 +126,6 @@ extension ClosedRange {
     /// - Returns: 限制在范围内的值
     static func <<(lhs: Self, rhs: Bound) -> Bound {
         lhs.constrainedValue(rhs)
-    }
-    
-    /// 判断自身是否包含指定的范围
-    public func contains(_ another: Self) -> Bool {
-        /// clamped -> Always return a smaller range
-        clamped(to: another) == another
     }
     
     /// 将传入的值限制在范围内部 | 过大或过小则取相应的极值

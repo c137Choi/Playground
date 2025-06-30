@@ -6,16 +6,6 @@
 
 import Foundation
 
-extension Range {
-    
-    /// 判断左面的范围是否包含右面
-    /// - Returns: 包含则返回true, 否则返回false
-    static func ~=(lhs: Self, rhs: Self) -> Bool {
-        /// clamped -> Always return a smaller range
-        rhs.clamped(to: lhs) == rhs
-    }
-}
-
 extension Range where Bound: Strideable, Bound.Stride: SignedInteger {
     
     /// 返回最后一个index | Range非空时有效(如果isEmpty还调用index(before:)方法程序会崩溃)

@@ -29,10 +29,6 @@ extension CharacterSet {
         lhs.union(rhs.characterSet)
     }
     
-    static func ~= (lhs: Character, rhs: CharacterSet) -> Bool {
-        rhs.contains(lhs)
-    }
-    
     /// 检查字符是否存在于字符集中
     /// - Parameter character: 字符
     /// - Returns: 是否包含

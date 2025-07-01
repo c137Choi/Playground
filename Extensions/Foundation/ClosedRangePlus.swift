@@ -305,6 +305,17 @@ extension ClosedRange {
     }
 }
 
+/// 同ClosedRange.SubSequence类型
+extension Slice where Base == ClosedRange<Int> {
+    
+    /// 方便将Algorithms模块中
+    /// chunks(ofCount count: Int) -> ChunksOfCountCollection<Self>
+    /// 生成的片段转换回闭合区间
+    var closedRange: Base {
+        first.unsafelyUnwrapped...last.unsafelyUnwrapped
+    }
+}
+
 // MARK: - 其他
 enum RangeBoundError: Error {
     case tooLow

@@ -98,6 +98,11 @@ func --><T>(_ lhs: T, rhs: T) -> T {
     rhs
 }
 
+/// 连续的两个数字
+func contiguousNumbers(_ last: Int, _ latest: Int) -> Bool {
+    latest == last + 1
+}
+
 /// 方法转换
 /// - Parameters:
 ///   - value: 被引用的对象

@@ -190,20 +190,35 @@ extension Array where Element: UIButton {
     
     /// 切换选中的按钮
     /// - Parameters:
+    ///   - controlEvents: 切换按钮需要执行的事件
     ///   - startIndex: 第一个选中的按钮索引
     ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: 选中的按钮事件序列
-    func switchSelectedButton(startIndex: Index?, eventFilter: RxButtonEventFilter<Element>? = nil) -> Observable<Element> {
-        switchSelectedButton(startWith: startIndex.flatMap(element(at:)), eventFilter: eventFilter)
+    func switchSelectedButton(
+        for controlEvents: UIControl.Event = .touchUpInside,
+        startIndex: Index?,
+        eventFilter: RxButtonEventFilter<Element>? = nil) -> Observable<Element>
+    {
+        /// 映射第一个按钮
+        let firstButton = startIndex.flatMap { index in
+            element(at: index)
+        }
+        /// 返回序列
+        return switchSelectedButton(for: controlEvents, startWith: startIndex.flatMap(element(at:)), eventFilter: eventFilter)
     }
     
     /// 切换选中的按钮
     /// - Parameters:
+    ///   - controlEvents: 切换按钮需要执行的事件
     ///   - first: 第一个要选中的按钮
     ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: 选中的按钮事件序列
-    func switchSelectedButton(startWith first: Element? = nil, eventFilter: RxButtonEventFilter<Element>? = nil) -> Observable<Element> {
-        tappedButton(startWith: first, eventFilter: eventFilter).lastAndLatest.compactMap { lastButton, button -> Element? in
+    func switchSelectedButton(
+        for controlEvents: UIControl.Event = .touchUpInside,
+        startWith first: Element? = nil,
+        eventFilter: RxButtonEventFilter<Element>? = nil) -> Observable<Element>
+    {
+        buttonFor(controlEvents: controlEvents, startWith: first, eventFilter: eventFilter).lastAndLatest.compactMap { lastButton, button -> Element? in
             /// 上一个按钮取消选中
             if let lastButton {
                 /// 重复点击按钮不发送事件
@@ -227,7 +242,7 @@ extension Array where Element: UIButton {
     ///   - first: 第一个要选中的按钮
     ///   - eventFilter: 按钮点击事件过滤闭包
     /// - Returns: 按钮事件序列
-    fileprivate func tappedButton(startWith first: Element?, eventFilter: RxButtonEventFilter<Element>?) -> Observable<Element> {
+    fileprivate func buttonFor(controlEvents: UIControl.Event, startWith first: Element?, eventFilter: RxButtonEventFilter<Element>?) -> Observable<Element> {
         /// 第一个发送的按钮
         let startButton = first.flatMap { firstButton -> Element? in
             /// 查找第一个按钮在数组中的索引. 如果不在数组中则返回空
@@ -241,14 +256,19 @@ extension Array where Element: UIButton {
                 return firstButton
             }
         }
-        let tappedButtonEvents = enumerated().map { offset, button -> Observable<Element> in
-            eventFilter.map(fallback: button.rx.tapButton) { filter in
-                button.rx.tapButton.filter { btn in
+        let eventButtonSequences = enumerated().map { offset, button -> Observable<Element> in
+            /// 指定事件触发是发送的Button序列
+            let buttonSequence = button.rx.controlEvent(controlEvents).compactMap {
+                [weak button] _ in button
+            }
+            /// 最终返回的序列
+            return eventFilter.map(fallback: buttonSequence) { filter in
+                buttonSequence.filter { btn in
                     filter(offset, btn)
                 }
             }
         }
-        return tappedButtonEvents.merged
+        return eventButtonSequences.merged
             .optionalElement
             .startWith(startButton)
             .unwrapped

@@ -206,9 +206,12 @@ extension Array where Element: UIButton {
         tappedButton(startWith: first, eventFilter: eventFilter).lastAndLatest.compactMap { lastButton, button -> Element? in
             /// 上一个按钮取消选中
             if let lastButton {
+                /// 重复点击按钮不发送事件
                 if button === lastButton {
                     return nil
-                } else {
+                }
+                /// 上一个点击的按钮取消选中
+                else {
                     lastButton.isSelected = false
                 }
             }

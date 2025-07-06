@@ -194,14 +194,8 @@ extension Array where Element: UIButton {
     ///   - startIndex: 第一个选中的按钮索引
     ///   - filter: 按钮点击事件过滤闭包
     /// - Returns: 选中的按钮事件序列
-    func switchButton(for controlEvents: UIControl.Event = .touchUpInside, startIndex: Index?, filter: RxElementFilter<Element>? = nil) -> Observable<Element>
-    {
-        /// 映射第一个按钮
-        let firstButton = startIndex.flatMap { index in
-            element(at: index)
-        }
-        /// 返回序列
-        return switchButton(for: controlEvents, startWith: firstButton, filter: filter)
+    func switchButton(for controlEvents: UIControl.Event = .touchUpInside, startIndex: Index?, filter: RxElementFilter<Element>? = nil) -> Observable<Element> {
+        switchButton(for: controlEvents, startWith: element(at: startIndex), filter: filter)
     }
     
     /// 切换选中的按钮

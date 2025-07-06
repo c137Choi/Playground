@@ -17,9 +17,10 @@ extension Collection {
     /// 获取指定位置的元素
     /// - Parameter index: 元素位置
     /// - Returns: 如果下标合规则返回相应元素
-    public func element(at index: Index) -> Element? {
-        guard isValidIndex(index) else { return nil }
-        return self[index]
+    public func element(at index: Index?) -> Element? {
+        index.flatMap { index in
+            isValidIndex(index) ? self[index] : nil
+        }
     }
     
     /// 验证是否为有效的Index

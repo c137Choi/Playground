@@ -139,6 +139,12 @@ extension CGSize {
 		}
 		return size
 	}
+    
+    /// 给定中心点返回CGRect
+    func rect(center: CGPoint) -> CGRect {
+        let origin = CGPoint(x: center.x - width.half, y: center.y - height.half)
+        return CGRect(origin: origin, size: self)
+    }
 }
 
 extension CGSize: @retroactive ExpressibleByFloatLiteral {

@@ -330,35 +330,16 @@ extension ObservableType {
         lastAndLatest.map(ShortHistory.init)
     }
     
-    /// 获取非空的上一个元素 和 当前元素
-    var lastAndLatestBothUnwrapped: Observable<(Element, Element)> {
-        lastAndLatest.compactMap { last, latest in
-            if let last {
-                (last, latest)
-            } else {
-                nil
-            }
-        }
-    }
-    
     /// 获取上一个元素 和 当前元素
     var lastAndLatest: Observable<(Element?, Element)> {
         scan(Array<Element>.empty) { history, next in
             history.appending(next).suffix(2)
         }
-        .map { history in
-            /// 确保元素数量至少有一个, 但不超过两个
-            guard (1...2).contains(history.count), let last = history.last else {
-                throw "ILLEGAL ELEMENTS"
+        .map { lastTwo in
+            guard let last = lastTwo.last else {
+                throw "元素数量非法, 检查.scan操作符内的逻辑"
             }
-            /// 一个元素
-            if history.count == 1 {
-                return (nil, last)
-            }
-            /// 两个元素
-            else {
-                return (history.first, last)
-            }
+            return lastTwo.count == 1 ? (nil, last) : (lastTwo.first, last)
         }
     }
     

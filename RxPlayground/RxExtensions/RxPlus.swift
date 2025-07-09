@@ -489,14 +489,8 @@ extension ObservableConvertibleType {
             .asCompletable()
     }
     
-    func flatMap<Source: ObservableConvertibleType>(_ source: Source) -> Observable<Source.Element> {
-        asObservable()
-            .flatMap { _ in source }
-    }
-    
     func flatMapLatest<Source: ObservableConvertibleType>(_ source: Source) -> Observable<Source.Element> {
-        asObservable()
-            .flatMapLatest { _ in source }
+        observable.flatMapLatest { _ in source }
     }
     
     var completed: Completable {
@@ -564,18 +558,15 @@ extension ObservableConvertibleType {
     }
     
     var optionalElement: Observable<Element?> {
-        asObservable()
-            .map { $0 }
+        observable.map { $0 }
     }
     
     var anyElement: Observable<Any> {
-        asObservable()
-            .map { $0 }
+        observable.map { $0 }
     }
     
     var voidElement: Observable<Void> {
-        asObservable()
-            .map { _ in () }
+        observable.map { _ in () }
     }
 }
 

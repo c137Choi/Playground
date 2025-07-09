@@ -26,6 +26,16 @@ extension Optional {
         self as Any
     }
     
+    /// 转换为Result类型
+    /// - Parameter failure: 解包失败时返回错误
+    public func result<Failure>(failure: Failure) -> Result<Wrapped, Failure> where Failure: Error {
+        if let wrapped = self {
+            return .success(wrapped)
+        } else {
+            return .failure(failure)
+        }
+    }
+    
     /// 过滤指定条件
     /// - Parameter predicate: 过滤条件
     /// - Returns: 满足指定条件的结果

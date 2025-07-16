@@ -12,6 +12,11 @@ import RxCocoa
 
 extension Reactive where Base == AVPlayer {
     
+    /// 播放AVPlayerItem序列
+    var currentItem: Observable<AVPlayerItem?> {
+        base.rx.observe(\.currentItem, options: .live)
+    }
+    
     /// 计算当前进度及当前视频帧数据
     /// - Parameter videoOutput: 视频采集Output
     /// - Parameter preferredFPS: 视频帧率 | 单位: 帧/秒
@@ -31,9 +36,13 @@ extension Reactive where Base == AVPlayer {
                 let interval = CMTime(value: 1, timescale: preferredFPS)
                 /// 观察者
                 let timeObserver = base.addPeriodicTimeObserver(forInterval: interval, queue: queue) { currentTime in
-                    /// 当前帧的CGImage
-                    guard let cgImage = cgImage(videoOutput, at: currentTime) else { return }
-                    /// 创建关键帧
+                    /// CVPixelBuffer
+                    guard let cvImageBuffer = videoOutput.copyPixelBuffer(forItemTime: currentTime, itemTimeForDisplay: nil) else { return }
+                    /// -> CIImage
+                    let ciImage = CIImage(cvImageBuffer: cvImageBuffer)
+                    /// -> CGImage
+                    guard let cgImage = CIContext(options: .empty).createCGImage(ciImage, from: ciImage.extent) else { return }
+                    /// -> AVKeyFrame
                     let keyFrame = AVKeyFrame(currentTime: currentTime, duration: duration, cgImage: cgImage)
                     /// 发送
                     observer.onNext(keyFrame)
@@ -43,20 +52,5 @@ extension Reactive where Base == AVPlayer {
                 }
             }
         }
-    }
-    
-    /// 当前时间的CGImage对象 | 宽高尺寸为视频源数据帧的宽高
-    private func cgImage(_ videoOutput: AVPlayerItemVideoOutput, at time: CMTime) -> CGImage? {
-        guard let cvImageBuffer = videoOutput.copyPixelBuffer(forItemTime: time, itemTimeForDisplay: nil) else { return nil }
-        let ciContextOptions: [CIContextOption: Any] = [:]
-        let ciContext = CIContext(options: ciContextOptions)
-        let ciImage = CIImage(cvImageBuffer: cvImageBuffer)
-        let cgImage = ciContext.createCGImage(ciImage, from: ciImage.extent)
-        return cgImage
-    }
-    
-    /// 播放AVPlayerItem序列
-    var currentItem: Observable<AVPlayerItem?> {
-        base.rx.observe(\.currentItem, options: .live)
     }
 }

@@ -10,21 +10,15 @@ import RxCocoa
 
 extension BehaviorRelay {
 
-    /// Accept update of current value
-    /// - Parameter update: mutate current value in closure
-    func acceptModifiedValue(byMutating update: (inout Element) -> Void) {
-        var newValue = value
-        update(&newValue)
-        accept(newValue)
+    /// 修改内部value
+    /// - Parameter configure: 回调闭包
+    func updateValue(configure: (inout Element) -> Void) {
+        var updated = value
+        configure(&updated)
+        accept(updated)
     }
 
-    /// Accept new value generated from current value
-    /// - Parameter update: generate new value from current, and return it
-    func acceptUpdate(byNewValue update: (Element) -> Element) {
-        accept(update(value))
-    }
-
-    static func <<(lhs: BehaviorRelay<Element>, rhs: Element) {
+    static func << (lhs: BehaviorRelay<Element>, rhs: Element) {
         lhs.accept(rhs)
     }
 }

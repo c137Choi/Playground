@@ -182,13 +182,13 @@ extension Reactive where Base: ActivityTracker {
 extension Reactive where Base: ErrorTracker {
     
     var errorConsumer: Binder<Error?> {
-        Binder(base, scheduler: MainScheduler.asyncInstance) { weakBase, error in
+        Binder(base) { weakBase, error in
             weakBase.trackError(error, isFatal: false)
         }
     }
     
     var fatalErrorConsumer: Binder<Error?> {
-        Binder(base, scheduler: MainScheduler.asyncInstance) { weakBase, error in
+        Binder(base) { weakBase, error in
             weakBase.trackError(error, isFatal: true)
         }
     }

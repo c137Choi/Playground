@@ -10,12 +10,6 @@ import RxCocoa
 
 extension Reactive where Base: UIButton {
     
-    var tapButton: Observable<Base> {
-        controlEvent(.touchUpInside).compactMap {
-            [weak base] in base
-        }
-    }
-    
     var normalTitle: Binder<String?> {
         title(for: .normal)
     }

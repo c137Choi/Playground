@@ -26,7 +26,7 @@ extension Reactive where Base: UIScrollView {
     }
     
     var contentSize: ControlProperty<CGSize> {
-        let binder = Binder(base, scheduler: MainScheduler.instance) { scroll, newContentSize in
+        let binder = Binder(base) { scroll, newContentSize in
             guard newContentSize != scroll.contentSize else { return }
             scroll.contentSize = newContentSize
         }

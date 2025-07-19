@@ -34,7 +34,7 @@ extension Reactive where Base: UICollectionView {
         }
             .distinctUntilChanged()
         
-        let binder = Binder(base, scheduler: MainScheduler.instance) { collectionView, page in
+        let binder = Binder(base) { collectionView, page in
             guard 0... ~= page else { return }
             let contentSize = collectionView.contentSize
             var axis = NSLayoutConstraint.Axis.horizontal

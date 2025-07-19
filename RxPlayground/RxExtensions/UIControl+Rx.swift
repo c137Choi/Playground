@@ -10,6 +10,13 @@ import RxCocoa
 
 extension Reactive where Base: UIControl {
     
+    /// ControlEvent -> Observable<Base>
+    public var touchUpInside: Observable<Base> {
+        controlEvent(.touchUpInside).compactMap {
+            [weak base] in base
+        }
+    }
+    
     public var state: Observable<UIControl.State> {
         Observable.combineLatest(isEnabled, isSelected, isHighlighted)
             .withUnretained(base)
@@ -20,7 +27,7 @@ extension Reactive where Base: UIControl {
     
     public var isHighlighted: ControlProperty<Bool> {
         let observeIsHighlighted = observe(\.isHighlighted, options: .live)
-        let binder = Binder(base, scheduler: MainScheduler.instance) { control, isHighlighted in
+        let binder = Binder(base) { control, isHighlighted in
             guard isHighlighted != control.isHighlighted else { return }
             control.isHighlighted = isHighlighted
         }
@@ -33,7 +40,7 @@ extension Reactive where Base: UIControl {
             .removeDuplicates //避免循环赋值
             .share(replay: 1, scope: .whileConnected)
         /// 接收属性变化
-        let valueSink = Binder(base, scheduler: MainScheduler.instance) { control, isSelected in
+        let valueSink = Binder(base) { control, isSelected in
             /// 确保值不同的时候才执行后续操作
             guard isSelected != control.isSelected else { return }
             /// 设置新值
@@ -44,7 +51,7 @@ extension Reactive where Base: UIControl {
     
     public var isEnabled: ControlProperty<Bool> {
         let observeIsEnabled = observe(\.isEnabled, options: .live)
-        let binder = Binder(base, scheduler: MainScheduler.instance) { control, isEnabled in
+        let binder = Binder(base) { control, isEnabled in
             guard isEnabled != control.isEnabled else { return }
             control.isEnabled = isEnabled
         }

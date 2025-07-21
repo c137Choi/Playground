@@ -8,20 +8,17 @@
 
 import Foundation
 
-struct Dispatch {
+enum Dispatch {
 	
 	private static var tokens = Set<String>()
 	
-	public static func once(file: String = #file,
-							function: String = #function,
-							line: Int = #line,
-							execute: () -> Void) {
+	public static func once(file: String = #file, function: String = #function, line: Int = #line, execute: () -> Void) {
 		let token = "\(file):\(function):\(line)"
 		once(token: token, execute: execute)
 	}
 	
 	public static func once(token: String, execute: () -> Void) {
-		guard !tokens.contains(token) else { return }
+        if tokens.contains(token) { return }
 		objc_sync_enter(self)
 		defer {
 			objc_sync_exit(self)

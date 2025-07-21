@@ -48,12 +48,12 @@ extension EventReceiver where Self: UIControl {
         if #available(iOS 14.0, *) {
             removeAction(identifiedBy: UIAction.Identifier(identifier), for: events)
         } else {
-            let foundWrapper = targets.as(ClosureWrapper<Self>.self).first { wrapper in
+            let target = targets.lazy.as(ClosureWrapper<Self>.self).first { wrapper in
                 wrapper.identifier == identifier
             }
-            if let foundWrapper {
-                removeTarget(foundWrapper, action: #selector(foundWrapper.trigger), for: events)
-                targets.remove(foundWrapper)
+            if let target {
+                removeTarget(target, action: #selector(target.trigger), for: events)
+                targets.remove(target)
             }
         }
     }

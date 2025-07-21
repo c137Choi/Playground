@@ -9,55 +9,6 @@
 import UIKit
 import SwiftUI
 
-protocol Tapable {
-    associatedtype T = Self
-    func addTappedExecution(_ execute: ((T) -> Void)?)
-}
-
-extension UIView: Tapable {
-    
-    var targets: NSMutableArray {
-        if let array = associated(NSMutableArray.self, self, Associated.targets) {
-            return array
-        } else {
-            let array = NSMutableArray()
-            setAssociatedObject(self, Associated.targets, array, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            return array
-        }
-    }
-}
-
-extension Tapable where Self: UIView {
-    
-    var tapped: ((Self) -> Void)? {
-        get {
-            associated(ClosureWrapper<Self>.self, self, Associated.tappedClosure).flatMap(\.callback)
-        }
-        set {
-            isUserInteractionEnabled = true
-            if let wrapper = associated(ClosureWrapper<Self>.self, self, Associated.tappedClosure) {
-                if let newValue {
-                    wrapper.callback = newValue
-                } else {
-                    wrapper.callback = nil
-                }
-            } else {
-                let target = ClosureWrapper(newValue)
-                let tapGesture = UITapGestureRecognizer(target: target, action: #selector(target.trigger))
-                addGestureRecognizer(tapGesture)
-                setAssociatedObject(self, Associated.tappedClosure, target, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-        }
-    }
-    
-    func addTappedExecution(_ callback: ((Self) -> Void)?) {
-        let wrapper = ClosureWrapper(callback)
-        let tapGesture = UITapGestureRecognizer(target: wrapper, action: #selector(wrapper.trigger))
-        addGestureRecognizer(tapGesture)
-        targets.add(wrapper)
-    }
-}
-
 extension UIView {
 	
 	convenience init(color: UIColor?) {
@@ -143,6 +94,16 @@ extension UIView {
     
     var isLandscape: Bool {
         frame.size.isLandscape
+    }
+    
+    var targets: NSMutableArray {
+        if let array = associated(NSMutableArray.self, self, Associated.targets) {
+            return array
+        } else {
+            let array = NSMutableArray()
+            setAssociatedObject(self, Associated.targets, array, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return array
+        }
     }
     
     /// 用于设置UIStackView.arrangedSubviews布局

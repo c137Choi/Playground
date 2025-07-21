@@ -11,7 +11,7 @@ protocol UIControlType: UIControl {}
 
 extension UIControl: UIControlType {}
 
-extension UIControlType where Self: UIControl {
+extension UIControlType {
     
     /// 添加事件回调
     /// - Parameters:

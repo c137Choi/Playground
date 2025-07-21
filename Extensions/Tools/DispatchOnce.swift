@@ -30,11 +30,11 @@ struct Dispatch {
 		execute()
 	}
     
-    public static func once(userDefaultKey: String, execute: () -> Void) {
-        if UserDefaults.standard.value(forKey: userDefaultKey).isValid {
+    public static func once(userDefaultsKey: String, execute: () -> Void) {
+        if UserDefaults.standard.value(forKey: userDefaultsKey).isValid {
             return
         }
-        UserDefaults.standard.setValue(String.randomUUID, forKey: userDefaultKey)
-        once(token: userDefaultKey, execute: execute)
+        UserDefaults.standard.setValue(1, forKey: userDefaultsKey)
+        once(token: userDefaultsKey, execute: execute)
     }
 }

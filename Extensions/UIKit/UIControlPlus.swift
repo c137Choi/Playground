@@ -15,6 +15,11 @@ extension UIControl {
     }
 }
 
+extension UIControl.Event {
+    /// 点击 -> 抬起事件(Inside + Outside)
+    static let touchUp: UIControl.Event = [.touchUpInside, .touchUpOutside]
+}
+
 extension UIControl.State: @retroactive CustomDebugStringConvertible {
     
     public var debugDescription: String {
@@ -45,9 +50,4 @@ extension UIControl.State: @retroactive CustomDebugStringConvertible {
         desc.removeLast(2)
         return desc
     }
-}
-
-extension UIControl.Event {
-    /// 点击 -> 抬起事件(Inside + Outside)
-    static let touchUp: UIControl.Event = [.touchUpInside, .touchUpOutside]
 }

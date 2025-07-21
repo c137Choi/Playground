@@ -123,6 +123,11 @@ extension UIView {
         set { alpha = newValue ? 0 : 1 }
     }
     
+    /// 返回在Window中的中心点
+    var centerInWindow: CGPoint {
+        convert(bounds.center, to: nil)
+    }
+    
     /// 返回在Window中的frame
     var frameInWindow: CGRect {
         convert(bounds, to: nil)
@@ -138,16 +143,6 @@ extension UIView {
     
     var isLandscape: Bool {
         frame.size.isLandscape
-    }
-    
-    /// 获取相对于Window的origin
-    var globalPoint :CGPoint? {
-        superview?.convert(frame.origin, to: nil)
-    }
-
-    /// 获取相对于Window的frame
-    var globalFrame :CGRect? {
-        superview?.convert(frame, to: nil)
     }
     
     /// 用于设置UIStackView.arrangedSubviews布局

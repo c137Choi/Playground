@@ -74,14 +74,13 @@ extension KeyboardPresentation {
     func adjustBoundsOfSuperview(_ superview: UIView?, firstResponder: UIView?) {
         guard let firstResponder else { return }
         guard let superview else { return }
-        guard let frameFromWindow = firstResponder.globalFrame else { return }
         switch state {
         case .presenting:
-            /// 键盘顶部间距
+            /// 自定义值: 键盘顶部间距
             let padding = 0.0
             /// 键盘顶部的Y值 - 键盘顶部间距
             let keyboardTolerance = toRect.minY - padding
-            let extraPadding = frameFromWindow.maxY - keyboardTolerance
+            let extraPadding = firstResponder.frameInWindow.maxY - keyboardTolerance
             if extraPadding > 0 {
                 superview.bounds.origin.y = extraPadding
             }

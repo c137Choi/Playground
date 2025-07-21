@@ -125,14 +125,6 @@ extension UIView {
         }
     }
     
-    /// 设置用于UIStackView布局的属性之后返回自身
-    /// - Parameter afterSpacing: UIStackView中arrangedSubview的后间距
-    /// - Returns: Self
-    public func afterSpacing(_ afterSpacing: CGFloat?) -> Self {
-        self.afterSpacing = afterSpacing
-        return self
-    }
-    
     /// 是否变形: 宽高不等于固定尺寸的宽高
     public func isDeformed(axis: NSLayoutConstraint.Axis) -> Bool {
         isStretched(axis: axis) || isSqueezed(axis: axis)

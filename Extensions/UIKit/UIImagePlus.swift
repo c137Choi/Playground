@@ -37,24 +37,6 @@ extension UIImage {
         }
     }
     
-    /// 从UIColor创建UIImage
-    /// - Parameters:
-    ///   - color: 填充颜色
-    ///   - size: 图片尺寸
-    convenience init(color: UIColor, size: CGSize) {
-        let format = UIGraphicsImageRendererFormat()
-        let renderer = UIGraphicsImageRenderer(size: size, format: format)
-        let uiImage = renderer.image { context in
-            color.setFill()
-            context.fill(context.format.bounds)
-        }
-        if let cgImage = uiImage.cgImage {
-            self.init(cgImage: cgImage)
-        } else {
-            self.init()
-        }
-    }
-    
     /// 源SVG图片要显示到MTKView上时需要重绘
     var pngImage: UIImage? {
         let canvas = CGRect(origin: .zero, size: size)

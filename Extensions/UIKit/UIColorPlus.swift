@@ -605,14 +605,31 @@ extension UIColor {
         return UIColor(patternImage: uiImage)
     }
     
-    func uiImage(size: CGSize = 1) -> UIImage {
-        let fillColor = self
+    /// UIColor -> UIImage
+    /// - Parameters:
+    ///   - size: 图片尺寸(Pt)
+    ///   - cornerRadius: 圆角
+    /// - Returns: UIImage实例
+    func uiImage(size: CGSize = 1, cornerRadius: CGFloat? = nil) -> UIImage {
         let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        
-        return UIGraphicsImageRenderer(size: size, format: format).image { context in
-            fillColor.setFill()
+        let renderer = UIGraphicsImageRenderer(size: size, format: format)
+        let uiImage = renderer.image { context in
+            self.setFill()
             context.fill(context.format.bounds)
+        }
+        /// 添加圆角
+        if let cornerRadius {
+            /// 图片尺寸
+            let renderSize = uiImage.size
+            /// 圆角矩形Rect
+            let roundedRect = CGRect(origin: .zero, size: renderSize)
+            /// 重新生成图片
+            return UIGraphicsImageRenderer(size: renderSize).image { ctx in
+                UIBezierPath(roundedRect: roundedRect, cornerRadius: cornerRadius).addClip()
+                uiImage.draw(in: roundedRect)
+            }
+        } else {
+            return uiImage
         }
     }
     

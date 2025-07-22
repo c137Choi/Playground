@@ -100,6 +100,12 @@ extension CGSize {
         CGSize(width: lhs.width * rhs, height: lhs.height * rhs)
     }
     
+    /// 宽高乘以指定的比率
+    static func / (lhs: CGSize, rhs: Double) -> CGSize {
+        if rhs.isZero { return lhs }
+        return CGSize(width: lhs.width / rhs, height: lhs.height / rhs)
+    }
+    
     /// 宽高分别乘以rhs的宽高
     static func * (lhs: CGSize, rhs: CGSize) -> CGSize {
         CGSize(width: lhs.width * rhs.width, height: lhs.height * rhs.height)

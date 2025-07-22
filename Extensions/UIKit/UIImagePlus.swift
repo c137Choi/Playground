@@ -37,24 +37,22 @@ extension UIImage {
         }
     }
     
-    /// SwifterSwift: Create UIImage from color and size.
-    /// 
+    /// 从UIColor创建UIImage
     /// - Parameters:
-    ///   - color: image fill color.
-    ///   - size: image size.
-    ///   - scale: 默认为屏幕的scale. 即最终图片的像素尺寸为size的宽高 × scale
-    ///   - 注: 在SwifterSwift的实现基础上做了点改造
-    convenience init(color: UIColor, size: CGSize, scale: CGFloat = UIScreen.main.scale) {
+    ///   - color: 填充颜色
+    ///   - size: 图片尺寸
+    convenience init(color: UIColor, size: CGSize) {
         let format = UIGraphicsImageRendererFormat()
-        format.scale = scale
-        guard let image = UIGraphicsImageRenderer(size: size, format: format).image(actions: { context in
+        let renderer = UIGraphicsImageRenderer(size: size, format: format)
+        let uiImage = renderer.image { context in
             color.setFill()
             context.fill(context.format.bounds)
-        }).cgImage else {
-            self.init()
-            return
         }
-        self.init(cgImage: image)
+        if let cgImage = uiImage.cgImage {
+            self.init(cgImage: cgImage)
+        } else {
+            self.init()
+        }
     }
     
     /// 源SVG图片要显示到MTKView上时需要重绘

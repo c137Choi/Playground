@@ -60,12 +60,14 @@ extension Int {
     
     /// 索引转换成序号
     var number: Int {
-        Swift.min(self + 1, .max)
+        let result = addingReportingOverflow(1)
+        return result.overflow ? .max : result.partialValue
     }
     
     /// 转换成索引值
     var index: Int {
-        Swift.max(self - 1, 0)
+        guard self >= 1 else { return 0 }
+        return self - 1
     }
 	
     var bool: Bool {

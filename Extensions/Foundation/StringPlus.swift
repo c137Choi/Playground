@@ -59,7 +59,7 @@ extension Optional where Wrapped == String {
 	var orEmpty: String { self ?? "" }
 	
     var isNotEmptyString: Bool {
-        isEmptyString.opposite
+        isEmptyString.toggled
     }
     
 	/// 判断Optional<String>类型是否为空(.none或Wrapped为空字符串)

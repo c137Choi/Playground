@@ -10,19 +10,17 @@ import RxCocoa
 
 extension Reactive where Base: UIControl {
     
-    /// ControlEvent -> Observable<Base> | 按钮执行选中/反选
-    public var selectedToggledTouchUpInside: Observable<Base> {
-        controlEvent(.touchUpInside).compactMap {
-            [weak base] in base.map { control in
-                control.with(new: \.isSelected, control.isSelected.toggled)
-            }
-        }
-    }
-    
     /// ControlEvent -> Observable<Base>
     public var touchUpInside: Observable<Base> {
-        controlEvent(.touchUpInside).compactMap {
-            [weak base] in base
+        touchUpInside(toggleSelected: false)
+    }
+    
+    /// 订阅按钮点击事件
+    /// - Parameter toggleSelected: 点击时是否切换isSelected
+    /// - Returns: Base序列
+    public func touchUpInside(toggleSelected: Bool) -> Observable<Base> {
+        controlEvent(.touchUpInside).withUnretained(base).map { base, _ in
+            toggleSelected ? base.with(new: \.isSelected, base.isSelected.toggled) : base
         }
     }
     

@@ -52,13 +52,6 @@ extension UIButton {
         titleLabel?.font = font
     }
     
-    /// 根据UIButton.State更新按钮状态
-    public func update(state: UIButton.State) {
-        isEnabled = state != .disabled
-        isSelected = state == .selected
-        isHighlighted = state == .highlighted
-    }
-    
 	open override func setNeedsLayout() {
 		super.setNeedsLayout()
 		setupImageTitleEdgeInsets()

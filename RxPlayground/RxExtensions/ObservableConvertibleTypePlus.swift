@@ -12,7 +12,7 @@ extension ObservableConvertibleType {
     
     /// 串联Observables
     static func +(lhs: Self, rhs: any ObservableConvertibleType) -> Completable {
-        lhs.completed + rhs.completed
+        lhs.completable + rhs.completable
     }
     
     static var empty: Observable<Element> {
@@ -79,7 +79,7 @@ extension ObservableConvertibleType {
         observable.flatMapLatest { _ in source }
     }
     
-    var completed: Completable {
+    var completable: Completable {
         asObservable()
             .ignoreElements()
             .asCompletable()

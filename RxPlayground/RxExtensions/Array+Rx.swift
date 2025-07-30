@@ -34,11 +34,11 @@ extension Array where Element: ObservableConvertibleType {
         }
         /// 间隔序列
         let pause = pauseInterval.map {
-            Observable.just(0).delay($0, scheduler: scheduler).completed
+            Observable.just(0).delay($0, scheduler: scheduler).completable
         }
         return enumerated().reduce(Completable.empty) { completable, tuple in
             /// 下一个Completable事件序列
-            let nextCompletable = tuple.element.completed
+            let nextCompletable = tuple.element.completable
             /// 中间的序列
             let isMiddleSequence = tuple.offset != startIndex && tuple.offset != lastIndex
             /// 不是第一个 && 时间间隔非空

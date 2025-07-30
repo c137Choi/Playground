@@ -23,8 +23,8 @@ extension UITableViewHeaderFooterView {
     }
     
     func tableView<T>(_ type: T.Type) -> T? where T: UITableView {
-        if let existedTableView = associated(T.self, self, Associated.tableView) {
-            return existedTableView
+        if let existingTableView = associated(T.self, self, Associated.tableView) {
+            return existingTableView
         }
         let fetchTableView = superview(type)
         setAssociatedObject(self, Associated.tableView, fetchTableView, .OBJC_ASSOCIATION_ASSIGN)

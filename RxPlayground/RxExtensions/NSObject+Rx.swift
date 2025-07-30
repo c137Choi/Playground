@@ -34,12 +34,12 @@ public extension Reactive where Base: AnyObject {
     var isPrepared: Bool {
         get {
             synchronized(lock: base) {
-                guard let existedValue = associated(Bool.self, base, Rx.isPrepared) else {
+                guard let existingValue = associated(Bool.self, base, Rx.isPrepared) else {
                     let initialValue = false
                     setAssociatedObject(base, Rx.isPrepared, initialValue, .OBJC_ASSOCIATION_ASSIGN)
                     return initialValue
                 }
-                return existedValue
+                return existingValue
             }
         }
         
@@ -63,13 +63,13 @@ public extension Reactive where Base: AnyObject {
     /// 通用的任意类型数据更新的BehaviorRelay | 初始值为()/Void
     var anyUpdateRelay: BehaviorRelay<Any> {
         synchronized(lock: base) {
-            guard let existedRelay = associated(BehaviorRelay<Any>.self, base, Rx.anyUpdateRelay) else {
+            guard let existingRelay = associated(BehaviorRelay<Any>.self, base, Rx.anyUpdateRelay) else {
                 /// 创建Relay | 起始值为Void
                 let newRelay = BehaviorRelay<Any>(value: ())
                 setAssociatedObject(base, Rx.anyUpdateRelay, newRelay, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                 return newRelay
             }
-            return existedRelay
+            return existingRelay
         }
     }
     
@@ -77,12 +77,12 @@ public extension Reactive where Base: AnyObject {
     var disposeBag: DisposeBag {
         get {
             synchronized(lock: base) {
-                guard let existedBag = associated(DisposeBag.self, base, Rx.disposeBag) else {
+                guard let existingBag = associated(DisposeBag.self, base, Rx.disposeBag) else {
                     let newBag = DisposeBag()
                     setAssociatedObject(base, Rx.disposeBag, newBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                     return newBag
                 }
-                return existedBag
+                return existingBag
             }
         }
         
@@ -97,12 +97,12 @@ public extension Reactive where Base: AnyObject {
     var cancellableBag: CancellableBag {
         get {
             synchronized(lock: base) {
-                guard let existedBag = associated(CancellableBag.self, base, Rx.cancellableBag) else {
+                guard let existingBag = associated(CancellableBag.self, base, Rx.cancellableBag) else {
                     let newBag = CancellableBag()
                     setAssociatedObject(base, Rx.cancellableBag, newBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                     return newBag
                 }
-                return existedBag
+                return existingBag
             }
         }
         
@@ -116,12 +116,12 @@ public extension Reactive where Base: AnyObject {
     var activityTrackingDisposebag: DisposeBag {
         get {
             synchronized(lock: base) {
-                guard let existedBag = associated(DisposeBag.self, base, Rx.activityTrackingDisposeBag) else {
+                guard let existingBag = associated(DisposeBag.self, base, Rx.activityTrackingDisposeBag) else {
                     let newBag = DisposeBag()
                     setAssociatedObject(base, Rx.activityTrackingDisposeBag, newBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                     return newBag
                 }
-                return existedBag
+                return existingBag
             }
         }
         

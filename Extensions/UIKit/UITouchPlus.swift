@@ -9,6 +9,11 @@ import UIKit
 
 extension UITouch {
     
+    /// 当前对象在自身view中的位置
+    var location: CGPoint {
+        location(in: view)
+    }
+    
     /// 计算和上次Touch的偏移
     /// - Parameter view: 点击的视图
     /// - Returns: 拖动偏移

@@ -16,8 +16,12 @@ extension UIControl {
 }
 
 extension UIControl.Event {
-    /// 点击 -> 抬起事件(Inside + Outside)
+    /// touchUpInside(Outside)
     static let touchUp: UIControl.Event = [.touchUpInside, .touchUpOutside]
+    /// touchDragInside(Outside)
+    static let touchDrag: UIControl.Event = [.touchDragInside, .touchDragOutside]
+    /// touchDownDragInside(Outside)
+    static let touchDownDrag: UIControl.Event = [.touchDown, .touchDrag]
 }
 
 extension UIControl.State: @retroactive CustomDebugStringConvertible {

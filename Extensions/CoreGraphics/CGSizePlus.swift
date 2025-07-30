@@ -124,9 +124,14 @@ extension CGSize {
         CGSize(width: height, height: width)
     }
     
-    /// height / width
-    var ratio: CGFloat {
-        height / width
+    /// 宽:高
+    var widthHeightRatio: CGFloat {
+        height.isZero ? 0.0 : width / height
+    }
+    
+    /// 高:宽
+    var heightWidthRatio: CGFloat {
+        width.isZero ? 0.0 : height / width
     }
     
     func multiplied(by: CGFloat) -> CGSize {

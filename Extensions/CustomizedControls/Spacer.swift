@@ -9,33 +9,33 @@
 import UIKit
 
 final class Spacer: UIView {
-	private let width: CGFloat?
-	private let height: CGFloat?
+	private let intrinsicWidth: CGFloat?
+	private let intrinsicHeight: CGFloat?
+    
+	init(intrinsicWidth: CGFloat? = nil, intrinsicHeight: CGFloat? = nil) {
+		self.intrinsicWidth = intrinsicWidth
+		self.intrinsicHeight = intrinsicHeight
+        let initialSize = CGSize(width: intrinsicWidth.orZero, height: intrinsicHeight.orZero)
+		let initialFrame = CGRect(origin: .zero, size: initialSize)
+		super.init(frame: initialFrame)
+	}
     
     override init(frame: CGRect) {
-        width = nil
-        height = nil
+        intrinsicWidth = nil
+        intrinsicHeight = nil
         super.init(frame: frame)
     }
     
-	init(width: CGFloat? = nil, height: CGFloat? = nil) {
-		self.width = width
-		self.height = height
-		let size = CGSize(width: width ?? 0, height: height ?? 0)
-		let rect = CGRect(origin: .zero, size: size)
-		super.init(frame: rect)
-	}
-    
-	required init?(coder: NSCoder) { nil }
+    required init?(coder: NSCoder) { nil }
     
 	override var intrinsicContentSize: CGSize {
-		var size = UIView.layoutFittingExpandedSize
-		if let width = width {
-			size.width = width
+		var intrinsicSize = UIView.layoutFittingExpandedSize
+		if let intrinsicWidth {
+			intrinsicSize.width = intrinsicWidth
 		}
-		if let height = height {
-			size.height = height
+		if let height = intrinsicHeight {
+			intrinsicSize.height = height
 		}
-		return size
+		return intrinsicSize
 	}
 }

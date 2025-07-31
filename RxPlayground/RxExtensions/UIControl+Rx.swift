@@ -32,36 +32,36 @@ extension Reactive where Base: UIControl {
             .removeDuplicates
     }
     
-    public var isHighlighted: ControlProperty<Bool> {
-        let observeIsHighlighted = observe(\.isHighlighted, options: .live)
-        let binder = Binder(base) { control, isHighlighted in
-            guard isHighlighted != control.isHighlighted else { return }
-            control.isHighlighted = isHighlighted
-        }
-        return ControlProperty(values: observeIsHighlighted, valueSink: binder)
-    }
-    
     public var isSelected: ControlProperty<Bool> {
         /// KVO观察属性变化
-        let values = observe(\.isSelected, options: .live)
-            .removeDuplicates //避免循环赋值
-            .share(replay: 1, scope: .whileConnected)
-        /// 接收属性变化
-        let valueSink = Binder(base) { control, isSelected in
-            /// 确保值不同的时候才执行后续操作
-            guard isSelected != control.isSelected else { return }
-            /// 设置新值
-            control.isSelected = isSelected
+        let values = observe(\.isSelected, options: .live).removeDuplicates
+        /// 设置属性
+        let valueSink = Binder(base) { base, selected in
+            guard selected != base.isSelected else { return }
+            base.isSelected = selected
+        }
+        return ControlProperty(values: values, valueSink: valueSink)
+    }
+    
+    public var isHighlighted: ControlProperty<Bool> {
+        /// KVO观察属性变化
+        let values = observe(\.isHighlighted, options: .live).removeDuplicates
+        /// 设置属性
+        let valueSink = Binder(base) { base, highlighted in
+            guard highlighted != base.isHighlighted else { return }
+            base.isHighlighted = highlighted
         }
         return ControlProperty(values: values, valueSink: valueSink)
     }
     
     public var isEnabled: ControlProperty<Bool> {
-        let observeIsEnabled = observe(\.isEnabled, options: .live)
-        let binder = Binder(base) { control, isEnabled in
-            guard isEnabled != control.isEnabled else { return }
-            control.isEnabled = isEnabled
+        /// KVO观察属性变化
+        let values = observe(\.isEnabled, options: .live).removeDuplicates
+        /// 设置属性
+        let valueSink = Binder(base) { base, enabled in
+            guard enabled != base.isEnabled else { return }
+            base.isEnabled = enabled
         }
-        return ControlProperty(values: observeIsEnabled, valueSink: binder)
+        return ControlProperty(values: values, valueSink: valueSink)
     }
 }

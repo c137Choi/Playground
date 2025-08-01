@@ -34,12 +34,18 @@ extension FloatingPoint {
     ///   - roundingIncrement: 进位精度
     ///   - rule: 进位规则
     /// - Returns: 进位后的结果
-    /// 这里的形参命名借用了NumberFormatter的同名属性, 具体作用在NumberFormatterPlus中的reset()方法中的属性注释中有详细说明
-    func rounded(_ roundingIncrement: Self, rule: FloatingPointRoundingRule) -> Self {
-        roundingIncrement * (self / roundingIncrement).rounded(rule)
+    /// 注1: roundingIncrement需传入10的n次方, 如圆周率: 3.14159_2653589793传入100000, rule传入.down则会将14159后面的小数舍掉
+    /// 注2: 这里的形参命名借用了NumberFormatter的同名属性, 具体作用在NumberFormatterPlus中的reset()方法中的属性注释中有详细说明
+    /// 注3: 和NumberFormatter里的roundingIncrement属性不同(先除再乘), 此方法是先乘再除
+    func rounded(roundingIncrement: Self, rule: FloatingPointRoundingRule? = nil) -> Self {
+        if let rule {
+            return (self * roundingIncrement).rounded(rule) / roundingIncrement
+        } else {
+            return (self * roundingIncrement).rounded() / roundingIncrement
+        }
     }
     
-    mutating func round(_ roundingIncrement: Self, rule: FloatingPointRoundingRule) {
-        self = rounded(roundingIncrement, rule: rule)
+    mutating func round(roundingIncrement: Self, rule: FloatingPointRoundingRule? = nil) {
+        self = rounded(roundingIncrement: roundingIncrement, rule: rule)
     }
 }

@@ -12,6 +12,16 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
         .vertical
     }
     
+    /// 是否开启: 触摸到UIControl子类的时候阻断滚动视图的滚动
+    /// 避免如像UISlider类似的控件在滑动时被UIScrollView滑动事件阻断的问题
+    var blockScrollWhenHitUIControls = true {
+        didSet {
+            if blockScrollWhenHitUIControls == false {
+                isScrollEnabled = true
+            }
+        }
+    }
+    
     var defaultBackgroundColor: UIColor? = baseViewBackgroundColor {
         willSet {
             backgroundColor = newValue
@@ -33,42 +43,40 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
         prepare()
     }
     
+    /// 避免如像UISlider类似的控件在滑动时被UIScrollView滑动事件阻断的问题
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let receiver = super.hitTest(point, with: event)
+        if blockScrollWhenHitUIControls {
+            /// UIControl或其子类
+            let isKindOfControl = receiver.or(false) {
+                $0.isKind(of: UIControl.self)
+            }
+            if isKindOfControl {
+                isScrollEnabled = false
+            } else {
+                isScrollEnabled = true
+            }
+        }
+        return receiver
+    }
+    
     func prepare() {
         prepareSubviews()
         prepareConstraints()
-        /// 标记: 不可取消内容点击, 使UIControl子视图可自由交互
-        canCancelContentTouches = false
         /// 内容边距自动调整
         contentInsetAdjustmentBehavior = .automatic
         /// 交互时收起键盘
         keyboardDismissMode = .interactive
         /// 背景色
         backgroundColor = defaultBackgroundColor
-        /// 隐藏滚动条
+        /// 垂直滚动条隐藏
         showsVerticalScrollIndicator = false
+        /// 水平滚动条隐藏
         showsHorizontalScrollIndicator = false
     }
     
     func prepareSubviews() {
         addSubview(contentView)
-    }
-    
-    override func touchesShouldBegin(_ touches: Set<UITouch>, with event: UIEvent?, in view: UIView) -> Bool {
-        /// 如果触摸点在UIControl上, 则优先处理UIControl事件
-        if view is UIControl {
-            return true
-        } else {
-            return super.touchesShouldBegin(touches, with: event, in: view)
-        }
-    }
-    
-    override func touchesShouldCancel(in view: UIView) -> Bool {
-        /// 如果是UIControl, 不取消触摸事件
-        if view is UIControl {
-            return false
-        } else {
-            return super.touchesShouldCancel(in: view)
-        }
     }
     
     override func updateConstraints() {

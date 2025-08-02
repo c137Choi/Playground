@@ -12,7 +12,12 @@ import SpriteKit
 
 extension UIImage {
     
-    convenience init?(qrContent: String?, size: CGFloat = 300.0) {
+    public convenience init?(base64Encoded base64String: String) {
+        guard let data = Data(base64Encoded: base64String) else { return nil }
+        self.init(data: data, scale: 1.0)
+    }
+    
+    public convenience init?(qrContent: String?, size: CGFloat = 300.0) {
         guard let qrContent else { return nil }
         let data = qrContent.data(using: .utf8)
         guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }

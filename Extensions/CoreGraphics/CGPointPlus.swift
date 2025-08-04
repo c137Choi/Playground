@@ -14,14 +14,6 @@ extension CGPoint {
         self == .zero
     }
     
-    func point(newX: CGFloat) -> CGPoint {
-        CGPoint(x: newX, y: y)
-    }
-    
-    func point(newY: CGFloat) -> CGPoint {
-        CGPoint(x: x, y: newY)
-    }
-    
     /// 计算和另外一个点之间的距离 | 利用勾股定理: 两直角边的平方和开平方得出斜边长度
     /// - Parameter another: 另外一个点
     /// - Returns: 距离

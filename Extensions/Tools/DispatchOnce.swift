@@ -28,10 +28,10 @@ enum Dispatch {
 	}
     
     public static func once(userDefaultsKey: String, execute: () -> Void) {
-        if UserDefaults.standard.value(forKey: userDefaultsKey).isValid {
+        if UserDefaults.standard.object(forKey: userDefaultsKey).isValid {
             return
         }
-        UserDefaults.standard.setValue(1, forKey: userDefaultsKey)
+        UserDefaults.standard.set(1, forKey: userDefaultsKey)
         once(token: userDefaultsKey, execute: execute)
     }
 }

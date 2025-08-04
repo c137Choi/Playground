@@ -14,11 +14,10 @@ extension CGPoint {
         self == .zero
     }
     
-    /// 计算和另外一个点之间的距离 | 利用勾股定理: 两直角边的平方和开平方得出斜边长度
-    /// - Parameter another: 另外一个点
-    /// - Returns: 距离
-    func distance(from another: CGPoint) -> CGFloat {
-        sqrt(pow(x - another.x, 2.0) + pow(y - another.y, 2.0))
+    /// 计算和另外一个点之间的距离
+    func distance(_ anotherPoint: CGPoint) -> CGFloat {
+        /// hypot: hypotenuse(直角三角形的斜边)
+        hypot(x - anotherPoint.x, y - anotherPoint.y)
     }
     
     /// 在两点之间插入点

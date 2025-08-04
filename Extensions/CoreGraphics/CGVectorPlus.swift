@@ -67,20 +67,6 @@ extension CGVector {
     static var bottomLeft: CGVector {
         down + left
     }
-    
-    // MARK: - ??
-    var length:Double {
-        sqrt(pow(dx, 2) + pow(dy, 2))
-    }
-    
-    mutating func normalize() {
-        dx /= length
-        dy /= length
-    }
-    
-    func normalized() -> CGVector {
-        CGVector(dx: dx / length, dy: dy / length)
-    }
 }
 
 extension CGVector {

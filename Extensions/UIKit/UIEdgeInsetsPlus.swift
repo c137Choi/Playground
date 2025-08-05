@@ -11,6 +11,44 @@ import UIKit
 @available(iOS 11.0, *)
 extension NSDirectionalEdgeInsets {
     
+    static func horizontal(_ padding: CGFloat) -> NSDirectionalEdgeInsets {
+        NSDirectionalEdgeInsets(top: 0, leading: padding, bottom: 0, trailing: padding)
+    }
+    
+    static func vertical(_ padding: CGFloat) -> NSDirectionalEdgeInsets {
+        NSDirectionalEdgeInsets(top: padding, leading: 0, bottom: padding, trailing: 0)
+    }
+    
+    static func top(_ padding: CGFloat) -> NSDirectionalEdgeInsets {
+        NSDirectionalEdgeInsets(top: padding, leading: 0, bottom: 0, trailing: 0)
+    }
+    
+    static func bottom(_ padding: CGFloat) -> NSDirectionalEdgeInsets {
+        NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: padding, trailing: 0)
+    }
+    
+    static func left(_ padding: CGFloat) -> NSDirectionalEdgeInsets {
+        switch UIApplication.shared.userInterfaceLayoutDirection {
+        case .leftToRight:
+            return NSDirectionalEdgeInsets(top: 0, leading: padding, bottom: 0, trailing: 0)
+        case .rightToLeft:
+            return NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: padding)
+        @unknown default:
+            return .zero
+        }
+    }
+    
+    static func right(_ padding: CGFloat) -> NSDirectionalEdgeInsets {
+        switch UIApplication.shared.userInterfaceLayoutDirection {
+        case .leftToRight:
+            return NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: padding)
+        case .rightToLeft:
+            return NSDirectionalEdgeInsets(top: 0, leading: padding, bottom: 0, trailing: 0)
+        @unknown default:
+            return .zero
+        }
+    }
+    
     var reversed: NSDirectionalEdgeInsets {
         NSDirectionalEdgeInsets(top: -top, leading: -leading, bottom: -bottom, trailing: -trailing)
     }
@@ -32,18 +70,23 @@ extension UIEdgeInsets {
     static func horizontal(_ padding: CGFloat) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
     }
+    
     static func vertical(_ padding: CGFloat) -> UIEdgeInsets {
         UIEdgeInsets(top: padding, left: 0, bottom: padding, right: 0)
     }
+    
     static func top(_ padding: CGFloat) -> UIEdgeInsets {
         UIEdgeInsets(top: padding, left: 0, bottom: 0, right: 0)
     }
+    
     static func left(_ padding: CGFloat) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: padding, bottom: 0, right: 0)
     }
+    
     static func bottom(_ padding: CGFloat) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: 0, bottom: padding, right: 0)
     }
+    
     static func right(_ padding: CGFloat) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: 0, bottom: 0, right: padding)
     }
@@ -61,21 +104,25 @@ extension UIEdgeInsets {
         if edges.contains(.right) { temp.right = screenSafeareaInsets.right > 0 ? 0 : right }
         return temp
     }
+    
     func topInset(_ inset: CGFloat) -> UIEdgeInsets {
         var insets = self
         insets.top = insets.top + inset
         return insets
     }
+    
     func leftInset(_ inset: CGFloat) -> UIEdgeInsets {
         var insets = self
         insets.left = insets.left + inset
         return insets
     }
+    
     func bottomInset(_ inset: CGFloat) -> UIEdgeInsets {
         var insets = self
         insets.bottom = insets.bottom + inset
         return insets
     }
+    
     func rightInset(_ inset: CGFloat) -> UIEdgeInsets {
         var insets = self
         insets.right = insets.right + inset
@@ -153,7 +200,7 @@ extension NSDirectionalEdgeInsets: @retroactive ExpressibleByArrayLiteral {
 
 extension UIEdgeInsets {
     
-    static func +(lhs: UIEdgeInsets, rhs: Double) -> UIEdgeInsets {
+    static func + (lhs: UIEdgeInsets, rhs: Double) -> UIEdgeInsets {
         UIEdgeInsets(
             top: lhs.top + rhs,
             left: lhs.left + rhs,
@@ -162,7 +209,7 @@ extension UIEdgeInsets {
         )
     }
     
-    static func +(lhs: UIEdgeInsets, rhs: UIEdgeInsets) -> UIEdgeInsets {
+    static func + (lhs: UIEdgeInsets, rhs: UIEdgeInsets) -> UIEdgeInsets {
         UIEdgeInsets(
             top: lhs.top + rhs.top,
             left: lhs.left + rhs.left,

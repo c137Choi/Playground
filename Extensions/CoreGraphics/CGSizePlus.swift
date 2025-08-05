@@ -111,6 +111,11 @@ extension CGSize {
         CGSize(width: lhs.width * rhs.width, height: lhs.height * rhs.height)
     }
     
+    /// 较短的边
+    var minEdge: CGFloat {
+        min(width, height)
+    }
+    
     /// 对角线长度
     var diagonal: CGFloat {
         hypot(width, height)

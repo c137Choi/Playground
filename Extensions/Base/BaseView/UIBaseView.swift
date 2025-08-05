@@ -10,10 +10,30 @@ import RxCocoa
 import QMUIKit
 import Moya
 
-// MARK: - 相关协议
-protocol ViewModelType: SimpleInitializer {}
+/// ViewModel宿主协议
+protocol ViewModelHost {
+    associatedtype ViewModel: SimpleInitializer
+    var viewModel: ViewModel { get set }
+}
 
-protocol PagableViewModelType: ViewModelType {
+protocol ViewModelSetup {
+    associatedtype ViewModel: SimpleInitializer
+    func setupViewModel(_ viewModel: ViewModel)
+}
+
+extension ViewModelSetup {
+    func setupViewModel(_ viewModel: ViewModel) {}
+}
+
+typealias ViewModelSetupView = ViewModelSetup & StandardLayoutLifeCycle
+
+/// ViewModel宿主UIView
+typealias ViewModelHostView = UIView & ViewModelHost
+
+/// ViewModel宿主UIViewController
+typealias ViewModelHostViewController = UIViewController & ViewModelHost
+
+protocol PagableViewModelType: SimpleInitializer {
     associatedtype Model
     var delegate: PagableViewModelDelegate? { get set }
     var numberOfSections: Int { get }
@@ -21,20 +41,6 @@ protocol PagableViewModelType: ViewModelType {
     var items: [Model] { get set }
     func fetchMoreData()
     init(delegate: PagableViewModelDelegate)
-}
-
-protocol ViewModelAccessible {
-    associatedtype ViewModel: ViewModelType
-    var viewModel: ViewModel { get set }
-}
-
-protocol ViewModelSetup {
-    associatedtype ViewModel: ViewModelType
-    func setupViewModel(_ viewModel: ViewModel)
-}
-
-extension ViewModelSetup {
-    func setupViewModel(_ viewModel: ViewModel) {}
 }
 
 protocol PagableViewModelDelegate: AnyObject {
@@ -54,8 +60,6 @@ extension PagableViewModelDelegate {
     }
 }
 
-typealias ViewModelSetupView = ViewModelSetup & StandardLayoutLifeCycle
-
 // MARK: - 基类
 /// 使用NSObject子类实现ViewModel
 /// 是为了某些情况下监听rx.deallocating通知, 以做一些逻辑处理
@@ -63,7 +67,7 @@ typealias ViewModelSetupView = ViewModelSetup & StandardLayoutLifeCycle
 /// 后来证明在VM里监听rx.deallocating没什么意义, 因为这时自身已经快销毁了, 很多属性都无效了
 /// 但还是暂时用NSObjct的子类来实现吧, 以防万一
 /// 而且有些协议只能由NSObject类实现
-class BaseViewModel: NSObject, ViewModelType {
+class BaseViewModel: NSObject {
     
     override init() {
         super.init()
@@ -151,9 +155,8 @@ class UIBaseView: UIView {
     func prepareConstraints() {}
 }
 
-typealias ViewModelAccessibleViewController = UIViewController & ViewModelAccessible
 /// 控制器主视图基类 | 可获取到ViewController对象、ViewController.ViewModel对象
-class BaseControllerView<ViewController: ViewModelAccessibleViewController>: UIBaseView {
+class ControllerView<ViewController: ViewModelHostViewController>: UIBaseView {
     
     private weak var weakController: ViewController?
     
@@ -189,7 +192,7 @@ class BaseControllerView<ViewController: ViewModelAccessibleViewController>: UIB
     private var neverController: ViewController {
         /// 推断所属的控制器, 储存到属性并返回控制器
         if let inferredController = qmui_viewController.as(ViewController.self) {
-            weakController = inferredController
+            attach(controller: inferredController)
             return inferredController
         } else {
             fatalError("Should not happen! Check your logic.")

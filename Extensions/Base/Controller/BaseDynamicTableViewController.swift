@@ -8,7 +8,7 @@ import UIKit
 import Moya
 
 class BaseDynamicTableViewController
-<PrimaryCell: UITableViewCell, ViewModel: PagableViewModelType>: BaseTableViewController, PagableViewModelDelegate, ViewModelAccessible {
+<PrimaryCell: UITableViewCell, ViewModel: PagableViewModelType>: BaseTableViewController, PagableViewModelDelegate, ViewModelHost {
     
     lazy var viewModel = ViewModel(delegate: self)
     

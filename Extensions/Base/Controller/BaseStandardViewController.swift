@@ -6,7 +6,7 @@
 
 import UIKit
 
-class BaseStandardViewController<MainView: ViewModelSetupView>: BaseViewController, ViewModelAccessible {
+class BaseStandardViewController<MainView: ViewModelSetupView>: BaseViewController, ViewModelHost {
     
     lazy var mainView = initializeMainView()
     

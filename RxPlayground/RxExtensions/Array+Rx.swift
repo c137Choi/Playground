@@ -165,7 +165,7 @@ extension Array where Element: UIButton {
     ///   - keyPath: KeyPath
     ///   - filter: 按钮点击事件过滤闭包
     /// - Returns: ControlProperty
-    func controlPropertyCoordinatorSwitchingButtons<Property: Hashable>(
+    func controlPropertyCoordinator<Property: Hashable>(
         startWith initialValue: Property? = nil,
         keyPath: ReferenceWritableKeyPath<Element, Property>,
         filter: RxElementFilter<Element>? = nil) -> RxButtonControlPropertyCoordinator<Element, Property>

@@ -15,14 +15,14 @@ extension UIStackView {
     }
     
     convenience init(
-        insets: UIEdgeInsets? = nil,
+        margins: UIEdgeInsets? = nil,
         axis: NSLayoutConstraint.Axis = .vertical,
         distribution: UIStackView.Distribution = .fill,
         alignment: UIStackView.Alignment = .leading,
         spacing: CGFloat = 0.0,
         @ArrayBuilder<UIView> arrangedSubviews: () -> [UIView] = { [] })
     {
-        self.init(insets: insets,
+        self.init(margins: margins,
                   axis: axis,
                   distribution: distribution,
                   alignment: alignment,
@@ -31,14 +31,14 @@ extension UIStackView {
     }
     
     convenience init(
-        insets: UIEdgeInsets? = nil,
+        margins: UIEdgeInsets? = nil,
         axis: NSLayoutConstraint.Axis = .vertical,
         distribution: UIStackView.Distribution = .fill,
         alignment: UIStackView.Alignment = .leading,
         spacing: CGFloat = 0.0,
         arrangedSubviews: UIView...)
     {
-        self.init(insets: insets,
+        self.init(margins: margins,
                   axis: axis,
                   distribution: distribution,
                   alignment: alignment,
@@ -47,7 +47,7 @@ extension UIStackView {
     }
     
     convenience init(
-        insets: UIEdgeInsets? = nil,
+        margins: UIEdgeInsets? = nil,
         axis: NSLayoutConstraint.Axis = .vertical,
         distribution: UIStackView.Distribution = .fill,
         alignment: UIStackView.Alignment = .leading,
@@ -55,7 +55,7 @@ extension UIStackView {
         arrangedSubviews: [UIView])
     {
         self.init(arrangedSubviews: arrangedSubviews)
-        self.contentInsets = insets
+        self.margins = margins
         self.axis = axis
         self.distribution = distribution
         self.alignment = alignment
@@ -153,7 +153,7 @@ extension UIStackView {
     }
     
     /// 内部控件边距
-    var contentInsets: UIEdgeInsets? {
+    var margins: UIEdgeInsets? {
         get {
             if #available(iOS 11, *) {
                 return directionalLayoutMargins.uiEdgeInsets
@@ -161,34 +161,13 @@ extension UIStackView {
                 return layoutMargins
             }
         }
-        set(insets) {
-            isLayoutMarginsRelativeArrangement = insets.isValid
-            guard let insets else { return }
+        set {
+            isLayoutMarginsRelativeArrangement = newValue.isValid
             if #available(iOS 11, *) {
-                directionalLayoutMargins = insets.directionalEdgeInsets
+                directionalLayoutMargins = newValue.or(.zero, map: \.directionalEdgeInsets)
             } else {
-                layoutMargins = insets
+                layoutMargins = newValue.or(.zero)
             }
-        }
-    }
-    
-    var horizontalInsets: UIEdgeInsets? {
-        get { contentInsets }
-        set(insets) {
-            guard var insets else { return }
-            insets.top = 0
-            insets.bottom = 0
-            contentInsets = insets
-        }
-    }
-    
-    var verticalInsets: UIEdgeInsets? {
-        get { contentInsets }
-        set(insets) {
-            guard var insets else { return }
-            insets.left = 0
-            insets.right = 0
-            contentInsets = insets
         }
     }
 }

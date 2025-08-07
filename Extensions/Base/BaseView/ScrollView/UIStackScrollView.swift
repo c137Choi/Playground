@@ -82,8 +82,8 @@ extension UIStackScrollView {
     }
     
     var contentInsets: UIEdgeInsets? {
-        get { stackView.contentInsets }
-        set { stackView.contentInsets = newValue }
+        get { stackView.margins }
+        set { stackView.margins = newValue }
     }
     
     func reArrangeSubviews(@ArrayBuilder<UIView> subviewsBuilder: () -> [UIView]) {

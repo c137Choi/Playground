@@ -9,11 +9,11 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-typealias RxControlEventElement<T> = (T, UIEvent?)
-
 protocol UIControlType: UIControl {}
 
 extension UIControl: UIControlType {}
+
+typealias RxControlEventElement<T> = (T, UIEvent?) where T: UIControlType
 
 extension UIControlType {
     

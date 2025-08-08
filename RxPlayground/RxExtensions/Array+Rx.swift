@@ -196,9 +196,11 @@ final class ControlPropertyCoordinator<Button: UIButton, Property: Hashable>: NS
     private weak var selectedButton: Button?
     /// 观察按钮切换
     private var switchingButtons: DisposeBag?
+    /// 标记是否发送事件
+    private var sendEvent = true
     /// 设置属性
     private lazy var propertySink = Binder<Property?>(self) { weakSelf, property in
-        weakSelf.property = property
+        weakSelf.setProperty(property, sendEvent: false)
     }
     
     /// 初始化
@@ -254,38 +256,47 @@ final class ControlPropertyCoordinator<Button: UIButton, Property: Hashable>: NS
         }
     }
     
-    /// Property
+    func setProperty(_ newProperty: Property?, sendEvent: Bool) {
+        /// property有变动才执行后续操作
+        guard self.property != newProperty else { return }
+        /// 属性有效
+        if let newProperty {
+            /// 目标按钮
+            guard let targetButton = propertyButtonMap[newProperty] else { return }
+            /// (注意调用顺序)先标记是否发送事件
+            self.sendEvent = sendEvent
+            /// 再发送事件
+            targetButton.sendActions(for: .touchUpInside)
+        }
+    }
+    
+    /// 属性: 设置属性时, 不发送事件
     var property: Property? {
         get {
             selectedButton.map { button in
                 button[keyPath: keyPath]
             }
         }
-        set(newProperty) {
-            /// property有变动才执行后续操作
-            guard self.property != newProperty else { return }
-            /// 属性有效
-            if let newProperty {
-                /// 目标按钮
-                guard let button = propertyButtonMap[newProperty] else { return }
-                /// 发送事件
-                button.sendActions(for: .touchUpInside)
-            }
+        set {
+            setProperty(newValue, sendEvent: false)
         }
     }
     
     var controlProperty: ControlProperty<Property?> {
-        let values = buttonEventSubject
-            .unwrapped
-            .withUnretained(keyPath)
-            .map { keyPath, event in
-                event.0[keyPath: keyPath]
+        let values = buttonEventSubject.unwrapped.withUnretained(self).compactMap { weakSelf, event -> Property? in
+            /// 如果不发送事件, 则直接返回空
+            if !weakSelf.sendEvent {
+                weakSelf.sendEvent = true
+                return nil
             }
+            /// 返回按钮属性
+            return event.0[keyPath: weakSelf.keyPath]
+        }
         return ControlProperty(values: values.optionalElement, valueSink: propertySink)
     }
     
     /// 用户交互后才发送事件的ControlProperty
-    var userInteractiveControlProperty: ControlProperty<Property?> {
+    var interactiveControlProperty: ControlProperty<Property?> {
         let interactiveValues = buttonEventSubject
             .enumerated()
             .compactMap { index, tuple -> ButtonControlEvent? in

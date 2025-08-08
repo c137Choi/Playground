@@ -51,93 +51,6 @@ extension Array where Element: ObservableConvertibleType {
     }
 }
 
-final class ControlPropertyCoordinator<Button: UIButton, Property: Hashable>: NSObject {
-    /// [属性:按钮]字典
-    typealias PropertyButtonMap = [Property: Button]
-    
-    /// 按钮映射字典
-    private let propertyButtonMap: PropertyButtonMap
-    /// ReferenceWritableKeyPath对象
-    private let keyPath: KeyPath<Button, Property>
-    /// 源事件序列
-    private let sharedSequence: Observable<[Button].ControlEventElement>
-    /// 储存选中的按钮
-    private weak var selectedButton: Button?
-    /// Property
-    var property: Property? {
-        get {
-            selectedButton.map { button in
-                button[keyPath: keyPath]
-            }
-        }
-        set(newProperty) {
-            /// property有变动才执行后续操作
-            guard self.property != newProperty else { return }
-            /// 属性有效
-            if let newProperty {
-                /// 目标按钮
-                guard let button = propertyButtonMap[newProperty] else { return }
-                /// 发送事件
-                button.sendActions(for: .touchUpInside)
-            }
-        }
-    }
-    
-    /// 初始化
-    /// - Parameters:
-    ///   - initialValue: 初始值
-    ///   - buttons: 按钮数组
-    ///   - keyPath: KeyPath
-    ///   - eventFilter: 事件过滤闭包
-    init(startWith initialValue: Property?,
-         buttons: [Button],
-         keyPath: KeyPath<Button, Property>,
-         eventFilter: RxElementFilter<Button>? = nil)
-    {
-        /// 建立映射
-        var propertyButtonMap = PropertyButtonMap.empty
-        /// 找出第一个需要选中的按钮
-        var firstButton: Button?
-        /// 遍历按钮
-        for button in buttons {
-            /// 从buttons中找到指定值
-            let buttonProperty = button[keyPath: keyPath]
-            /// 更新键值映射
-            propertyButtonMap[buttonProperty] = button
-            /// 如果和初始值匹配则储存为第一个选中按钮
-            if initialValue == buttonProperty {
-                firstButton = button
-            }
-        }
-        /// 更新映射属性
-        self.propertyButtonMap = propertyButtonMap
-        /// 保存KeyPath
-        self.keyPath = keyPath
-        /// 生成序列 | 同时储存选中的按钮
-        self.sharedSequence = buttons.switchButtonEvent(.touchUpInside, startWith: firstButton, eventFilter: eventFilter).share(replay: 1)
-        /// 父类初始化
-        super.init()
-        /// 内部订阅(给selectedButton赋值)
-        self.sharedSequence
-            .assign(\.0, to: rx.selectedButton)
-            .subscribe()
-            .disposed(by: rx.disposeBag)
-    }
-    
-    /// 生成ControlProperty(使用计算属性而不是lazy var避免循环引用)
-    var controlProperty: ControlProperty<Property?> {
-        /// 只接受event非空的事件(即用户点击事件)
-        let values = sharedSequence.filter(\.1.isValid).withUnretained(keyPath).map { keyPath, event in
-            event.0[keyPath: keyPath]
-        }
-        /// 设置属性
-        let valueSink = Binder<Property?>(self) { weakSelf, property in
-            weakSelf.property = property
-        }
-        return ControlProperty(values: values.optionalElement, valueSink: valueSink)
-    }
-}
-
 extension Array where Element: UIButton {
     
     /// ControlEvent元素
@@ -263,5 +176,135 @@ extension Array where Element: UIButton {
             .optionalElement
             .startWith(firstElement)
             .unwrapped
+    }
+}
+
+// MARK: - ControlPropertyCoordinator
+final class ControlPropertyCoordinator<Button: UIButton, Property: Hashable>: NSObject {
+    /// [属性:按钮]字典
+    typealias PropertyButtonMap = [Property: Button]
+    /// 按钮触发事件
+    typealias ButtonControlEvent = RxControlEventElement<Button>
+    
+    /// ReferenceWritableKeyPath对象
+    private let keyPath: KeyPath<Button, Property>
+    /// 按钮事件Subject
+    private let buttonEventSubject = BehaviorSubject<ButtonControlEvent?>(value: nil)
+    /// 按钮映射字典
+    private var propertyButtonMap = PropertyButtonMap.empty
+    /// 储存选中的按钮
+    private weak var selectedButton: Button?
+    /// 观察按钮切换
+    private var switchingButtons: DisposeBag?
+    /// 设置属性
+    private lazy var propertySink = Binder<Property?>(self) { weakSelf, property in
+        weakSelf.property = property
+    }
+    
+    /// 初始化
+    /// - Parameters:
+    ///   - initialProperty: 初始值
+    ///   - buttons: 按钮数组
+    ///   - keyPath: KeyPath
+    ///   - eventFilter: 事件过滤闭包
+    init(startWith initialProperty: Property?, buttons: [Button], keyPath: KeyPath<Button, Property>, eventFilter: RxElementFilter<Button>? = nil) {
+        /// 保存KeyPath
+        self.keyPath = keyPath
+        /// 父类初始化
+        super.init()
+        /// 监听按钮切换
+        reload(buttons, initialProperty: initialProperty, eventFilter: eventFilter)
+        /// 绑定选中按钮
+        buttonEventSubject
+            .unwrapped
+            .map(\.0)
+            .bind(to: rx.selectedButton)
+            .disposed(by: rx.disposeBag)
+    }
+    
+    /// 监听按钮切换
+    /// - Parameters:
+    ///   - buttons: 要切换的按钮
+    ///   - firstButton: 首次选中的按钮
+    ///   - eventFilter: 事件过滤闭包
+    func reload(_ buttons: [Button], initialProperty: Property?, eventFilter: RxElementFilter<Button>? = nil) {
+        /// 建立映射
+        var tmpPropertyButtonMap = PropertyButtonMap.empty
+        /// 找出第一个需要选中的按钮
+        var firstButton: Button?
+        /// 遍历要切换的按钮
+        for button in buttons {
+            /// 按钮属性
+            let buttonProperty = button[keyPath: keyPath]
+            /// 更新属性 -> 按钮映射
+            tmpPropertyButtonMap[buttonProperty] = button
+            /// 如果按钮属性和初始值匹配, 则将按钮储存为第一个选中按钮
+            if initialProperty == buttonProperty {
+                firstButton = button
+            }
+        }
+        /// 更新映射属性
+        self.propertyButtonMap = tmpPropertyButtonMap
+        /// 持续观察按钮切换
+        self.switchingButtons = DisposeBag {
+            buttons.switchButtonEvent(.touchUpInside, startWith: firstButton, eventFilter: eventFilter)
+                .optionalElement
+                .multicast(buttonEventSubject)
+                .connect()
+        }
+    }
+    
+    /// Property
+    var property: Property? {
+        get {
+            selectedButton.map { button in
+                button[keyPath: keyPath]
+            }
+        }
+        set(newProperty) {
+            /// property有变动才执行后续操作
+            guard self.property != newProperty else { return }
+            /// 属性有效
+            if let newProperty {
+                /// 目标按钮
+                guard let button = propertyButtonMap[newProperty] else { return }
+                /// 发送事件
+                button.sendActions(for: .touchUpInside)
+            }
+        }
+    }
+    
+    var controlProperty: ControlProperty<Property?> {
+        let values = buttonEventSubject
+            .unwrapped
+            .withUnretained(keyPath)
+            .map { keyPath, event in
+                event.0[keyPath: keyPath]
+            }
+        return ControlProperty(values: values.optionalElement, valueSink: propertySink)
+    }
+    
+    /// 用户交互后才发送事件的ControlProperty
+    var userInteractiveControlProperty: ControlProperty<Property?> {
+        let interactiveValues = buttonEventSubject
+            .enumerated()
+            .compactMap { index, tuple -> ButtonControlEvent? in
+                if let tuple {
+                    /// 首次订阅UIEvent保持为空
+                    if index == 0 {
+                        return (tuple.0, nil)
+                    } else {
+                        return tuple
+                    }
+                } else {
+                    return nil
+                }
+            }
+            .filter(\.1.isValid) // 只接受event非空的事件(即用户点击事件)
+            .withUnretained(keyPath)
+            .map { keyPath, event in
+                event.0[keyPath: keyPath]
+            }
+        return ControlProperty(values: interactiveValues.optionalElement, valueSink: propertySink)
     }
 }

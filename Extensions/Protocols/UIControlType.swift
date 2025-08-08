@@ -143,7 +143,7 @@ extension Reactive where Base: UIControlType {
                 observer.onNext(tuple)
             }
             /// 销毁时执行Target的dispose方法
-            return Disposables.create(with: target.dispose)
+            return Disposables.create(with: target.removeTargetAction)
         }
         /// 事件序列
         let events = sequence.take(until: deallocated)

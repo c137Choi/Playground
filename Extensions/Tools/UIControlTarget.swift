@@ -6,10 +6,8 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
 
-final class UIControlTarget<T>: Disposable where T: UIControlType {
+final class UIControlTarget<T> where T: UIControlType {
     /// 回调Closure
     let eventHandler: (T, UIEvent?) -> Void
     /// 标识符
@@ -40,9 +38,5 @@ final class UIControlTarget<T>: Disposable where T: UIControlType {
     @objc private func action(_ sender: AnyObject, event: UIEvent?) {
         guard let control else { return }
         eventHandler(control, event)
-    }
-    
-    func dispose() {
-        removeTargetAction()
     }
 }

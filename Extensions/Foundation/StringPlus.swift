@@ -403,7 +403,7 @@ extension String {
     }
     
 	static var randomUUID: String {
-		UUID().uuidString
+        UUID.new.uuidString
 	}
 	
 	func isValid(for characterSet: CharacterSet) -> Bool {

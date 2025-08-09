@@ -186,7 +186,7 @@ final class ControlPropertyCoordinator<Button: UIButton, Property: Hashable>: NS
     /// 按钮触发事件
     typealias ButtonControlEvent = RxControlEventElement<Button>
     
-    /// ReferenceWritableKeyPath对象
+    /// KeyPath对象
     private let keyPath: KeyPath<Button, Property>
     /// 按钮事件Subject
     private let buttonEventSubject = BehaviorSubject<ButtonControlEvent?>(value: nil)
@@ -283,39 +283,33 @@ final class ControlPropertyCoordinator<Button: UIButton, Property: Hashable>: NS
     }
     
     var controlProperty: ControlProperty<Property?> {
-        let values = buttonEventSubject.unwrapped.withUnretained(self).compactMap { weakSelf, event -> Property? in
-            /// 如果不发送事件, 则直接返回空
-            if !weakSelf.sendEvent {
-                weakSelf.sendEvent = true
+        let values = buttonEventSubject.compactMap {
+            [weak self] buttonEvent -> Property? in
+            guard let self, let buttonEvent else { return nil }
+            /// 如果标记为不发送事件则直接返回
+            if !self.sendEvent {
+                self.sendEvent = true
                 return nil
             }
-            /// 返回按钮属性
-            return event.0[keyPath: weakSelf.keyPath]
+            /// 返回Property
+            return buttonEvent.0[keyPath: self.keyPath]
         }
-        return ControlProperty(values: values.optionalElement, valueSink: propertySink)
+        return ControlProperty(values: values.take(until: rx.deallocated).optionalElement, valueSink: propertySink)
     }
     
     /// 用户交互后才发送事件的ControlProperty
     var interactiveControlProperty: ControlProperty<Property?> {
-        let interactiveValues = buttonEventSubject
-            .enumerated()
-            .compactMap { index, tuple -> ButtonControlEvent? in
-                if let tuple {
-                    /// 首次订阅UIEvent保持为空
-                    if index == 0 {
-                        return (tuple.0, nil)
-                    } else {
-                        return tuple
-                    }
-                } else {
-                    return nil
-                }
+        let interactiveValues = buttonEventSubject.enumerated().compactMap {
+            [weak keyPath] index, buttonEvent -> Property? in
+            guard let keyPath, let buttonEvent else { return nil }
+            /// 首次订阅不发送事件
+            if index == 0 {
+                return nil
+            } else {
+                /// 确保UIEvent非空
+                return buttonEvent.1.isValid ? buttonEvent.0[keyPath: keyPath] : nil
             }
-            .filter(\.1.isValid) // 只接受event非空的事件(即用户点击事件)
-            .withUnretained(keyPath)
-            .map { keyPath, event in
-                event.0[keyPath: keyPath]
-            }
-        return ControlProperty(values: interactiveValues.optionalElement, valueSink: propertySink)
+        }
+        return ControlProperty(values: interactiveValues.take(until: rx.deallocated).optionalElement, valueSink: propertySink)
     }
 }

@@ -48,7 +48,6 @@ extension UIView {
         @UniqueAddress static var backgroundView
         @UniqueAddress static var mournFilterView
         @UniqueAddress static var targets
-        @UniqueAddress static var tappedClosure
     }
     
     var isVisibleAndPrepared: Bool {
@@ -89,13 +88,18 @@ extension UIView {
         frame.size.isLandscape
     }
     
-    var targets: NSMutableArray {
-        if let array = associated(NSMutableArray.self, self, Associated.targets) {
-            return array
-        } else {
-            let array = NSMutableArray()
-            setAssociatedObject(self, Associated.targets, array, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            return array
+    var targets: [String: Any] {
+        get {
+            if let dict = associated([String: Any].self, self, Associated.targets) {
+                return dict
+            } else {
+                let dict = [String: Any].empty
+                setAssociatedObject(self, Associated.targets, dict, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                return dict
+            }
+        }
+        set {
+            setAssociatedObject(self, Associated.targets, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     

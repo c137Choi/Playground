@@ -65,9 +65,9 @@ extension Array where Element: UIButton {
     func controlPropertyCoordinator<T: Hashable>(
         startWith initialValue: T? = nil,
         keyPath: KeyPath<Element, T>,
-        eventFilter: RxElementFilter<Element>? = nil) -> ControlPropertyCoordinator<Element, T>
+        eventFilter: RxElementFilter<Element>? = nil) -> ButtonControlPropertyCoordinator<Element, T>
     {
-        ControlPropertyCoordinator(startWith: initialValue, buttons: self, keyPath: keyPath, eventFilter: eventFilter)
+        ButtonControlPropertyCoordinator(startWith: initialValue, buttons: self, keyPath: keyPath, eventFilter: eventFilter)
     }
     
     /// 切换选中的按钮
@@ -179,8 +179,8 @@ extension Array where Element: UIButton {
     }
 }
 
-// MARK: - ControlPropertyCoordinator
-final class ControlPropertyCoordinator<Button: UIButton, Property: Hashable>: NSObject {
+// MARK: - ButtonControlPropertyCoordinator
+final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashable>: NSObject {
     /// [属性:按钮]字典
     typealias PropertyButtonMap = [Property: Button]
     /// 按钮触发事件
@@ -209,7 +209,7 @@ final class ControlPropertyCoordinator<Button: UIButton, Property: Hashable>: NS
     ///   - buttons: 按钮数组
     ///   - keyPath: KeyPath
     ///   - eventFilter: 事件过滤闭包
-    init(startWith initialProperty: Property?, buttons: [Button], keyPath: KeyPath<Button, Property>, eventFilter: RxElementFilter<Button>? = nil) {
+    init(startWith initialProperty: Property? = nil, buttons: [Button] = .empty, keyPath: KeyPath<Button, Property>, eventFilter: RxElementFilter<Button>? = nil) {
         /// 保存KeyPath
         self.keyPath = keyPath
         /// 父类初始化

@@ -229,7 +229,7 @@ final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashabl
     ///   - buttons: 要切换的按钮
     ///   - firstButton: 首次选中的按钮
     ///   - eventFilter: 事件过滤闭包
-    func reload(_ buttons: [Button], initialProperty: Property?, eventFilter: RxElementFilter<Button>? = nil) {
+    func reload(_ buttons: [Button], initialProperty: Property? = nil, eventFilter: RxElementFilter<Button>? = nil) {
         /// 建立映射
         var tmpPropertyButtonMap = PropertyButtonMap.empty
         /// 找出第一个需要选中的按钮
@@ -249,10 +249,13 @@ final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashabl
         self.propertyButtonMap = tmpPropertyButtonMap
         /// 持续观察按钮切换
         self.switchingButtons = DisposeBag {
-            buttons.switchButtonEvent(.touchUpInside, startWith: firstButton, eventFilter: eventFilter)
-                .optionalElement
-                .multicast(buttonEventSubject)
-                .connect()
+            buttons.switchButtonEvent(.touchUpInside, startWith: firstButton, eventFilter: eventFilter).subscribe {
+                [weak self] event in
+                /// 这里要检查element非空, 考虑按钮数组为空的时候发送completed事件给subject导致事件序列结束的情况
+                guard let self, let element = event.element else { return }
+                /// 转发到subject
+                buttonEventSubject.onNext(element)
+            }
         }
     }
     

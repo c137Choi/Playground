@@ -31,7 +31,7 @@ enum Dispatch {
         if UserDefaults.standard.object(forKey: userDefaultsKey).isValid {
             return
         }
-        UserDefaults.standard.set(1, forKey: userDefaultsKey)
+        UserDefaults.standard.set("已执行", forKey: userDefaultsKey)
         once(token: userDefaultsKey, execute: execute)
     }
 }

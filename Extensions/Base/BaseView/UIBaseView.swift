@@ -156,43 +156,38 @@ class UIBaseView: UIView {
 }
 
 /// 控制器主视图基类 | 可获取到ViewController对象、ViewController.ViewModel对象
-class ControllerView<ViewController: ViewModelHostViewController>: UIBaseView {
+class ViewControllerBaseView<Controller: ViewModelHostViewController>: UIBaseView {
     
-    private weak var weakController: ViewController?
+    /// 弱引用控制器
+    private weak var _controllerReference: Controller?
     
-    var viewModel: ViewController.ViewModel {
+    var viewModel: Controller.ViewModel {
         get { viewController.viewModel }
         set { viewController.viewModel = newValue }
     }
     
-    var viewController: ViewController {
-        get { weakController ?? neverController }
-        set { weakController = newValue }
+    var viewController: Controller {
+        get { _controllerReference ?? neverController }
+        set { _controllerReference = newValue }
     }
     
-    convenience init(controller: ViewController) {
+    convenience init(controller: Controller) {
         self.init(frame: .zero)
-        attach(controller: controller)
-    }
-    
-    @discardableResult
-    func attach(controller: ViewController) -> Self {
-        weakController = controller
-        return self
+        self.viewController = controller
     }
     
     override func didMoveToWindow() {
         super.didMoveToWindow()
         /// 引用的控制器为空时, 尝试推断所属的控制器并储存到属性
-        if weakController.isVoid, let inferredController = qmui_viewController.as(ViewController.self) {
-            weakController = inferredController
+        if _controllerReference.isVoid, let inferredController = qmui_viewController.as(Controller.self) {
+            _controllerReference = inferredController
         }
     }
     
-    private var neverController: ViewController {
+    private var neverController: Controller {
         /// 推断所属的控制器, 储存到属性并返回控制器
-        if let inferredController = qmui_viewController.as(ViewController.self) {
-            attach(controller: inferredController)
+        if let inferredController = qmui_viewController.as(Controller.self) {
+            self.viewController = inferredController
             return inferredController
         } else {
             fatalError("Should not happen! Check your logic.")

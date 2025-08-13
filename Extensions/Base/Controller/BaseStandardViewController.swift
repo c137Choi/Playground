@@ -8,7 +8,7 @@ import UIKit
 
 class BaseStandardViewController<MainView: ViewModelSetupView>: BaseViewController, ViewModelHost {
     
-    lazy var mainView = initializeMainView()
+    lazy var mainView = mainViewInitialization()
     
     lazy var viewModel = MainView.ViewModel()
     
@@ -26,8 +26,8 @@ class BaseStandardViewController<MainView: ViewModelSetupView>: BaseViewControll
     
     /// Override point
     /// 子类可重写此方法使用自己定义的主视图初始化方法创建主视图
-    /// 例如: BaseControllerView需要使用init(controller: ViewController)方法创建主视图
-    func initializeMainView() -> MainView {
+    /// 例如: ControllerView需要使用init(controller: ViewController)方法创建主视图
+    func mainViewInitialization() -> MainView {
         MainView()
     }
 }

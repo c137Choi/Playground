@@ -75,9 +75,9 @@ class BaseViewController: UIViewController, UIGestureRecognizerDelegate, UINavig
         target: self,
         action: #selector(dismissNavigationControllerOrSelf))
     
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        initialConfigure()
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.initialConfigure()
     }
     
     required init?(coder: NSCoder) {

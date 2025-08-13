@@ -5,21 +5,15 @@
 //  Created by Choi on 2023/8/12.
 //
 
-import Foundation
-#if !os(Linux)
-import CoreGraphics
-#endif
-#if os(iOS) || os(tvOS)
-import UIKit.UIGeometry
-#endif
+import UIKit
+
+public protocol Configurable {}
+
+public protocol ReferenceConfigurable: AnyObject {}
 
 public protocol SimpleInitializer {
     init()
 }
-
-public protocol ReferenceConfigurable: AnyObject {}
-
-public protocol Configurable {}
 
 // MARK: - Conforming Types
 extension NSObject: SimpleInitializer {}
@@ -33,18 +27,18 @@ extension UIEdgeInsets: Configurable {}
 // MARK: - 协议实现
 extension Configurable {
     
-    /// 拷贝自身, 并对自身的拷贝进行配置, 最后返回拷贝 | 用于值类型
-    func with(configuration: (inout Self) throws -> Void) rethrows -> Self {
-        var copy = self
-        try configuration(&copy)
-        return copy
-    }
-    
     /// 拷贝自身, 并根据KeyPath为拷贝赋值, 最后返回拷贝 | 用于值类型
     func with<T>(new keyPath: WritableKeyPath<Self, T>, _ value: T) -> Self {
-        var copy = self
-        copy[keyPath: keyPath] = value
-        return copy
+        with { make in
+            make[keyPath: keyPath] = value
+        }
+    }
+    
+    /// 拷贝自身, 并对自身的拷贝进行配置, 最后返回拷贝 | 用于值类型
+    func with(configuration: (inout Self) throws -> Void) rethrows -> Self {
+        var clone = self
+        try configuration(&clone)
+        return clone
     }
 }
 
@@ -65,9 +59,9 @@ extension ReferenceConfigurable {
     }
 }
 
-extension ReferenceConfigurable where Self: SimpleInitializer {
+extension SimpleInitializer where Self: ReferenceConfigurable {
+    
     static func make(_ configuration: (Self) -> Void) -> Self {
-        let retval = Self()
-        return retval.configure(configuration)
+        self.init().configure(configuration)
     }
 }

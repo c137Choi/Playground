@@ -10,7 +10,7 @@ import Foundation
 extension JSONDecoder {
     
     /// 通用JSONDecoder
-    static let common = JSONDecoder()
+    static let instance = JSONDecoder()
     
     /// 时间以毫秒解析的Decoder
     static let millisecondsDateDecodingDecoder: JSONDecoder = {

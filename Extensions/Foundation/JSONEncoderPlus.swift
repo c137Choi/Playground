@@ -10,7 +10,7 @@ import Foundation
 extension JSONEncoder {
     
     /// 通用JSONEncoder
-    static let common = JSONEncoder()
+    static let instance = JSONEncoder()
     
     /// 时间以毫秒解析的Encoder
     static let millisecondsDateEncodingEncoder: JSONEncoder = {

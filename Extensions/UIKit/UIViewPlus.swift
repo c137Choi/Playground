@@ -122,6 +122,12 @@ extension UIView {
         }
     }
     
+    /// 必要时,更新layoutMargins
+    public func updateLayoutMarginsIfNeeded(_ margins: UIEdgeInsets) {
+        guard layoutMargins != margins else { return }
+        layoutMargins = margins
+    }
+    
     /// 是否变形: 宽高不等于固定尺寸的宽高
     public func isDeformed(axis: NSLayoutConstraint.Axis) -> Bool {
         isStretched(axis: axis) || isSqueezed(axis: axis)

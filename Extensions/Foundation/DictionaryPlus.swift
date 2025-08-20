@@ -12,6 +12,14 @@ extension Dictionary {
         self[key]
     }
     
+    mutating func removeKeys<S>(keys: S) where S: Sequence, S.Element == Key {
+        var tmp = self
+        keys.forEach { key in
+            tmp[key] = nil
+        }
+        self = tmp
+    }
+    
     /// 替换键
     /// - Parameters:
     ///   - oldKey: 旧键

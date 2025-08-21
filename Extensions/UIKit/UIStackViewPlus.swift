@@ -89,7 +89,7 @@ extension UIStackView {
     }
     
     func reArrange<T>(_ arrangedSubviews: T) where T: Sequence, T.Element: UIView {
-        clearArrangedSubviews()
+        clearEachArrangedSubviews()
         arrange(arrangedSubviews: arrangedSubviews)
     }
     
@@ -105,14 +105,25 @@ extension UIStackView {
     }
     
     /// 清除所有的arrangedSubview
-    func clearArrangedSubviews() {
-        arrangedSubviews.forEach(clearArrangedSubview)
+    func clearEachArrangedSubviews() {
+        clearArrangedSubviews(arrangedSubviews)
     }
     
-    /// 清除StackView中指定的arrangedSubview
-    func clearArrangedSubview(_ arrangedSubview: UIView) {
-        removeArrangedSubview(arrangedSubview)
-        arrangedSubview.removeFromSuperview()
+    func clearArrangedSubviews(_ arrangedSubviews: UIView...) {
+        clearArrangedSubviews(arrangedSubviews)
+    }
+    
+    func clearArrangedSubviews(_ arrangedSubviews: [UIView]) {
+        /// 修改数组
+        var tmpArrangedSubviews = arrangedSubviews
+        /// 依次出列
+        while let arrangedSubview = tmpArrangedSubviews.popLast() {
+            /// 虽然直接调用removeFromSuperview方法也可以达到效果
+            /// 但是Reactive<UIStackView>里有个属性naturalSize需要依赖这个方法调用
+            /// 所以这里还是明确调用此方法
+            removeArrangedSubview(arrangedSubview)
+            arrangedSubview.removeFromSuperview()
+        }
     }
     
     /// 设置背景色

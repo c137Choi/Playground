@@ -55,10 +55,6 @@ extension UIImage {
         return UIImage(data: pngData)
     }
     
-    var skTexture: SKTexture {
-        SKTexture(image: self)
-    }
-    
     /// SwifterSwift: Average color for this image.
     var averageColor: UIColor? {
         // https://stackoverflow.com/questions/26330924

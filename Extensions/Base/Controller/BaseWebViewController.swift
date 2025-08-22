@@ -10,9 +10,8 @@ import WebKit
 class BaseWebViewController: BaseViewController, WKUIDelegate, WKNavigationDelegate, UIScrollViewDelegate {
     
     private lazy var webview = makeWebView()
-    private lazy var progressView = UIProgressView(progressViewStyle: .bar).configure { make in
-        make.progressTintColor = .accentColor
-    }
+    
+    lazy var progressView = UIProgressView(progressViewStyle: .bar)
     
     var fixedTitle: String? {
         willSet { title = newValue }

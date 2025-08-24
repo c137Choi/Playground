@@ -9,7 +9,7 @@ import RxSwift
 
 class UIStackScrollView: UIBaseScrollView {
     
-    lazy var stackView = UIStackView(axis: Self.scrollableAxis, distribution: .fill, alignment: .fill, spacing: 0.0)
+    lazy var stackView = UIStackView(axis: Self.scrollDirection, distribution: .fill, alignment: .fill, spacing: 0.0)
     
     private var observingStackViewNaturalSize: DisposeBag?
     
@@ -44,7 +44,7 @@ extension UIStackScrollView {
         spacing: CGFloat = 0,
         @ArrayBuilder<UIView> subviewsBuilder: () -> [UIView] = { [] }) {
             let arrangedSubviews = subviewsBuilder()
-            self.init(axis: Self.scrollableAxis, distribution: distribution, alignment: alignment, spacing: spacing, arrangedSubviews: arrangedSubviews)
+            self.init(axis: Self.scrollDirection, distribution: distribution, alignment: alignment, spacing: spacing, arrangedSubviews: arrangedSubviews)
         }
     
     convenience init(
@@ -105,7 +105,7 @@ extension UIStackScrollView {
     }
     
     private func setAutoResize(_ enabled: Bool) {
-        let stretchAxis = Self.scrollableAxis
+        let stretchAxis = Self.scrollDirection
         if enabled {
             observingStackViewNaturalSize = DisposeBag {
                 stackView.rx.naturalSize.bind {
@@ -139,5 +139,8 @@ extension UIStackScrollView {
 typealias UIVStackScrollView = UIStackScrollView
 
 class UIHStackScrollView: UIStackScrollView {
-    final override class var scrollableAxis: NSLayoutConstraint.Axis { .horizontal }
+    
+    final override class var scrollDirection: NSLayoutConstraint.Axis {
+        NSLayoutConstraint.Axis.horizontal
+    }
 }

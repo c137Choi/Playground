@@ -8,8 +8,8 @@ import UIKit
 
 class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
     
-    class var scrollableAxis: NSLayoutConstraint.Axis {
-        .vertical
+    class var scrollDirection: NSLayoutConstraint.Axis {
+        NSLayoutConstraint.Axis.vertical
     }
     
     /// 是否开启: 触摸到UIControl子类的时候阻断滚动视图的滚动
@@ -29,7 +29,7 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
         }
     }
     
-    private(set) lazy var scrollableAxis = Self.scrollableAxis
+    private(set) lazy var scrollDirection = Self.scrollDirection
     
     lazy var contentView = makeContentView()
     
@@ -80,13 +80,15 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
     }
     
     override func updateConstraints() {
-        contentView.snp.remakeConstraints { content in
-            content.edges.equalToSuperview()
-            switch scrollableAxis {
+        contentView.snp.remakeConstraints { make in
+            make.edges.equalTo(contentLayoutGuide)
+        }
+        contentLayoutGuide.snp.remakeConstraints { make in
+            switch scrollDirection {
             case .horizontal:
-                content.height.equalToSuperview()
+                make.height.equalTo(frameLayoutGuide)
             case .vertical:
-                content.width.equalToSuperview()
+                make.width.equalTo(frameLayoutGuide)
             @unknown default:
                 fatalError("Unhandled condition")
             }
@@ -104,5 +106,8 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
 typealias UIBaseVerticalScrollView = UIBaseScrollView
 
 class UIBaseHorizontalScrollView: UIBaseScrollView {
-    override class var scrollableAxis: NSLayoutConstraint.Axis { .horizontal }
+    
+    override class var scrollDirection: NSLayoutConstraint.Axis {
+        NSLayoutConstraint.Axis.horizontal
+    }
 }

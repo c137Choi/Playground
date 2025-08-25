@@ -11,21 +11,6 @@ class UIStackScrollView: UIBaseScrollView {
     
     lazy var stackView = UIStackView(axis: Self.scrollDirection, distribution: .fill, alignment: .fill, spacing: 0.0)
     
-    private var observingStackViewNaturalSize: DisposeBag?
-    
-    /// 自动根据stackView内容变化调整自身尺寸
-    var autoResize = false {
-        didSet {
-            setAutoResize(autoResize)
-        }
-    }
-    
-    override func prepare() {
-        super.prepare()
-        showsVerticalScrollIndicator = false
-        showsHorizontalScrollIndicator = false
-    }
-    
     override func makeContentView() -> UIView {
         stackView
     }
@@ -102,37 +87,6 @@ extension UIStackScrollView {
     
     func addArrangedSubview(_ subview: UIView) {
         stackView.addArrangedSubview(subview)
-    }
-    
-    private func setAutoResize(_ enabled: Bool) {
-        let stretchAxis = Self.scrollDirection
-        if enabled {
-            observingStackViewNaturalSize = DisposeBag {
-                stackView.rx.naturalSize.bind {
-                    [unowned self] naturalSize in
-                    switch stretchAxis {
-                    case .horizontal:
-                        let constraint = naturalSize.width.constraint(priority: .defaultHigh)
-                        fix(widthConstraint: constraint)
-                    case .vertical:
-                        let constraint = naturalSize.height.constraint(priority: .defaultHigh)
-                        fix(heightConstraint: constraint)
-                    @unknown default:
-                        fatalError("Unhandled condition")
-                    }
-                }
-            }
-        } else {
-            observingStackViewNaturalSize = nil
-            switch stretchAxis {
-            case .horizontal:
-                fix(width: nil)
-            case .vertical:
-                fix(height: nil)
-            @unknown default:
-                fatalError("Unhandled condition")
-            }
-        }
     }
 }
 

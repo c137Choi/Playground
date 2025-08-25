@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import Combine
 
 class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
     
@@ -29,9 +30,13 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
         }
     }
     
+    /// 滚动方向
     private(set) lazy var scrollDirection = Self.scrollDirection
     
+    /// 内容视图
     lazy var contentView = makeContentView()
+    
+    private var observingContentSize: AnyCancellable?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -100,6 +105,26 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
     
     func makeContentView() -> UIView {
         UIView(color: defaultBackgroundColor)
+    }
+    
+    /// 设置自身尺寸根据ContentView自动调整
+    /// 注: 不能默认就观察ContentView的尺寸变化, 需要根据条件启用这一特性. 因为有的子类会用到ContentView的method swizzling, 这会和KVO有冲突
+    func setAutoResize(_ autoResize: Bool) {
+        if autoResize {
+            /// 移除重复项, 避免滚动时持续发送事件
+            observingContentSize = contentView.publisher(for: \.bounds, options: .live).removeDuplicates().sink {
+                [unowned self] _ in
+                invalidateIntrinsicContentSize()
+            }
+        } else {
+            observingContentSize?.cancel()
+            observingContentSize = nil
+            invalidateIntrinsicContentSize()
+        }
+    }
+    
+    override var intrinsicContentSize: CGSize {
+        observingContentSize.isValid ? contentView.bounds.size : super.intrinsicContentSize
     }
 }
 

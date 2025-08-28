@@ -65,7 +65,7 @@ class BaseTableViewController: BaseViewController, UITableViewDataSource, UITabl
     
     /// 创建空视图
     func makeEmptyView() -> UIView {
-        ZKTableViewEmptyView()
+        TableViewEmptyView()
     }
     // MARK: - Table View Delegate
     // 注意: 必须父类里有实现,代理方法才会调用

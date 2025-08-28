@@ -27,7 +27,7 @@ Footer: UICollectionReusableView>: BaseCollectionViewController, UICollectionVie
     }
     
     override func makeEmptyView() -> UIView {
-        ZKTableViewEmptyView()
+        TableViewEmptyView()
     }
     
     override func configureCollectionView(_ collectionView: UICollectionView) {

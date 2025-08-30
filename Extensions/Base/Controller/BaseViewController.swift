@@ -459,9 +459,9 @@ extension BaseViewController {
         presentor.popDialog {
             AlertDialog(
                 title: title,
-                message: localized.inquiry_OPEN_PERMISSION_SETTINGS~) {
+                message: NSLocalizedString("是否打开权限设置页面?", comment: "")) {
                     DialogAction.cancel
-                    DialogAction(title: localized.com_YES~) {
+                    DialogAction(title: NSLocalizedString("是", comment: "")) {
                         UIApplication.openSettings()
                     }
                 }
@@ -475,10 +475,10 @@ extension BaseViewController {
     func fetchPhotos(count: Int = 1, targetImageSize: CGSize? = nil, allowsEditing: Bool = false) {
         self.targetImageSize = targetImageSize
         let sheet = ActionSheetController {
-            DialogAction(title: localized.com_PHOTO_ALBUM~) {
+            DialogAction(title: NSLocalizedString("相册", comment: "")) {
                 [unowned self] in getPhotos(count: count, from: .photoLibrary, allowsEditing: allowsEditing)
             }
-            DialogAction(title: localized.com_TAKE_A_PHOTO~) {
+            DialogAction(title: NSLocalizedString("拍照", comment: "")) {
                 [unowned self] in getPhotos(count: 1, from: .camera, allowsEditing: allowsEditing)
             }
         }

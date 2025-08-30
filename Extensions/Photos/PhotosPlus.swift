@@ -18,7 +18,7 @@ extension PHAuthorizationStatus: @retroactive LocalizedError {
         case .restricted:
             return "RESTRICTED"
         case .denied:
-            return localized.alert_CAMERA_ACCESS_DENIED~
+            return NSLocalizedString("相册未授权", comment: "")
         case .authorized:
             return "AUTHORIZED"
         case .limited:

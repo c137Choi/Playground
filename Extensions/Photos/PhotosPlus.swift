@@ -9,6 +9,8 @@ import PhotosUI
 import RxSwift
 import RxCocoa
 
+extension PHAuthorizationStatus: @retroactive _BridgedNSError {}
+extension PHAuthorizationStatus: @retroactive _ObjectiveCBridgeableError {}
 extension PHAuthorizationStatus: @retroactive LocalizedError {
     
     public var errorDescription: String? {

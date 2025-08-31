@@ -26,6 +26,8 @@ extension AVAuthorizationStatus: @retroactive CustomStringConvertible {
     }
 }
 
+extension AVAuthorizationStatus: @retroactive _BridgedNSError {}
+extension AVAuthorizationStatus: @retroactive _ObjectiveCBridgeableError {}
 extension AVAuthorizationStatus: @retroactive LocalizedError {
     
     public var errorDescription: String? {

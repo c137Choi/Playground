@@ -7,7 +7,6 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import QMUIKit
 import Moya
 
 /// ViewModel宿主协议

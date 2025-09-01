@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import Moya
 
 class BaseDynamicTableViewController
 <PrimaryCell: UITableViewCell, ViewModel: PagableViewModelType>: BaseTableViewController, PagableViewModelDelegate, ViewModelHost {

@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import QMUIKit
 
 class BaseNavigationController: UINavigationController, PresentedControllerType {
     

@@ -175,24 +175,10 @@ struct ColorBlendComponent {
 }
 
 extension UIColor {
-    /// 常用颜色
-    static let OxCCCCCC = 0xCCCCCC.uiColor
-    static let OxDDDDDD = 0xDDDDDD.uiColor
-    static let OxEEEEEE = 0xEEEEEE.uiColor
-    static let Ox999999 = 0x999999.uiColor
-    static let Ox666666 = 0x666666.uiColor
-    static let Ox555555 = 0x555555.uiColor
-    static let Ox444444 = 0x444444.uiColor
-    static let Ox333333 = 0x333333.uiColor
-    static let Ox222222 = 0x222222.uiColor
     /// 冷白
     static let coldWhite = UIColor(temperature: 10_000.0)
     /// 暖白
     static let warmWhite = UIColor(temperature: 2_000.0)
-    /// 琥珀色
-    static let amber = 0xFFBF00.uiColor
-    /// 清柠色
-    static let lightLime = 0xBFFF00.uiColor
 }
 
 extension UIColor {

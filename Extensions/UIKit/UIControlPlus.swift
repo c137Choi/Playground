@@ -24,6 +24,13 @@ extension UIControl.Event {
     static let touchDownDrag: UIControl.Event = [.touchDown, .touchDrag]
 }
 
+extension UIControl.State: @retroactive Hashable {
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawValue)
+    }
+}
+
 extension UIControl.State: @retroactive CustomDebugStringConvertible {
     
     public var debugDescription: String {

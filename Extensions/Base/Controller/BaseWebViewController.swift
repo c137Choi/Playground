@@ -107,9 +107,10 @@ class BaseWebViewController: BaseViewController, WKUIDelegate, WKNavigationDeleg
 
 extension BaseWebViewController {
     
-    convenience init(url: URL?) {
+    convenience init(url: URL?, fixedTitle: String? = nil) {
         self.init()
-        load(url)
+        self.fixedTitle = fixedTitle
+        self.load(url)
     }
     
     /// Webview背景颜色

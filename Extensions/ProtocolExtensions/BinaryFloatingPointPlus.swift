@@ -41,7 +41,16 @@ extension BinaryFloatingPoint {
     }
     
     var int: Int {
-        Int(self)
+        let doubleValue = double
+        if doubleValue < Int.min.double {
+            return Int.min
+        }
+        else if doubleValue > Int.max.double {
+            return Int.max
+        }
+        else {
+            return Int(self)
+        }
     }
     
     var half: Self {

@@ -172,23 +172,23 @@ extension Data {
         binaryInteger(Int8.self).orZero
     }
     
-    var uint: UInt {
+    var uInt: UInt {
         binaryInteger(UInt.self).orZero
     }
     
-    var uint64: UInt64 {
+    var uInt64: UInt64 {
         binaryInteger(UInt64.self).orZero
     }
     
-    var uint32: UInt32 {
+    var uInt32: UInt32 {
         binaryInteger(UInt32.self).orZero
     }
     
-    var uint16: UInt16 {
+    var uInt16: UInt16 {
         binaryInteger(UInt16.self).orZero
     }
     
-    var uint8: UInt8 {
+    var uInt8: UInt8 {
         binaryInteger(UInt8.self).orZero
     }
     

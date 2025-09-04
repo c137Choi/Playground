@@ -176,6 +176,14 @@ extension UIView {
         removeConstraints(constraints)
     }
     
+    /// 移除所有子视图
+    public func removeAllSubviews() {
+        var subviews = subviews
+        while let subview = subviews.popLast() {
+            subview.removeFromSuperview()
+        }
+    }
+    
     /// Quick configuration to give the view shadows.
     public func addShadow(offset: CGSize = .zero, opacity: Float = 0.65, radius: CGFloat = 20, color: UIColor = .black) {
         layer.shadowOffset = offset
@@ -239,11 +247,6 @@ extension UIView {
     
     func relativeFrameTo(_ target: UIView) -> CGRect? {
         superview?.convert(frame, to: target)
-    }
-    
-    func tagged(_ tag: Int) -> Self {
-        self.tag = tag
-        return self
     }
     
     /// 添加背景色

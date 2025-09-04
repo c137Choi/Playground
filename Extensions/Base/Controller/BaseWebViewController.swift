@@ -9,7 +9,7 @@ import WebKit
 
 class BaseWebViewController: BaseViewController, WKUIDelegate, WKNavigationDelegate, UIScrollViewDelegate {
     
-    private lazy var webview = makeWebView()
+    lazy var webview = makeWebView()
     
     lazy var progressView = UIProgressView(progressViewStyle: .bar)
     

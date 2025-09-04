@@ -92,8 +92,8 @@ extension UITableView {
 	}
 }
 
-// MARK: - KK<UITableView>
-extension KK where Base: UITableView {
+// MARK: - Choi<UITableView>
+extension Choi where Base: UITableView {
     
     /// 刷新列表
     /// - Parameter keepLastSelections: 重新选择上次选中的行

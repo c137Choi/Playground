@@ -18,7 +18,7 @@ extension UIView {
 }
 
 // MARK: - __________ Getters __________
-extension KK where Base: UIView {
+extension Choi where Base: UIView {
     private typealias Associated = UIView.Associated
     
     /// 使用命名空间,避免和UICollectionView,UITableView的属性名冲突
@@ -294,7 +294,7 @@ extension UIView {
         background.frame = frame
         background.autoresizingMask = .autoResize
         insertSubview(background, at: 0)
-        kk.backgroundView = background
+        self.OO.backgroundView = background
     }
     
 	func snapshotScreen(scrollView: UIScrollView) -> UIImage?{

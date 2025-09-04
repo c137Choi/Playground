@@ -151,7 +151,7 @@ extension UIStackView {
                     borderColor: borderColor
                 )
             } else {
-                kk.backgroundView = nil
+                self.OO.backgroundView = nil
             }
         }
     }

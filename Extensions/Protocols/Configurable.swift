@@ -19,6 +19,11 @@ public protocol SimpleInitializer {
 extension NSObject: SimpleInitializer {}
 extension NSObject: ReferenceConfigurable {}
 
+extension Array: Configurable {}
+extension Calendar: Configurable {}
+extension Dictionary: Configurable {}
+extension DateComponents: Configurable {}
+extension Set: Configurable {}
 extension CGRect: Configurable {}
 extension CGSize: Configurable {}
 extension CGPoint: Configurable {}
@@ -26,6 +31,12 @@ extension UIEdgeInsets: Configurable {}
 
 // MARK: - 协议实现
 extension Configurable {
+    
+    /// 变形: 将自身转换成其他类型
+    /// - Parameter transformer: 转换闭包
+    func transform<T>(_ transformer: (Self) -> T) -> T {
+        transformer(self)
+    }
     
     /// 拷贝自身, 并根据KeyPath为拷贝赋值, 最后返回拷贝 | 用于值类型
     func with<T>(new keyPath: WritableKeyPath<Self, T>, _ value: T) -> Self {
@@ -43,6 +54,12 @@ extension Configurable {
 }
 
 extension ReferenceConfigurable {
+    
+    /// 变形: 将自身转换成其他类型
+    /// - Parameter transformer: 转换闭包
+    func transform<T>(_ transformer: (Self) -> T) -> T {
+        transformer(self)
+    }
     
     /// 对自身进行配置并返回自身
     @discardableResult

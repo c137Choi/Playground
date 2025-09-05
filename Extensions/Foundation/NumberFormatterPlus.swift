@@ -14,11 +14,10 @@ extension NumberFormatter {
     fileprivate static let frozenFormatter = NumberFormatter()
     
     /// 复用的Formatter | 每次使用前需要先进行重置
-    @Transient(venishAfter: .seconds(300))
-    fileprivate static var sharedFormatter = NumberFormatter.init
+    fileprivate static var instance = NumberFormatter()
 	
 	public static var shared: NumberFormatter {
-        sharedFormatter.unsafelyUnwrapped.reset()
+        instance.reset
 	}
 	
 	public static var spellout: NumberFormatter {
@@ -30,8 +29,7 @@ extension NumberFormatter {
 	}
 	
 	/// 重置NumberFormatter
-	@discardableResult
-	private func reset() -> Self {
+    fileprivate var reset: NumberFormatter {
         /// 格式化样式
         numberStyle                       = NumberFormatter.frozenFormatter.numberStyle
         /// 本地化

@@ -9,16 +9,16 @@
 import Foundation
 
 extension DateFormatter {
+    
+    /// 共享实例
+    fileprivate static let instance = DateFormatter()
+    
+    /// 使用前先重置
+    static var shared: DateFormatter {
+        instance.reset
+    }
 	
-    @Transient(venishAfter: .seconds(300))
-    fileprivate static var sharedDateFormatter = DateFormatter.init
-	
-	static var shared: DateFormatter {
-        sharedDateFormatter.unsafelyUnwrapped.reset()
-	}
-	
-	@discardableResult
-	private func reset() -> DateFormatter {
+    fileprivate var reset: DateFormatter {
 		formattingContext = .unknown
 		dateFormat = ""
 		dateStyle = .full

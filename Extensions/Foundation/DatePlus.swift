@@ -64,23 +64,23 @@ extension Date {
 	func string(dateFormat: String) -> String {
         DateFormatter.shared
             .with(new: \.dateFormat, dateFormat)
-            .transform(transformer)
+            .map(formattedString)
 	}
 	
 	var beijingTimeString: String {
 		DateFormatter.shared
             .with(new: \.dateFormat, "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
             .with(new: \.timeZone, .beijing)
-			.transform(transformer)
+			.map(formattedString)
 	}
 	
 	var debugTimeString: String {
 		DateFormatter.shared
             .with(new: \.dateFormat, "HH:mm:ss.SSS")
-			.transform(transformer)
+			.map(formattedString)
 	}
 	
-	private func transformer(_ formatter: DateFormatter) -> String {
+	private func formattedString(_ formatter: DateFormatter) -> String {
 		formatter.string(from: self)
 	}
 	
@@ -95,7 +95,7 @@ extension Date {
 	///   - rhs: 结束时间
 	/// - Returns: DateComponents
 	static func >> (lhs: Date, rhs: Date) -> DateComponents {
-		DefaultCalendarComponents.transform { components -> DateComponents in
+		DefaultCalendarComponents.map { components -> DateComponents in
 			Calendar.gregorian.dateComponents(components, from: lhs, to: rhs)
 		}
 	}

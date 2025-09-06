@@ -28,7 +28,7 @@ extension BinaryInteger {
 //            make.positivePrefix = "+"
 //            make.negativePrefix = "-"
 //            make.zeroSymbol = "0"
-//        }.transform { formatter in
+//        }.map { formatter in
 //            formatter.string(for: self).orEmpty
 //        }
     }

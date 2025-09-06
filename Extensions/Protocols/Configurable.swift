@@ -9,16 +9,74 @@ import UIKit
 
 public protocol Configurable {}
 
-public protocol ReferenceConfigurable: AnyObject {}
-
 public protocol SimpleInitializer {
     init()
 }
 
-// MARK: - Conforming Types
-extension NSObject: SimpleInitializer {}
-extension NSObject: ReferenceConfigurable {}
+extension Configurable {
+    
+    /// 转换
+    /// - Parameter transform: 转换闭包
+    /// - Returns: 转换后的类型
+    func map<T>(_ transform: (Self) throws -> T) rethrows -> T {
+        try transform(self)
+    }
+    
+    /// 通过KeyPath更新属性:
+    /// - Parameters:
+    ///   - keyPath: KeyPath
+    ///   - value: 新值
+    /// - Returns: 值类型返回拷贝对象. 引用类型返回其自身
+    func with<T>(new keyPath: WritableKeyPath<Self, T>, _ value: T) -> Self {
+        with { configurable in
+            configurable[keyPath: keyPath] = value
+        }
+    }
+    
+    /// 配置
+    /// - Parameter configuration: 配置闭包
+    /// - Returns: 值类型返回拷贝对象. 引用类型返回自身
+    func with(configuration: (inout Self) throws -> Void) rethrows -> Self {
+        var clone = self
+        try configuration(&clone)
+        return clone
+    }
+    
+    /// 配置
+    /// - Parameter configuration: 配置闭包
+    /// - Returns: 返回自身
+    @discardableResult
+    mutating func configure(_ configuration: (inout Self) throws -> Void) rethrows -> Self {
+        try configuration(&self)
+        return self
+    }
+}
 
+/// 为引用类型另外定义扩展方法, 方便对let对象直接调用方法
+extension Configurable where Self: AnyObject {
+    
+    /// 配置
+    /// - Parameter configuration: 配置闭包
+    /// - Returns: 返回自身
+    @discardableResult
+    func configure(_ configuration: (Self) throws -> Void) rethrows -> Self {
+        try configuration(self)
+        return self
+    }
+}
+
+extension SimpleInitializer where Self: Configurable & AnyObject {
+    
+    /// 创建并初始化实例
+    /// - Parameter configuration: 初始化配置
+    /// - Returns: 返回实例
+    static func make(_ configuration: (Self) -> Void) -> Self {
+        self.init().configure(configuration)
+    }
+}
+
+extension NSObject: SimpleInitializer {}
+extension NSObject: Configurable {}
 extension Array: Configurable {}
 extension Calendar: Configurable {}
 extension Dictionary: Configurable {}
@@ -28,57 +86,3 @@ extension CGRect: Configurable {}
 extension CGSize: Configurable {}
 extension CGPoint: Configurable {}
 extension UIEdgeInsets: Configurable {}
-
-// MARK: - 协议实现
-extension Configurable {
-    
-    /// 变形: 将自身转换成其他类型
-    /// - Parameter transformer: 转换闭包
-    func transform<T>(_ transformer: (Self) -> T) -> T {
-        transformer(self)
-    }
-    
-    /// 拷贝自身, 并根据KeyPath为拷贝赋值, 最后返回拷贝 | 用于值类型
-    func with<T>(new keyPath: WritableKeyPath<Self, T>, _ value: T) -> Self {
-        with { make in
-            make[keyPath: keyPath] = value
-        }
-    }
-    
-    /// 拷贝自身, 并对自身的拷贝进行配置, 最后返回拷贝 | 用于值类型
-    func with(configuration: (inout Self) throws -> Void) rethrows -> Self {
-        var clone = self
-        try configuration(&clone)
-        return clone
-    }
-}
-
-extension ReferenceConfigurable {
-    
-    /// 变形: 将自身转换成其他类型
-    /// - Parameter transformer: 转换闭包
-    func transform<T>(_ transformer: (Self) -> T) -> T {
-        transformer(self)
-    }
-    
-    /// 对自身进行配置并返回自身
-    @discardableResult
-    func configure(_ configuration: (Self) throws -> Void) rethrows -> Self {
-        try configuration(self)
-        return self
-    }
-    
-    /// 通过ReferenceWritableKeyPath更新属性并返回自身
-    @discardableResult
-    func with<T>(new keyPath: ReferenceWritableKeyPath<Self, T>, _ value: T) -> Self {
-        self[keyPath: keyPath] = value
-        return self
-    }
-}
-
-extension SimpleInitializer where Self: ReferenceConfigurable {
-    
-    static func make(_ configuration: (Self) -> Void) -> Self {
-        self.init().configure(configuration)
-    }
-}

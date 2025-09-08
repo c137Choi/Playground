@@ -10,6 +10,30 @@ import Foundation
 
 extension NSObject {
 	
+    enum Associated {
+        @UniqueAddress static var isPrepared
+    }
+    
+    /// 是否准备好标记: 默认为true
+    var isPrepared: Bool {
+        get {
+            synchronized(lock: self) {
+                guard let prepared = associated(Bool.self, self, Associated.isPrepared) else {
+                    /// 默认初始值
+                    let initialValue = true
+                    setAssociatedObject(self, Associated.isPrepared, initialValue, .OBJC_ASSOCIATION_ASSIGN)
+                    return initialValue
+                }
+                return prepared
+            }
+        }
+        set(prepared) {
+            synchronized(lock: self) {
+                setAssociatedObject(self, Associated.isPrepared, prepared, .OBJC_ASSOCIATION_ASSIGN)
+            }
+        }
+    }
+    
 	/// 转换成指针
 	public var rawPointer: UnsafeMutableRawPointer {
 		Unmanaged.passUnretained(self).toOpaque()

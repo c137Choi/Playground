@@ -14,41 +14,9 @@ enum Rx {
     @UniqueAddress static var cancellableBag
     @UniqueAddress static var activityTrackingDisposeBag
     @UniqueAddress static var anyUpdateRelay
-    @UniqueAddress static var isPrepared
-}
-
-extension NSObject {
-    
-    /// 标记(是否准备好) | 单独为NSObject写一个计算属性
-    /// 避免某些情况下使用keyPath特性时,由于计算属性太深(?)导致的编译错误
-    /// 如: XX.filter(\.0.rx.isPrepared)可能会编译不过
-    var isPrepared: Bool {
-        get { rx.isPrepared }
-        set { rx.isPrepared = newValue }
-    }
 }
 
 public extension Reactive where Base: AnyObject {
-    
-    /// 标记(是否准备好) | 默认初始值为false
-    var isPrepared: Bool {
-        get {
-            synchronized(lock: base) {
-                guard let existingValue = associated(Bool.self, base, Rx.isPrepared) else {
-                    let initialValue = false
-                    setAssociatedObject(base, Rx.isPrepared, initialValue, .OBJC_ASSOCIATION_ASSIGN)
-                    return initialValue
-                }
-                return existingValue
-            }
-        }
-        
-        nonmutating set(newValue) {
-            synchronized(lock: base) {
-                setAssociatedObject(base, Rx.isPrepared, newValue, .OBJC_ASSOCIATION_ASSIGN)
-            }
-        }
-    }
     
     /// 更新数据流(跳过初始值) | 内部使用了.take(until: deallocated)
     var anyNewUpdate: Observable<Any> {

@@ -15,7 +15,7 @@ extension CGPoint {
     }
     
     /// 计算和另外一个点之间的距离
-    func distance(_ anotherPoint: CGPoint) -> CGFloat {
+    func distance(to anotherPoint: CGPoint) -> CGFloat {
         /// hypot: hypotenuse(直角三角形的斜边)
         hypot(x - anotherPoint.x, y - anotherPoint.y)
     }

@@ -11,14 +11,10 @@ protocol SelfReflectable {
     var itself: Self { get }
 }
 
-extension Bool: SelfReflectable {
-    var itself: Bool { self }
+extension SelfReflectable {
+    var itself: Self { self }
 }
 
-extension Optional: SelfReflectable {
-    var itself: Optional<Wrapped> { self }
-}
-
-extension Array: SelfReflectable {
-    var itself: Array<Element> { self }
-}
+extension Bool: SelfReflectable {}
+extension Optional: SelfReflectable {}
+extension Array: SelfReflectable {}

@@ -10,33 +10,6 @@ import UIKit
 import SwiftUI
 
 extension UIView {
-	
-	convenience init(color: UIColor?) {
-		self.init(frame: .zero)
-		backgroundColor = color
-	}
-}
-
-// MARK: - __________ Getters __________
-extension Choi where Base: UIView {
-    private typealias Associated = UIView.Associated
-    
-    /// 使用命名空间,避免和UICollectionView,UITableView的属性名冲突
-    var backgroundView: UIView? {
-        get {
-            associated(UIView.self, base, UIView.Associated.backgroundView)
-        }
-        nonmutating set {
-            /// 移除旧背景(如果存在)
-            if let oldBackground = backgroundView {
-                oldBackground.removeFromSuperview()
-            }
-            /// 保存新背景
-            setAssociatedObject(base, UIView.Associated.backgroundView, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-}
-extension UIView {
     /// 背景View
     final class _BackgroundView: UIView {}
     /// 阴影View
@@ -48,6 +21,16 @@ extension UIView {
         @UniqueAddress static var backgroundView
         @UniqueAddress static var mournFilterView
         @UniqueAddress static var targets
+    }
+}
+
+extension UIView {
+    
+    /// 初始化
+    /// - Parameter color: 初始背景色
+    convenience init(color: UIColor?) {
+        self.init(frame: .zero)
+        backgroundColor = color
     }
     
     var isVisibleAndPrepared: Bool {
@@ -120,6 +103,83 @@ extension UIView {
         set {
             setAssociatedObject(self, Associated.mournFilterView, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
+    }
+    
+    /// 注1: 必须要有父视图或window非空的情况下才可以截图成功
+    /// 注2: width或height有一个为空(或近似为0, 如:0.1), drawHierarchy就会crash
+    /// https://stackoverflow.com/questions/21722508/ios-drawviewhierarchyinrect-crash-exc-breakpoint-unknown
+    var snapshot: UIImage? {
+        guard window.isValid else {
+            assertionFailure("对不可见的视图截图会导致崩溃")
+            return nil
+        }
+        switch self {
+        case let unwrapped where unwrapped is UITableView:
+            let tableView = unwrapped as! UITableView
+            return getTableViewScreenshot(tableView: tableView, whereView: superview!)
+        default:
+            /// 屏幕scale
+            let scale = UIScreen.main.scale
+            /// 是否不透明
+            let isOpaque = false
+            /// 渲染图片
+            if #available(iOS 10.0, *) {
+                let format = UIGraphicsImageRendererFormat()
+                format.scale = scale
+                format.opaque = isOpaque
+                /// 创建绘图渲染器
+                let renderer = UIGraphicsImageRenderer(size: bounds.size, format: format)
+                /// 使用PNG图片格式
+                let pngData = renderer.pngData { context in
+                    drawHierarchy(in: bounds, afterScreenUpdates: true)
+                }
+                /// 或者使用JPEG图片
+                let _ = renderer.jpegData(withCompressionQuality: 1.0) { context in
+                    
+                }
+                return UIImage(data: pngData)
+            } else {
+                UIGraphicsBeginImageContextWithOptions(bounds.size, isOpaque, scale)
+                defer {
+                    UIGraphicsEndImageContext()
+                }
+                guard drawHierarchy(in: bounds, afterScreenUpdates: true) else { return nil }
+                return UIGraphicsGetImageFromCurrentImageContext()
+            }
+        }
+    }
+    
+    var shadowView: _ShadowView {
+        guard let shadow = associated(_ShadowView.self, self, Associated.shadowView) else {
+            let shadow = _ShadowView(frame: bounds)
+            shadow.isUserInteractionEnabled = false
+            shadow.backgroundColor = .clear
+            shadow.layer.masksToBounds = false
+            shadow.layer.shouldRasterize = true
+            shadow.layer.rasterizationScale = UIScreen.main.scale
+            shadow.autoresizingMask = [
+                .flexibleWidth,
+                .flexibleHeight
+            ]
+            setAssociatedObject(self, Associated.shadowView, shadow, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return shadow
+        }
+        return shadow
+    }
+    
+    /// 用于调整父视图为ScrollView子类时, 其子视图被自身遮挡的问题
+    /// 通常赋值给控制器的.additionalSafeAreaInsets属性, 让ScrollView自动适配边距
+    /// 注: 这时自身底部的约束就不好设置成相对父视图的safeAreaLayoutGuide了, 直接相对于父视图本身能达到效果.
+    /// 可能不是最优解,待后续优化
+    @available(iOS 11.0, *)
+    var additionalSafeAreaInsetsFromSuperView: UIEdgeInsets {
+        .bottom(bottomSafeAreaPadding + frame.height)
+    }
+    
+    @available(iOS 11.0, *)
+    var bottomSafeAreaPadding: Double {
+        guard let superview else { return 0 }
+        return superview.bounds.height - frame.maxY - superview.safeAreaInsets.bottom
     }
     
     /// 必要时,更新layoutMargins
@@ -376,85 +436,87 @@ extension UIView {
         return UIImage(cgImage: scaledCGImage)
     }
     
-    /// 注1: 必须要有父视图或window非空的情况下才可以截图成功
-    /// 注2: width或height有一个为空(或近似为0, 如:0.1), drawHierarchy就会crash
-    /// https://stackoverflow.com/questions/21722508/ios-drawviewhierarchyinrect-crash-exc-breakpoint-unknown
-	var snapshot: UIImage? {
-        guard window.isValid else {
-            assertionFailure("对不可见的视图截图会导致崩溃")
-            return nil
-        }
-        switch self {
-        case let unwrapped where unwrapped is UITableView:
-            let tableView = unwrapped as! UITableView
-            return getTableViewScreenshot(tableView: tableView, whereView: superview!)
-        default:
-            /// 屏幕scale
-            let scale = UIScreen.main.scale
-            /// 是否不透明
-            let isOpaque = false
-            /// 渲染图片
-            if #available(iOS 10.0, *) {
-                let format = UIGraphicsImageRendererFormat()
-                format.scale = scale
-                format.opaque = isOpaque
-                /// 创建绘图渲染器
-                let renderer = UIGraphicsImageRenderer(size: bounds.size, format: format)
-                /// 使用PNG图片格式
-                let pngData = renderer.pngData { context in
-                    drawHierarchy(in: bounds, afterScreenUpdates: true)
-                }
-                /// 或者使用JPEG图片
-                let _ = renderer.jpegData(withCompressionQuality: 1.0) { context in
-                    
-                }
-                return UIImage(data: pngData)
+    
+    
+    
+    /// 为视图添加圆角和阴影 | 只在frame确定的时候才能调用此方法
+    /// - Parameters:
+    ///   - corners: 圆角效果施加的角
+    ///   - cornerRadius: 圆角大小
+    ///   - shadowColor: 阴影颜色: 不为空才添加阴影
+    ///   - shadowOffsetX: 阴影偏移X
+    ///   - shadowOffsetY: 阴影偏移Y
+    ///   - shadowRadius: 阴影大小
+    ///   - shadowOpacity: 阴影透明度
+    ///   - shadowExpansion: 阴影扩大值:大于零扩大; 小于零收缩; 0:默认值
+    func roundCorners(corners: UIRectCorner = .allCorners,
+                      cornerRadius: CGFloat = 0.0,
+                      withShadowColor shadowColor: UIColor? = nil,
+                      shadowOffset: (x: Double, y: Double) = (0, 0),
+                      shadowRadius: CGFloat = 0,
+                      shadowOpacity: Float = 0,
+                      shadowExpansion: CGFloat = 0) {
+        // 圆角
+        var bezier = UIBezierPath(
+            roundedRect: bounds,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width:cornerRadius, height:cornerRadius)
+        )
+        if cornerRadius > 0 {
+            // 未设置阴影的时候尝试使用iOS 11的API设置圆角
+            if #available(iOS 11.0, *), shadowColor == nil {
+                // 这个方法在UITableViewCell外部调用时 Section的最后一个Cell不起作用,不清楚为啥
+                layer.masksToBounds = true
+                layer.cornerRadius = cornerRadius
+                layer.maskedCorners = corners.caCornerMask
             } else {
-                UIGraphicsBeginImageContextWithOptions(bounds.size, isOpaque, scale)
-                defer {
-                    UIGraphicsEndImageContext()
-                }
-                guard drawHierarchy(in: bounds, afterScreenUpdates: true) else { return nil }
-                return UIGraphicsGetImageFromCurrentImageContext()
+                let shape = CAShapeLayer()
+                shape.path = bezier.cgPath
+                layer.mask = shape
+            }
+        } else {
+            if #available(iOS 11.0, *), shadowColor == nil {
+                // 这个方法在UITableViewCell外部调用时 Section的最后一个Cell不起作用,不清楚为啥
+                layer.masksToBounds = false
+                layer.cornerRadius = cornerRadius
+                layer.maskedCorners = corners.caCornerMask
+            } else {
+                layer.mask = nil
             }
         }
-	}
-    
-    /// 用于调整父视图为ScrollView子类时, 其子视图被自身遮挡的问题
-    /// 通常赋值给控制器的.additionalSafeAreaInsets属性, 让ScrollView自动适配边距
-    /// 注: 这时自身底部的约束就不好设置成相对父视图的safeAreaLayoutGuide了, 直接相对于父视图本身能达到效果.
-    /// 可能不是最优解,待后续优化
-    @available(iOS 11.0, *)
-    var additionalSafeAreaInsetsFromSuperView: UIEdgeInsets {
-        .bottom(bottomSafeAreaPadding + frame.height)
-    }
-    
-    @available(iOS 11.0, *)
-    var bottomSafeAreaPadding: Double {
-        guard let superview else { return 0 }
-        return superview.bounds.height - frame.maxY - superview.safeAreaInsets.bottom
+        
+        // 阴影
+        if let shadowColor = shadowColor {
+            // 调整阴影View的frame
+            shadowView.frame = frame
+            // 设置阴影属性
+            shadowView.layer.shadowColor = shadowColor.cgColor
+            shadowView.layer.shadowOffset = CGSize(width: shadowOffset.x, height: shadowOffset.y)
+            shadowView.layer.shadowRadius = shadowRadius
+            shadowView.layer.shadowOpacity = shadowOpacity
+            // 设置阴影形状
+            if shadowExpansion != 0 {
+                let insets = UIEdgeInsets(
+                    top: -shadowExpansion,
+                    left: -shadowExpansion,
+                    bottom: -shadowExpansion,
+                    right: -shadowExpansion
+                )
+                bezier = UIBezierPath(
+                    roundedRect: bounds.inset(by: insets),
+                    byRoundingCorners: corners,
+                    cornerRadii: CGSize(width:cornerRadius, height:cornerRadius)
+                )
+            }
+            shadowView.layer.shadowPath = bezier.cgPath
+            if let superView = superview {
+                superView.insertSubview(shadowView, belowSubview: self)
+            }
+        }
     }
 }
 
-// MARK: - __________ Functions __________
-extension Array where Element: UIView {
-	
-	/// 将UIView的数组包装的StackView里
-	/// - Returns: The stack view wrapping the given view array as arranged subviews.
-	func embedInStackView(
-		axis: NSLayoutConstraint.Axis = .vertical,
-		distribution: UIStackView.Distribution = .fill,
-		alignment: UIStackView.Alignment = .leading,
-		spacing: CGFloat = 0)
-	-> UIStackView {
-		let stackView = UIStackView(arrangedSubviews: self)
-		stackView.axis = axis
-		stackView.distribution = distribution
-		stackView.alignment = alignment
-		stackView.spacing = spacing
-		return stackView
-	}
-}
+// MARK: - UIView + NSLayoutConstraint
 extension UIView {
     
     /// 固定比例(宽/高)
@@ -647,48 +709,48 @@ extension UIView {
         }
         return self
     }
-	
-	/// 添加子视图(可变参数)
-	/// - Parameter subviews: 子视图序列
-	func addSubviews(_ subviews: UIView...) {
-		addSubviews(subviews)
-	}
-	
-	/// 添加子视图(通过@ArrayBuilder创建)
-	/// - Parameter builder: 子视图构建方法
-	func addSubviews(@ArrayBuilder<UIView> builder: () -> [UIView]) {
-		let subviews = builder()
-		addSubviews(subviews)
-	}
-	
-	/// 添加子视图集合
-	/// - Parameter subviews: UIView集合
-	func addSubviews<T>(_ subviews: T) where T: Sequence, T.Element: UIView {
-		subviews.forEach { subview in
-			addSubview(subview)
-		}
-	}
-	
-	/// 自适应Size | 内部子控件Autolayout
-	/// 注意: 在设置UITableView.headerView属性的时候,内部控件的约束优先级最好都配置成非.required
+    
+    /// 添加子视图(可变参数)
+    /// - Parameter subviews: 子视图序列
+    func addSubviews(_ subviews: UIView...) {
+        addSubviews(subviews)
+    }
+    
+    /// 添加子视图(通过@ArrayBuilder创建)
+    /// - Parameter builder: 子视图构建方法
+    func addSubviews(@ArrayBuilder<UIView> builder: () -> [UIView]) {
+        let subviews = builder()
+        addSubviews(subviews)
+    }
+    
+    /// 添加子视图集合
+    /// - Parameter subviews: UIView集合
+    func addSubviews<T>(_ subviews: T) where T: Sequence, T.Element: UIView {
+        subviews.forEach { subview in
+            addSubview(subview)
+        }
+    }
+    
+    /// 自适应Size | 内部子控件Autolayout
+    /// 注意: 在设置UITableView.headerView属性的时候,内部控件的约束优先级最好都配置成非.required
     /// 否则可能报Unable to simultaneously satisfy constraints.警告
     /// 如果headerView继承自普通的UIView,调用此方法之前要保证提前设置好宽度约束等于TableView的宽度,否则会得到错误的布局
     /// 或者调用layoutIfNeeded然后重新赋值UITableView.headerView
     ///
     /// 故,最好使用UITableViewHeaderFooterView的子类来设置UITableView的headerView属性,因为其自身就带有宽度等于父视图的约束
     /// 可以省去再次配置宽度约束的步骤
-	func fitSizeIfNeeded() {
-		let systemLayoutSize = systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-		let height = systemLayoutSize.height
-		let width = systemLayoutSize.width
-		// Comparison necessary to avoid infinite loop
-		if height != bounds.height {
-			bounds.size.height = height
-		}
-		if width != bounds.width {
-			bounds.size.width = width
-		}
-	}
+    func fitSizeIfNeeded() {
+        let systemLayoutSize = systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        let height = systemLayoutSize.height
+        let width = systemLayoutSize.width
+        // Comparison necessary to avoid infinite loop
+        if height != bounds.height {
+            bounds.size.height = height
+        }
+        if width != bounds.width {
+            bounds.size.width = width
+        }
+    }
     
     func superview(where predicate: (UIView) -> Bool) -> UIView? {
         superview(UIView.self, where: predicate)
@@ -711,28 +773,28 @@ extension UIView {
         }
         return targetSuperview
     }
-	
-	/// 获取父视图
-	/// - Parameter type: 父视图类型
-	/// - Returns: 有效的父视图
-	func superview<SuperView: UIView>(_ type: SuperView.Type) -> SuperView? {
+    
+    /// 获取父视图
+    /// - Parameter type: 父视图类型
+    /// - Returns: 有效的父视图
+    func superview<SuperView: UIView>(_ type: SuperView.Type) -> SuperView? {
         /// 确保有父视图
-		guard let validSuperview = superview else { return nil }
+        guard let validSuperview = superview else { return nil }
         /// 转换成指定类型的父视图
-		guard let matchedSuperview = validSuperview as? SuperView else {
+        guard let matchedSuperview = validSuperview as? SuperView else {
             /// 如果转换失败则查找父视图的parentSuperView
-			return validSuperview.superview(SuperView.self)
-		}
-		return matchedSuperview
-	}
-	
-	/// 硬化 | 不可拉伸 | 不可压缩
-	/// - Parameters:
-	///   - axis: 设置轴线 | 默认为空(两轴同时硬化)
-	///   - intensity: 硬化强度
-	/// - Returns: 控件本身
-	/// - Tips: 谨慎使用这个方法: 调用这四个方法之后, 会导致UIButtonPlus分类中重写的intrinsicContentSize返回的size失效
-	@discardableResult
+            return validSuperview.superview(SuperView.self)
+        }
+        return matchedSuperview
+    }
+    
+    /// 硬化 | 不可拉伸 | 不可压缩
+    /// - Parameters:
+    ///   - axis: 设置轴线 | 默认为空(两轴同时硬化)
+    ///   - intensity: 硬化强度
+    /// - Returns: 控件本身
+    /// - Tips: 谨慎使用这个方法: 调用这四个方法之后, 会导致UIButtonPlus分类中重写的intrinsicContentSize返回的size失效
+    @discardableResult
     func harden(axis: NSLayoutConstraint.Axis? = nil, intensity: UILayoutPriority = .required) -> Self {
         if let axis {
             switch axis {
@@ -748,8 +810,8 @@ extension UIView {
             hardenHorizontal(intensity)
         }
         
-		return self
-	}
+        return self
+    }
     
     
     /// 垂直方向硬化
@@ -773,104 +835,55 @@ extension UIView {
         setContentHuggingPriority(intensity, for: .horizontal)
         return self
     }
+}
+
+// MARK: - Choi<UIView>
+extension Choi where Base: UIView {
+    
+    /// 使用命名空间, 避免和UICollectionView, UITableView的属性名冲突
+    var backgroundView: UIView? {
+        get {
+            associated(UIView.self, base, UIView.Associated.backgroundView)
+        }
+        nonmutating set {
+            /// 移除旧背景(如果存在)
+            backgroundView?.removeFromSuperview()
+            /// 保存新背景
+            setAssociatedObject(base, UIView.Associated.backgroundView, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+}
+
+// MARK: - [UIView]
+extension Array where Element: UIView {
 	
-	// MARK: - __________ 圆角 + 阴影 __________
-	var shadowView: _ShadowView {
-        guard let shadow = associated(_ShadowView.self, self, Associated.shadowView) else {
-			let shadow = _ShadowView(frame: bounds)
-			shadow.isUserInteractionEnabled = false
-			shadow.backgroundColor = .clear
-			shadow.layer.masksToBounds = false
-			shadow.layer.shouldRasterize = true
-			shadow.layer.rasterizationScale = UIScreen.main.scale
-			shadow.autoresizingMask = [
-				.flexibleWidth,
-				.flexibleHeight
-			]
-            setAssociatedObject(self, Associated.shadowView, shadow, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-			return shadow
-		}
-		return shadow
-	}
-	
-	
-	/// 为视图添加圆角和阴影 | 只在frame确定的时候才能调用此方法
-	/// - Parameters:
-	///   - corners: 圆角效果施加的角
-	///   - cornerRadius: 圆角大小
-	///   - shadowColor: 阴影颜色: 不为空才添加阴影
-	///   - shadowOffsetX: 阴影偏移X
-	///   - shadowOffsetY: 阴影偏移Y
-	///   - shadowRadius: 阴影大小
-	///   - shadowOpacity: 阴影透明度
-	///   - shadowExpansion: 阴影扩大值:大于零扩大; 小于零收缩; 0:默认值
-	func roundCorners(corners: UIRectCorner = .allCorners,
-					  cornerRadius: CGFloat = 0.0,
-					  withShadowColor shadowColor: UIColor? = nil,
-					  shadowOffset: (x: Double, y: Double) = (0, 0),
-					  shadowRadius: CGFloat = 0,
-					  shadowOpacity: Float = 0,
-					  shadowExpansion: CGFloat = 0) {
-		// 圆角
-		var bezier = UIBezierPath(
-			roundedRect: bounds,
-			byRoundingCorners: corners,
-			cornerRadii: CGSize(width:cornerRadius, height:cornerRadius)
-		)
-		if cornerRadius > 0 {
-			// 未设置阴影的时候尝试使用iOS 11的API设置圆角
-			if #available(iOS 11.0, *), shadowColor == nil {
-				// 这个方法在UITableViewCell外部调用时 Section的最后一个Cell不起作用,不清楚为啥
-				layer.masksToBounds = true
-				layer.cornerRadius = cornerRadius
-				layer.maskedCorners = corners.caCornerMask
-			} else {
-				let shape = CAShapeLayer()
-				shape.path = bezier.cgPath
-				layer.mask = shape
-			}
-		} else {
-            if #available(iOS 11.0, *), shadowColor == nil {
-                // 这个方法在UITableViewCell外部调用时 Section的最后一个Cell不起作用,不清楚为啥
-                layer.masksToBounds = false
-                layer.cornerRadius = cornerRadius
-                layer.maskedCorners = corners.caCornerMask
-            } else {
-                layer.mask = nil
-            }
-		}
-		
-		// 阴影
-		if let shadowColor = shadowColor {
-			// 调整阴影View的frame
-			shadowView.frame = frame
-			// 设置阴影属性
-			shadowView.layer.shadowColor = shadowColor.cgColor
-			shadowView.layer.shadowOffset = CGSize(width: shadowOffset.x, height: shadowOffset.y)
-			shadowView.layer.shadowRadius = shadowRadius
-			shadowView.layer.shadowOpacity = shadowOpacity
-			// 设置阴影形状
-			if shadowExpansion != 0 {
-				let insets = UIEdgeInsets(
-					top: -shadowExpansion,
-					left: -shadowExpansion,
-					bottom: -shadowExpansion,
-					right: -shadowExpansion
-				)
-				bezier = UIBezierPath(
-					roundedRect: bounds.inset(by: insets),
-					byRoundingCorners: corners,
-					cornerRadii: CGSize(width:cornerRadius, height:cornerRadius)
-				)
-			}
-			shadowView.layer.shadowPath = bezier.cgPath
-			if let superView = superview {
-				superView.insertSubview(shadowView, belowSubview: self)
-			}
-		}
+	/// 将UIView的数组包装的StackView里
+	/// - Returns: The stack view wrapping the given view array as arranged subviews.
+	func embedInStackView(
+		axis: NSLayoutConstraint.Axis = .vertical,
+		distribution: UIStackView.Distribution = .fill,
+		alignment: UIStackView.Alignment = .leading,
+		spacing: CGFloat = 0)
+	-> UIStackView {
+		let stackView = UIStackView(arrangedSubviews: self)
+		stackView.axis = axis
+		stackView.distribution = distribution
+		stackView.alignment = alignment
+		stackView.spacing = spacing
+		return stackView
 	}
 }
-// MARK: - __________ SwiftUI __________
+
+// MARK: - UIView.AutoresizingMask
+extension UIView.AutoresizingMask {
+    
+    /// 自动根据初始的frame调整尺寸
+    static var autoResize: UIView.AutoresizingMask {
+        [.flexibleWidth, .flexibleHeight]
+    }
+}
+
+// MARK: - SwiftUI
 #if DEBUG
 @available(iOS 13.0, *)
 extension UIView {
@@ -902,12 +915,3 @@ extension UIView {
 	}
 }
 #endif
-
-// MARK: - 其他
-extension UIView.AutoresizingMask {
-    
-    /// 自动根据初始的frame调整尺寸
-    static var autoResize: UIView.AutoresizingMask {
-        [.flexibleWidth, .flexibleHeight]
-    }
-}

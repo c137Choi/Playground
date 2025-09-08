@@ -385,12 +385,3 @@ struct ValueRequirement: OptionSet {
         timer.invalidate()
     }
 }
-
-/// https://github.com/atrick/swift-evolution/blob/diagnose-implicit-raw-bitwise/proposals/nnnn-implicit-raw-bitwise-conversion.md#associated-object-string-keys
-@propertyWrapper
-public class UniqueAddress {
-    public init() {}
-    public var wrappedValue: UnsafeRawPointer {
-        UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
-    }
-}

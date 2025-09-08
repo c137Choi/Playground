@@ -23,7 +23,7 @@ class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
         }
     }
     
-    var defaultBackgroundColor: UIColor? = baseViewBackgroundColor {
+    var defaultBackgroundColor: UIColor? = .baseBackground {
         willSet {
             backgroundColor = newValue
             contentView.backgroundColor = newValue

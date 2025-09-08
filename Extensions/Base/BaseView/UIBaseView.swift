@@ -131,7 +131,7 @@ class PagableViewModel<Target: TargetType, Model: Codable>: BasePagableViewModel
 
 class UIBaseView: UIView {
     
-    var defaultBackgroundColor: UIColor? { baseViewBackgroundColor }
+    var defaultBackgroundColor: UIColor? { .baseBackground }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

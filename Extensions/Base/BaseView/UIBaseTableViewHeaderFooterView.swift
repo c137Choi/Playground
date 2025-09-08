@@ -13,7 +13,7 @@ class UIBaseTableViewHeaderFooterView: UITableViewHeaderFooterView, StandardLayo
     
     /// 背景色
     var defaultBackgroundColor: UIColor? {
-        baseViewBackgroundColor
+        .baseBackground
     }
     
     /// 圆角

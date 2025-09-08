@@ -76,7 +76,7 @@ class BaseCollectionViewController: BaseViewController, UICollectionViewDelegate
         collectionView.autoresizingMask = .autoResize
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = baseViewBackgroundColor
+        collectionView.backgroundColor = .baseBackground
         if #available(iOS 13.0, *) {
             if let compositionalLayout {
                 collectionView.setCollectionViewLayout(compositionalLayout, animated: false)

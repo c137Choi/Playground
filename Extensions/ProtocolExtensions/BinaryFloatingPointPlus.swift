@@ -149,14 +149,14 @@ extension BinaryFloatingPoint {
     var signedR2: String {
         signedDecimalFormatter.configure { make in
             make.roundingMode = .halfUp
-        }.map { fmt -> String in
+        }.transform { fmt -> String in
             fmt.string(from: nsNumber) ?? ""
         }
     }
     
     /// 带符号 | 原样输出
     var signedF: String {
-        signedDecimalFormatter.map { fmt -> String in
+        signedDecimalFormatter.transform { fmt -> String in
             fmt.string(from: nsNumber) ?? ""
         }
     }
@@ -165,14 +165,14 @@ extension BinaryFloatingPoint {
     var signedF2: String {
         signedDecimalFormatter.configure { make in
             make.minimumFractionDigits = 2
-        }.map { fmt -> String in
+        }.transform { fmt -> String in
             fmt.string(from: nsNumber) ?? ""
         }
     }
     
     /// 四舍五入 | 原样输出
     var r2: String {
-        roundDecimalFormatter.map { fmt -> String in
+        roundDecimalFormatter.transform { fmt -> String in
             fmt.string(from: nsNumber) ?? ""
         }
     }
@@ -182,7 +182,7 @@ extension BinaryFloatingPoint {
         decimalFormatter.configure { make in
             make.minimumFractionDigits = 0
             make.maximumFractionDigits = .max
-        }.map { fmt -> String in
+        }.transform { fmt -> String in
             fmt.string(from: nsNumber) ?? ""
         }
     }
@@ -219,7 +219,7 @@ extension BinaryFloatingPoint {
             fmt.roundingMode = .halfEven
             fmt.minimumFractionDigits = fractions
             fmt.maximumFractionDigits = fractions
-        }.map { fmt in
+        }.transform { fmt in
             fmt.string(for: self)
         }
     }
@@ -228,7 +228,7 @@ extension BinaryFloatingPoint {
         signedDecimalFormatter.configure { fmt in
             fmt.minimumFractionDigits = fractionDigits
             fmt.maximumFractionDigits = fractionDigits
-        }.map { fmt -> String in
+        }.transform { fmt -> String in
             fmt.string(from: nsNumber) ?? ""
         }
     }
@@ -251,7 +251,7 @@ extension BinaryFloatingPoint {
             if let roundingIncrement {
                 fmt.roundingIncrement = roundingIncrement
             }
-        }.map { fmt -> String in
+        }.transform { fmt -> String in
             fmt.string(for: self).orEmpty
         }
     }

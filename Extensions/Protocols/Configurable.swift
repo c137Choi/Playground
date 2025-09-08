@@ -16,10 +16,10 @@ public protocol SimpleInitializer {
 extension Configurable {
     
     /// 转换
-    /// - Parameter transform: 转换闭包
+    /// - Parameter transformer: 转换闭包
     /// - Returns: 转换后的类型
-    func map<T>(_ transform: (Self) throws -> T) rethrows -> T {
-        try transform(self)
+    func transform<T>(_ transformer: (Self) throws -> T) rethrows -> T {
+        try transformer(self)
     }
     
     /// 通过KeyPath更新属性:

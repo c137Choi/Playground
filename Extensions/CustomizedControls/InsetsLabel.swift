@@ -9,43 +9,23 @@
 import UIKit
 
 class InsetsLabel: UILabel {
-	
-	var textEdgeInsets: UIEdgeInsets = .zero {
-		didSet {
-			setNeedsDisplay()
-			invalidateIntrinsicContentSize()
-		}
-	}
-	
-	/// 设置圆角
-	var roundCornersOption: (UIRectCorner, CGFloat)?
-	
-	override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
-		super.textRect(forBounds: bounds.inset(by: textEdgeInsets), limitedToNumberOfLines: numberOfLines)
-			.inset(by: textEdgeInsets.reversed)
-	}
-	
-	// Or, you can override this property.
-	override var preferredMaxLayoutWidth: CGFloat {
-		get { super.preferredMaxLayoutWidth }
-		set { super.preferredMaxLayoutWidth = newValue }
-	}
-	
-	override func drawText(in rect: CGRect) {
-		if let option = roundCornersOption {
-			roundCorners(corners: option.0, cornerRadius: option.1)
-		}
-		super.drawText(in: rect.inset(by: textEdgeInsets))
-	}
-}
-
-extension InsetsLabel {
     
-    /// 重设边距
-    /// - Parameter insets: 边距
-    /// - Returns: 自身
-    func padding(_ insets: UIEdgeInsets) -> Self {
-        textEdgeInsets = insets
-        return self
+    override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        let insetBounds = bounds.inset(by: contentEdgeInsets)
+        let rect = super.textRect(forBounds: insetBounds, limitedToNumberOfLines: numberOfLines)
+        return rect.inset(by: contentEdgeInsets.reversed)
+    }
+    
+    override func drawText(in rect: CGRect) {
+        let insetRect = rect.inset(by: contentEdgeInsets)
+        super.drawText(in: insetRect)
+    }
+    
+    /// 文字内边距
+    var contentEdgeInsets: UIEdgeInsets = .zero {
+        didSet {
+            setNeedsDisplay()
+            invalidateIntrinsicContentSize()
+        }
     }
 }

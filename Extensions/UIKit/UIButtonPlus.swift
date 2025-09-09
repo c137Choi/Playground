@@ -271,4 +271,10 @@ extension UIButton {
 		imageEdgeInsets = imageInsets
 		titleEdgeInsets = titleInsets
 	}
+    
+    /// 给contentEdgeInsets写个别名, 避免讨厌的警告
+    var contentInsets: UIEdgeInsets {
+        get { contentEdgeInsets }
+        set { contentEdgeInsets = newValue }
+    }
 }

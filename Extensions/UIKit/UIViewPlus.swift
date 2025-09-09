@@ -793,7 +793,6 @@ extension UIView {
     ///   - axis: 设置轴线 | 默认为空(两轴同时硬化)
     ///   - intensity: 硬化强度
     /// - Returns: 控件本身
-    /// - Tips: 谨慎使用这个方法: 调用这四个方法之后, 会导致UIButtonPlus分类中重写的intrinsicContentSize返回的size失效
     @discardableResult
     func harden(axis: NSLayoutConstraint.Axis? = nil, intensity: UILayoutPriority = .required) -> Self {
         if let axis {

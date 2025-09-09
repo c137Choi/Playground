@@ -86,3 +86,4 @@ extension CGRect: Configurable {}
 extension CGSize: Configurable {}
 extension CGPoint: Configurable {}
 extension UIEdgeInsets: Configurable {}
+extension AttributeContainer: Configurable {}

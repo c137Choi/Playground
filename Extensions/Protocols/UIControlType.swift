@@ -15,6 +15,25 @@ extension UIControl: UIControlType {}
 
 extension UIControlType {
     
+    @available(iOS 14.0, *)
+    func reloadEvents(_ targetEvents: UIControl.Event = .touchUpInside, _ eventHandler: @escaping (Self) -> Void) {
+        /// 移除旧事件
+        enumerateEventHandlers { action, targetAction, event, stop in
+            /// 确保Event匹配
+            guard event == targetEvents else { return }
+            /// 移除Action
+            if let action {
+                removeAction(action, for: event)
+            }
+            /// 移除Target-Action
+            if let (target, action) = targetAction {
+                removeTarget(target, action: action, for: event)
+            }
+        }
+        /// 最后添加新事件
+        addEvents(targetEvents, eventHandler)
+    }
+    
     /// 添加事件回调
     /// - Parameters:
     ///   - controlEvents: 触发的事件集合

@@ -21,6 +21,22 @@ extension String {
 
 extension String {
     
+    private func translation() -> String {
+        /// 默认语言
+        let zhHans = "zh-Hans"
+        /// 尝试查找翻译
+        let translation = NSLocalizedString(self, comment: "")
+        /// 返回翻译文本: 翻译不等于自身, 或用户优先语言等于默认语言, 则直接返回翻译
+        if translation != self || NSLocale.preferredLanguages.first == zhHans {
+            return translation
+        }
+        /// 载入默认语言
+        guard let zhHansPath = Bundle.main.path(forResource: zhHans, ofType: "lproj"), let bundle = Bundle(path: zhHansPath) else {
+            return translation
+        }
+        return NSLocalizedString(self, bundle: bundle, comment: "")
+    }
+    
 	/// 返回SF Symbol图片
     var systemImage: UIImage? {
         guard #available(iOS 13.0, *) else { return nil }
@@ -33,11 +49,6 @@ extension String {
         let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: weight, scale: scale)
         return UIImage(systemName: self, withConfiguration: config)
     }
-	
-	/// 生成图片
-	var uiImage: UIImage? {
-		UIImage(named: self)
-	}
     
     @available(iOS 13.0, *)
     public func systemImage(_ pointSize: CGFloat, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .default) -> UIImage? {

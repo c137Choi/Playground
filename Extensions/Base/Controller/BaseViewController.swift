@@ -456,12 +456,14 @@ extension BaseViewController {
     /// 弹出相机授权失败对话框
     /// - Parameter title: 相应的标题,提示具体使用相机的用途
     func popCameraAccessDeniedDialog(title: String) {
+        let message = NSLocalizedString("是否打开权限设置页面?", comment: "")
+        let yes = NSLocalizedString("是", comment: "")
         presentor.popDialog {
             AlertDialog(
                 title: title,
-                message: NSLocalizedString("是否打开权限设置页面?", comment: "")) {
+                message: message) {
                     DialogAction.cancel
-                    DialogAction(title: NSLocalizedString("是", comment: "")) {
+                    DialogAction(title: yes) {
                         UIApplication.openSettings()
                     }
                 }
@@ -474,11 +476,13 @@ extension BaseViewController {
     
     func fetchPhotos(count: Int = 1, targetImageSize: CGSize? = nil, allowsEditing: Bool = false) {
         self.targetImageSize = targetImageSize
+        let titleAlbum = NSLocalizedString("相册", comment: "")
+        let titleTakePhoto = NSLocalizedString("拍照", comment: "")
         let sheet = ActionSheetController {
-            DialogAction(title: NSLocalizedString("相册", comment: "")) {
+            DialogAction(title: titleAlbum) {
                 [unowned self] in getPhotos(count: count, from: .photoLibrary, allowsEditing: allowsEditing)
             }
-            DialogAction(title: NSLocalizedString("拍照", comment: "")) {
+            DialogAction(title: titleTakePhoto) {
                 [unowned self] in getPhotos(count: 1, from: .camera, allowsEditing: allowsEditing)
             }
         }

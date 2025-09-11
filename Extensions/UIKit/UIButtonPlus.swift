@@ -14,13 +14,14 @@ extension UIButton {
         @UniqueAddress static var imagePadding
     }
     
-    convenience init(image: UIImage?) {
+    convenience init(image: UIImage?, selectedImage: UIImage? = nil) {
         self.init(frame: .zero)
         setImage(image, for: .normal)
+        setImage(selectedImage, for: .selected)
     }
     
-    convenience init(title: String? = nil, titleColor: UIColor? = nil, titleFontSize: CGFloat = 14.0, titleFontWeight: UIFont.Weight = .regular) {
-        let font = UIFont.systemFont(ofSize: titleFontSize, weight: titleFontWeight)
+    convenience init(title: String? = nil, titleColor: UIColor? = nil, fontSize: CGFloat = 14.0, fontWeight: UIFont.Weight = .regular) {
+        let font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
         self.init(title: title, titleColor: titleColor, font: font)
     }
     
@@ -28,7 +29,7 @@ extension UIButton {
         self.init(frame: .zero)
         setTitle(title, for: .normal)
         setTitleColor(titleColor, for: .normal)
-        titleLabel?.font = font
+        titleFont = font
     }
     
     var titleFont: UIFont? {

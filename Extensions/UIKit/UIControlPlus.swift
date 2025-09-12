@@ -9,56 +9,31 @@ import UIKit
 
 extension UIControl {
     
-    var isDisabled: Bool {
-        get { !isEnabled }
-        set(disabled) { isEnabled = !disabled }
+    /// 是否禁用
+    public var isDisabled: Bool {
+        get { isEnabled.toggled }
+        set { isEnabled = newValue.toggled }
     }
 }
 
 extension UIControl.Event {
-    /// touchUpInside(Outside)
-    static let touchUp: UIControl.Event = [.touchUpInside, .touchUpOutside]
-    /// touchDragInside(Outside)
-    static let touchDrag: UIControl.Event = [.touchDragInside, .touchDragOutside]
-    /// touchDownDragInside(Outside)
-    static let touchDownDrag: UIControl.Event = [.touchDown, .touchDrag]
+    /// 按下抬起
+    public static let touchUp: UIControl.Event = [.touchUpInside, .touchUpOutside]
+    /// 按下 + 内(外)拖动
+    public static let touchDownDrag: UIControl.Event = [.touchDown, .touchDragInside, .touchDragOutside]
+}
+
+extension UIControl.State {
+    
+    /// 方便自定义状态的时候调用: .customState.unionHighlighted
+    public var unionHighlighted: UIControl.State {
+        union(.highlighted)
+    }
 }
 
 extension UIControl.State: @retroactive Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
-    }
-}
-
-extension UIControl.State: @retroactive CustomDebugStringConvertible {
-    
-    public var debugDescription: String {
-        if isEmpty { return "empty" }
-        var desc = ""
-        if contains(.normal) {
-            desc += "normal, "
-        }
-        if contains(.highlighted) {
-            desc += "highlighted, "
-        }
-        if contains(.disabled) {
-            desc += "disabled, "
-        }
-        if contains(.selected) {
-            desc += "selected, "
-        }
-        if contains(.focused) {
-            desc += "focused, "
-        }
-        if contains(.application) {
-            desc += "application, "
-        }
-        if contains(.reserved) {
-            desc += "reserved, "
-        }
-        /// 移除逗号+空格
-        desc.removeLast(2)
-        return desc
     }
 }

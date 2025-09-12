@@ -32,51 +32,25 @@ extension UIButton {
         titleFont = font
     }
     
+    /// 给contentEdgeInsets写个别名, 避免讨厌的过期警告
+    var contentInsets: UIEdgeInsets {
+        get { contentEdgeInsets }
+        set { contentEdgeInsets = newValue }
+    }
+    
+    /// Title字体
     var titleFont: UIFont? {
         get { titleLabel?.font }
         set { titleLabel?.font = newValue }
     }
 	
-    private var imageWidth: CGFloat { imageSize.width }
-    private var imageHeight: CGFloat { imageSize.height }
-    private var titleWidth: CGFloat { titleSize.width }
-    private var titleHeight: CGFloat { titleSize.height }
-    
-    private var imageSize: CGSize {
-        currentImage.or(.zero, map: \.size)
+    /// 这里通过'两次'调整isEnabled以触发按钮的状态更新
+    func setStateUpdated() {
+        isEnabled.toggle()
+        isEnabled.toggle()
     }
     
-	private var titleSize: CGSize {
-		/// 适配iOS14,否则此属性会按照字体的Font返回一个值,从而影响intrinsicContentSize的计算
-		guard let titleLabel = titleLabel, titleLabel.text != .none else { return .zero }
-		let additionalWidth = UIAccessibility.isBoldTextEnabled ? 1.5 : 0
-		let additionalSize = CGSize(width: additionalWidth, height: 0)
-		return titleLabel.intrinsicContentSize + additionalSize
-	}
-    
-    /// 图片位置
-    private var imagePlacement: UITextLayoutDirection {
-        get {
-            associated(Int.self, self, Associated.imagePlacement).flatMap(UITextLayoutDirection.init, fallback: .left)
-        }
-        set {
-            setAssociatedObject(self, Associated.imagePlacement, newValue.rawValue, .OBJC_ASSOCIATION_ASSIGN)
-            setupImageTitleEdgeInsets()
-        }
-    }
-    
-    /// Image-Title间距(大于等于0; 最好是偶数,否则按钮显示可能会有小小误差<iOS中像素对齐导致的问题>)
-    private var imagePadding: CGFloat {
-        get {
-            associated(CGFloat.self, self, Associated.imagePadding).or(0.0)
-        }
-        set {
-            assert(newValue >= 0, "A sane person would never do that.")
-            setAssociatedObject(self, Associated.imagePadding, newValue, .OBJC_ASSOCIATION_ASSIGN)
-            setupImageTitleEdgeInsets()
-        }
-    }
-	
+	// MARK: - Deprecated
 	private func setupImageTitleEdgeInsets() {
 		guard imageSize != .zero && titleSize != .zero else { return }
 		
@@ -273,9 +247,39 @@ extension UIButton {
 		titleEdgeInsets = titleInsets
 	}
     
-    /// 给contentEdgeInsets写个别名, 避免讨厌的警告
-    var contentInsets: UIEdgeInsets {
-        get { contentEdgeInsets }
-        set { contentEdgeInsets = newValue }
+    private var imageWidth: CGFloat { imageSize.width }
+    private var imageHeight: CGFloat { imageSize.height }
+    private var titleWidth: CGFloat { titleSize.width }
+    private var titleHeight: CGFloat { titleSize.height }
+    private var imageSize: CGSize {
+        currentImage.or(.zero, map: \.size)
+    }
+    private var titleSize: CGSize {
+        /// 适配iOS14,否则此属性会按照字体的Font返回一个值,从而影响intrinsicContentSize的计算
+        guard let titleLabel = titleLabel, titleLabel.text != .none else { return .zero }
+        let additionalWidth = UIAccessibility.isBoldTextEnabled ? 1.5 : 0
+        let additionalSize = CGSize(width: additionalWidth, height: 0)
+        return titleLabel.intrinsicContentSize + additionalSize
+    }
+    /// 图片位置
+    private var imagePlacement: UITextLayoutDirection {
+        get {
+            associated(Int.self, self, Associated.imagePlacement).flatMap(UITextLayoutDirection.init, fallback: .left)
+        }
+        set {
+            setAssociatedObject(self, Associated.imagePlacement, newValue.rawValue, .OBJC_ASSOCIATION_ASSIGN)
+            setupImageTitleEdgeInsets()
+        }
+    }
+    /// Image-Title间距(大于等于0; 最好是偶数,否则按钮显示可能会有小小误差<iOS中像素对齐导致的问题>)
+    private var imagePadding: CGFloat {
+        get {
+            associated(CGFloat.self, self, Associated.imagePadding).or(0.0)
+        }
+        set {
+            assert(newValue >= 0, "A sane person would never do that.")
+            setAssociatedObject(self, Associated.imagePadding, newValue, .OBJC_ASSOCIATION_ASSIGN)
+            setupImageTitleEdgeInsets()
+        }
     }
 }

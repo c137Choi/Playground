@@ -12,12 +12,27 @@ extension Dictionary {
         self[key]
     }
     
-    mutating func removeKeys<S>(keys: S) where S: Sequence, S.Element == Key {
-        var tmp = self
-        keys.forEach { key in
-            tmp[key] = nil
+    /// 移除一组Key
+    /// - Parameters:
+    ///   - keysToRemove: 要移除的Keys
+    ///   - liveUpdate: 是否实时更新(如果传入false, 则会在临时变量更新之后再更新自身的值)
+    mutating func removeKeys<S>(_ keysToRemove: S, liveUpdate: Bool = true) where S: Sequence, S.Element == Key {
+        /// 取交集以节省开销
+        let intersectionKeys = self.keys.set.intersection(keysToRemove)
+        /// 更新字典
+        func removingKeys(_ dict: inout Self) {
+            for key in intersectionKeys {
+                dict.removeValue(forKey: key)
+            }
         }
-        self = tmp
+        /// 根据条件执行逻辑
+        if liveUpdate {
+            removingKeys(&self)
+        } else {
+            var dict = self
+            removingKeys(&dict)
+            self = dict
+        }
     }
     
     /// 替换键
@@ -29,19 +44,5 @@ extension Dictionary {
         guard let value = removeValue(forKey: oldKey) else { return }
         /// 使用新键保存旧值
         updateValue(value, forKey: newKey)
-    }
-    
-    /// 下标支持Optional<Key>类型
-    subscript(key: Key?) -> Value? {
-        get {
-            key.flatMap {
-                self[$0]
-            }
-        }
-        set {
-            if let key {
-                self[key] = newValue
-            }
-        }
     }
 }

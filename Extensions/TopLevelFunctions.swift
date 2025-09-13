@@ -81,24 +81,11 @@ func synchronized<T>(lock: AnyObject, _ closure: () throws -> T) rethrows -> T {
     return try closure()
 }
 
-/// 左侧优先
-func <--<T>(_ lhs: T?, rhs: T?) -> T? {
-    lhs ?? rhs
-}
-/// 返回左边 | 常见于Dictionary.merge方法
-func <--<T>(_ lhs: T, rhs: T) -> T {
-    lhs
-}
-/// 右侧优先
-func --><T>(_ lhs: T?, rhs: T?) -> T? {
-    rhs ?? lhs
-}
-/// 返回右边 | 常见于Dictionary.merge方法
-func --><T>(_ lhs: T, rhs: T) -> T {
-    rhs
-}
-
-/// 连续的两个数字
+/// 使用左边的参数 | 常见于Dictionary.merge方法
+func <--<T>(_ lhs: T, rhs: T) -> T { lhs }
+/// 使用右边的参数 | 常见于Dictionary.merge方法
+func --><T>(_ lhs: T, rhs: T) -> T { rhs }
+/// 是否为连续的两个数字
 func contiguousNumbers(_ last: Int, _ latest: Int) -> Bool {
     latest == last + 1
 }

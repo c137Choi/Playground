@@ -13,6 +13,11 @@ extension Sequence {
         Array(self)
     }
     
+    /// Result非空时返回结果, 否则返回nil
+    func reduceFilledResult<Result>(into initialResult: Result, _ updateAccumulatingResult: (inout Result, Self.Element) throws -> ()) rethrows -> Result? where Result: Collection {
+        try reduce(into: initialResult, updateAccumulatingResult).filledOrNil
+    }
+    
     /// 根据KeyPath过滤掉重复的元素
     /// - Parameter keyPath: 元素的KeyPath
     /// - Returns: 无重复元素的数组

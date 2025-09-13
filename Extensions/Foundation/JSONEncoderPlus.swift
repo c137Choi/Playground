@@ -7,6 +7,15 @@
 
 import Foundation
 
+extension JSONEncoder: Configurable {}
+
+extension Configurable where Self == JSONEncoder {
+    
+    static func make(_ configuration: (JSONEncoder) -> Void) -> JSONEncoder {
+        JSONEncoder().configure(configuration)
+    }
+}
+
 extension JSONEncoder {
     
     /// 通用JSONEncoder | 不要修改属性, 只用于简单编解码. 其他情况需要使用单独的实例
@@ -17,9 +26,7 @@ extension JSONEncoder {
     }
     
     /// 时间以毫秒解析的Encoder
-    static let millisecondsDateEncodingEncoder: JSONEncoder = {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .millisecondsSince1970
-        return encoder
-    }()
+    static let millisecondsDateEncoder = JSONEncoder.make { make in
+        make.dateEncodingStrategy = .millisecondsSince1970
+    }
 }

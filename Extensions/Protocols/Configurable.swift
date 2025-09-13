@@ -76,6 +76,7 @@ extension SimpleInitializer where Self: Configurable & AnyObject {
 }
 
 extension NSObject: SimpleInitializer {}
+
 extension NSObject: Configurable {}
 extension Array: Configurable {}
 extension Calendar: Configurable {}

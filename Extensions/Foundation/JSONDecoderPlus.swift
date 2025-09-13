@@ -15,13 +15,6 @@ extension JSONDecoder {
     static func decode<T>(_ type: T.Type, from data: Data) throws -> T where T: Decodable {
         try instance.decode(type, from: data)
     }
-    
-    /// 时间以毫秒解析的Decoder
-    static let millisecondsDateDecodingDecoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .millisecondsSince1970
-        return decoder
-    }()
 }
 
 //MARK: -- 可变参数的解码

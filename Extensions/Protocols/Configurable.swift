@@ -87,6 +87,7 @@ extension CGRect: Configurable {}
 extension CGSize: Configurable {}
 extension CGPoint: Configurable {}
 extension UIEdgeInsets: Configurable {}
+extension NSDirectionalEdgeInsets: Configurable {}
 
 @available(iOS 15, *)
 extension AttributeContainer: Configurable {}

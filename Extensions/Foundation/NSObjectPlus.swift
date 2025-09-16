@@ -15,12 +15,12 @@ extension NSObject {
         @UniqueAddress static var isPrepared
     }
     
-    var targets: [String: Any] {
+    var targets: [AnyHashable: Any] {
         get {
-            if let dict = associated([String: Any].self, self, Associated.targets) {
+            if let dict = associated([AnyHashable: Any].self, self, Associated.targets) {
                 return dict
             } else {
-                let dict = [String: Any].empty
+                let dict = [AnyHashable: Any].empty
                 setAssociatedObject(self, Associated.targets, dict, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                 return dict
             }

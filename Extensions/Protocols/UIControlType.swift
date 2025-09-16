@@ -55,7 +55,7 @@ extension UIControlType {
                 eventHandler(control)
             }
             /// 强引用target
-            targets[target.identifier.rawValue] = target
+            targets[target.identifier] = target
             /// 返回Identifier
             return target.identifier
         }
@@ -69,7 +69,7 @@ extension UIControlType {
         if #available(iOS 14.0, *) {
             removeAction(identifiedBy: identifier, for: controlEvents)
         } else {
-            if let target = targets.removeValue(forKey: identifier.rawValue).as(ControlEventTarget<Self>.self) {
+            if let target = targets.removeValue(forKey: identifier).as(ControlEventTarget<Self>.self) {
                 target.dispose()
             }
         }
@@ -85,13 +85,13 @@ extension UIControlType {
         /// Target实例
         let target = ControlEventTarget(control: self, controlEvents: controlEvents, eventHandler)
         /// 强引用target
-        targets[target.identifier.rawValue] = target
+        targets[target.identifier] = target
         /// 返回Identifier
         return target.identifier
     }
     
     func removeEnhancedEvents(identifiedBy identifier: UIAction.Identifier) {
-        if let target = targets.removeValue(forKey: identifier.rawValue).as(ControlEventTarget<Self>.self) {
+        if let target = targets.removeValue(forKey: identifier).as(ControlEventTarget<Self>.self) {
             target.dispose()
         }
     }

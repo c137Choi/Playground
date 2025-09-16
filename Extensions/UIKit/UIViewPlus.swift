@@ -20,7 +20,6 @@ extension UIView {
         @UniqueAddress static var shadowView
         @UniqueAddress static var backgroundView
         @UniqueAddress static var mournFilterView
-        @UniqueAddress static var targets
     }
 }
 
@@ -69,21 +68,6 @@ extension UIView {
     
     var isLandscape: Bool {
         frame.size.isLandscape
-    }
-    
-    var targets: [String: Any] {
-        get {
-            if let dict = associated([String: Any].self, self, Associated.targets) {
-                return dict
-            } else {
-                let dict = [String: Any].empty
-                setAssociatedObject(self, Associated.targets, dict, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-                return dict
-            }
-        }
-        set {
-            setAssociatedObject(self, Associated.targets, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
     }
     
     /// 用于设置UIStackView.arrangedSubviews布局

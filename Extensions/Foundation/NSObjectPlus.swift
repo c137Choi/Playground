@@ -11,7 +11,23 @@ import Foundation
 extension NSObject {
 	
     enum Associated {
+        @UniqueAddress static var targets
         @UniqueAddress static var isPrepared
+    }
+    
+    var targets: [String: Any] {
+        get {
+            if let dict = associated([String: Any].self, self, Associated.targets) {
+                return dict
+            } else {
+                let dict = [String: Any].empty
+                setAssociatedObject(self, Associated.targets, dict, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                return dict
+            }
+        }
+        set {
+            setAssociatedObject(self, Associated.targets, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
     /// 是否准备好标记: 默认为true

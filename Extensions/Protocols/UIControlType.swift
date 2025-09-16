@@ -74,4 +74,25 @@ extension UIControlType {
             }
         }
     }
+    
+    /// 添加事件 | 闭包同时返回UIEvent?对象
+    /// - Parameters:
+    ///   - controlEvents: 事件类型
+    ///   - eventHandler: 事件回调闭包
+    /// - Returns: UIAction.Identifier, 方便调用
+    @discardableResult
+    func enhancedEvents(_ controlEvents: UIControl.Event = .touchUpInside, _ eventHandler: @escaping (Self, UIEvent?) -> Void) -> UIAction.Identifier {
+        /// Target实例
+        let target = ControlEventTarget(control: self, controlEvents: controlEvents, eventHandler)
+        /// 强引用target
+        targets[target.identifier.rawValue] = target
+        /// 返回Identifier
+        return target.identifier
+    }
+    
+    func removeEnhancedEvents(identifiedBy identifier: UIAction.Identifier) {
+        if let target = targets.removeValue(forKey: identifier.rawValue).as(ControlEventTarget<Self>.self) {
+            target.dispose()
+        }
+    }
 }

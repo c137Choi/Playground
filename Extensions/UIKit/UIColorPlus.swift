@@ -183,6 +183,16 @@ extension UIColor {
 
 extension UIColor {
     
+    /// 返回较深的颜色
+    var darker: UIColor {
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, a: CGFloat = 0
+        if getRed(&red, green: &green, blue: &blue, alpha: &a) {
+            return UIColor(red: max(red - 0.2, 0.0), green: max(green - 0.2, 0.0), blue: max(blue - 0.2, 0.0), alpha: a)
+        } else {
+            return self
+        }
+    }
+    
     /// 返回颜色是否为透明
     var isClear: Bool {
         cgColor.alpha.isZero

@@ -43,12 +43,6 @@ extension UIButton {
         get { titleLabel?.font }
         set { titleLabel?.font = newValue }
     }
-	
-    /// 这里通过'两次'调整isEnabled以触发按钮的状态更新
-    func setStateUpdated() {
-        isEnabled.toggle()
-        isEnabled.toggle()
-    }
     
 	// MARK: - Deprecated
 	private func setupImageTitleEdgeInsets() {

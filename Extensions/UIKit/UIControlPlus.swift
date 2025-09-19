@@ -27,8 +27,8 @@ extension UIControl.Event {
 
 extension UIControl.State {
     
-    /// 方便自定义状态的时候调用: .customState.unionHighlighted
-    public var unionHighlighted: UIControl.State {
+    /// 方便自定义状态的时候调用: .customState.andHighlighted
+    public var andHighlighted: UIControl.State {
         union(.highlighted)
     }
 }

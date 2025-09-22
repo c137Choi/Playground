@@ -11,18 +11,18 @@ import UIKit
 class InsetsLabel: UILabel {
     
     override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
-        let insetBounds = bounds.inset(by: textInsets)
+        let insetBounds = bounds.inset(by: textEdgeInsets)
         let rect = super.textRect(forBounds: insetBounds, limitedToNumberOfLines: numberOfLines)
-        return rect.inset(by: textInsets.reversed)
+        return rect.inset(by: textEdgeInsets.reversed)
     }
     
     override func drawText(in rect: CGRect) {
-        let insetRect = rect.inset(by: textInsets)
+        let insetRect = rect.inset(by: textEdgeInsets)
         super.drawText(in: insetRect)
     }
     
     /// 文字内边距
-    var textInsets = UIEdgeInsets.zero {
+    var textEdgeInsets = UIEdgeInsets.zero {
         didSet {
             setNeedsDisplay()
             invalidateIntrinsicContentSize()

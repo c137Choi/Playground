@@ -55,7 +55,7 @@ class JustifiedLabel: InsetsLabel {
     
     override func layoutSublayers(of layer: CALayer) {
         super.layoutSublayers(of: layer)
-        textLayer.frame = layer.bounds.inset(by: textInsets)
+        textLayer.frame = layer.bounds.inset(by: textEdgeInsets)
     }
     
     required init?(coder: NSCoder) {

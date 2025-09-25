@@ -1,5 +1,5 @@
 //
-//  ControlEventTarget.swift
+//  UIControlEventRelay.swift
 //  KnowLED
 //
 //  Created by Choi on 2025/7/21.
@@ -8,14 +8,14 @@
 import UIKit
 import RxSwift
 
-final class ControlEventTarget<Control>: Disposable where Control: UIControl {
+final class UIControlEventRelay<Control>: Disposable where Control: UIControl {
     /// 事件回调闭包
     typealias EventHandler = (Control, UIEvent?) -> Void
     
     /// 标识符
     let identifier = UIAction.Identifier(String.randomUUID)
     /// 关联事件
-    private let controlEvents: UIControl.Event
+    private let events: UIControl.Event
     /// 回调Closure
     private var eventHandler: EventHandler?
     /// 弱引用控件实例
@@ -24,13 +24,13 @@ final class ControlEventTarget<Control>: Disposable where Control: UIControl {
     /// 初始化
     /// - Parameters:
     ///   - control: 关联的UIControl
-    ///   - controlEvents: 关联的事件
+    ///   - events: 关联的事件
     ///   - eventHandler: 事件触发回调
-    init(control: Control, controlEvents: UIControl.Event, _ eventHandler: @escaping EventHandler) {
+    init(_ control: Control, events: UIControl.Event, _ eventHandler: @escaping EventHandler) {
         self.control = control
-        self.controlEvents = controlEvents
+        self.events = events
         self.eventHandler = eventHandler
-        control.addTarget(self, action: #selector(action(_:_:)), for: controlEvents)
+        control.addTarget(self, action: #selector(action(_:_:)), for: events)
     }
     
     @objc private func action(_ sender: AnyObject, _ event: UIEvent?) {
@@ -38,7 +38,7 @@ final class ControlEventTarget<Control>: Disposable where Control: UIControl {
     }
     
     func dispose() {
-        control?.removeTarget(self, action: #selector(action(_:_:)), for: controlEvents)
+        control?.removeTarget(self, action: #selector(action(_:_:)), for: events)
         eventHandler = nil
     }
 }

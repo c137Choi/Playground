@@ -72,8 +72,8 @@ extension Reactive where Base: UIControl {
     typealias ControlEventElement = RxControlEventElement<Base>
     
     /// 增强的ControlEvent: 事件序列的元素返回控件和UIEvent?
-    /// - Parameter controlEvents: 触发事件
-    func enhancedControlEvent(_ controlEvents: UIControl.Event) -> ControlEvent<ControlEventElement> {
+    /// - Parameter events: 触发事件
+    func enhancedControlEvent(_ events: UIControl.Event) -> ControlEvent<ControlEventElement> {
         let sequence = Observable<ControlEventElement>.create {
             [weak control = self.base] observer in
             /// 确保主线程运行
@@ -84,7 +84,7 @@ extension Reactive where Base: UIControl {
                 return Disposables.create()
             }
             /// 创建Target并处理事件回调. 内部添加事件
-            return ControlEventTarget(control: control, controlEvents: controlEvents) { sender, event in
+            return UIControlEventRelay(control, events: events) { sender, event in
                 let tuple: ControlEventElement = (sender, event)
                 observer.onNext(tuple)
             }

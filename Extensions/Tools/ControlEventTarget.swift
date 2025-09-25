@@ -34,8 +34,7 @@ final class ControlEventTarget<Control>: Disposable where Control: UIControl {
     }
     
     @objc private func action(_ sender: AnyObject, _ event: UIEvent?) {
-        guard let eventHandler, let control = sender as? Control else { return }
-        eventHandler(control, event)
+        eventHandler?(sender as! Control, event)
     }
     
     func dispose() {

@@ -6,7 +6,7 @@
 
 import UIKit
 
-class UIBaseCollectionReusableView: UICollectionReusableView, StandardLayoutLifeCycle {
+class UIBaseCollectionReusableView: UICollectionReusableView, UIViewLifeCycle {
 
     @Published var indexPath: IndexPath?
     

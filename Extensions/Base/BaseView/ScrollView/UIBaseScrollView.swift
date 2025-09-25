@@ -7,7 +7,7 @@
 import UIKit
 import Combine
 
-class UIBaseScrollView: UIScrollView, StandardLayoutLifeCycle {
+class UIBaseScrollView: UIScrollView, UIViewLifeCycle {
     
     class var scrollDirection: NSLayoutConstraint.Axis {
         NSLayoutConstraint.Axis.vertical

@@ -16,7 +16,7 @@ enum UIBackgroundStyleMode {
     case modern
 }
 
-class UIBaseTableViewCell: UITableViewCell, StandardLayoutLifeCycle {
+class UIBaseTableViewCell: UITableViewCell, UIViewLifeCycle {
     /// 分割线类
     fileprivate final class _UIBaseTableViewCellSeparatorView: UIView {}
     

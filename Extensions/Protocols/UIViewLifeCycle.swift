@@ -1,5 +1,5 @@
 //
-//  StandardLayoutLifeCycle.swift
+//  UIViewLifeCycle.swift
 //  KnowLED
 //
 //  Created by Choi on 2023/8/12.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol StandardLayoutLifeCycle: UIView {
+protocol UIViewLifeCycle: UIView {
     
     func prepare()
     
@@ -16,7 +16,7 @@ protocol StandardLayoutLifeCycle: UIView {
     func prepareConstraints()
 }
 
-extension StandardLayoutLifeCycle {
+extension UIViewLifeCycle {
     
     func prepare() {
         prepareSubviews()

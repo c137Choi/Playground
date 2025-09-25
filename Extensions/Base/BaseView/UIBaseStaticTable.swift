@@ -10,7 +10,7 @@ import UIKit
 typealias StaticSection = UIBaseStaticTable.Section
 typealias StaticRow = UIBaseStaticTable.Row
 
-class UIBaseStaticTable: UITableView, StandardLayoutLifeCycle, UITableViewDelegate, UITableViewDataSource {
+class UIBaseStaticTable: UITableView, UIViewLifeCycle, UITableViewDelegate, UITableViewDataSource {
     
     class var style: UITableView.Style {
         .grouped

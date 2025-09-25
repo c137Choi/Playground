@@ -6,7 +6,7 @@
 
 import UIKit
 
-class UIBaseCollectionViewCell: UICollectionViewCell, StandardLayoutLifeCycle {
+class UIBaseCollectionViewCell: UICollectionViewCell, UIViewLifeCycle {
     
     /// 直接复写Cell的backgroundColor属性会有循环调用问题
     /// 所以重新定义一个背景色属性

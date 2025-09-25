@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UIBaseStackView: UIStackView, StandardLayoutLifeCycle {
+class UIBaseStackView: UIStackView, UIViewLifeCycle {
 
     override init(frame: CGRect) {
         super.init(frame: frame)

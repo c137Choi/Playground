@@ -24,7 +24,7 @@ extension ViewModelSetup {
     func setupViewModel(_ viewModel: ViewModel) {}
 }
 
-typealias ViewModelSetupView = ViewModelSetup & StandardLayoutLifeCycle
+typealias ViewModelSetupView = ViewModelSetup & UIViewLifeCycle
 
 /// ViewModel宿主UIView
 typealias ViewModelHostView = UIView & ViewModelHost

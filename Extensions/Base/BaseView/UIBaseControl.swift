@@ -6,7 +6,7 @@
 
 import UIKit
 
-class UIBaseControl: UIControl, StandardLayoutLifeCycle {
+class UIBaseControl: UIControl, UIViewLifeCycle {
     
     override init(frame: CGRect) {
         super.init(frame: frame)

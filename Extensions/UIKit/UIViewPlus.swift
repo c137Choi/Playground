@@ -92,7 +92,7 @@ extension UIView {
     /// 注1: 必须要有父视图或window非空的情况下才可以截图成功
     /// 注2: width或height有一个为空(或近似为0, 如:0.1), drawHierarchy就会crash
     /// https://stackoverflow.com/questions/21722508/ios-drawviewhierarchyinrect-crash-exc-breakpoint-unknown
-    var snapshot: UIImage? {
+    var snapshotImage: UIImage? {
         guard window.isValid else {
             assertionFailure("对不可见的视图截图会导致崩溃")
             return nil
@@ -411,8 +411,8 @@ extension UIView {
     
     /// 截图指定区域
     func snapshot(frame: CGRect) -> UIImage? {
-        guard let snapshot else { return nil }
-        guard let cgImage = snapshot.cgImage else { return nil }
+        guard let snapshotImage else { return nil }
+        guard let cgImage = snapshotImage.cgImage else { return nil }
         let scale = UIScreen.main.scale
         let transform = CGAffineTransformMakeScale(scale, scale)
         let scaledRect = CGRectApplyAffineTransform(frame, transform)

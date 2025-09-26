@@ -118,22 +118,22 @@ extension Array where Element: UIButton {
         eventFilter: RxElementFilter<Element>? = nil) -> Observable<ControlEventElement>
     {
         mergedControlEvent(controlEvents, startWith: firstButton, eventFilter: eventFilter).lastAndLatest.compactMap {
-            lastEvent, event -> ControlEventElement? in
+            lastControlEvent, controlEvent -> ControlEventElement? in
             /// 上一个按钮取消选中
-            if let lastEvent {
+            if let lastControlEvent {
                 /// 重复的按钮不发送事件
-                if event.0 === lastEvent.0 {
+                if controlEvent.control === lastControlEvent.control {
                     return nil
                 }
                 /// 取消选中上一个按钮
                 else {
-                    lastEvent.0.isSelected = false
+                    lastControlEvent.control.isSelected = false
                 }
             }
             /// 选中最新的按钮
-            event.0.isSelected = true
+            controlEvent.control.isSelected = true
             /// 返回事件元组
-            return event
+            return controlEvent
         }
     }
     
@@ -188,8 +188,8 @@ final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashabl
     
     /// KeyPath对象
     private let keyPath: KeyPath<Button, Property>
-    /// 按钮事件Subject
-    private let buttonEventSubject = BehaviorSubject<ButtonControlEvent?>(value: nil)
+    /// 按钮事件Relay
+    private let buttonEventRelay = BehaviorRelay<ButtonControlEvent?>(value: nil)
     /// 按钮映射字典
     private var propertyButtonMap = PropertyButtonMap.empty
     /// 储存选中的按钮
@@ -199,7 +199,7 @@ final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashabl
     /// 标记是否发送事件
     private var sendEvent = true
     /// 设置属性
-    private lazy var propertySink = Binder<Property?>(self) { weakSelf, property in
+    private lazy var sinkProperty = Binder<Property?>(self) { weakSelf, property in
         weakSelf.setProperty(property, sendEvent: false)
     }
     
@@ -216,12 +216,6 @@ final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashabl
         super.init()
         /// 监听按钮切换
         reload(buttons, initialProperty: initialProperty, eventFilter: eventFilter)
-        /// 绑定选中按钮
-        buttonEventSubject
-            .unwrapped
-            .map(\.0)
-            .bind(to: rx.selectedButton)
-            .disposed(by: rx.disposeBag)
     }
     
     /// 监听按钮切换
@@ -250,11 +244,13 @@ final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashabl
         /// 持续观察按钮切换
         self.switchingButtons = DisposeBag {
             buttons.switchButtonEvent(.touchUpInside, startWith: firstButton, eventFilter: eventFilter).subscribe {
-                [weak self] event in
+                [unowned self] rxEvent in
                 /// 这里要检查element非空, 考虑按钮数组为空的时候发送completed事件给subject导致事件序列结束的情况
-                guard let self, let element = event.element else { return }
+                guard let controlEvent = rxEvent.element else { return }
+                /// 保存选中的按钮
+                selectedButton = controlEvent.control
                 /// 转发到subject
-                buttonEventSubject.onNext(element)
+                buttonEventRelay.accept(controlEvent)
             }
         }
     }
@@ -286,33 +282,33 @@ final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashabl
     }
     
     var controlProperty: ControlProperty<Property?> {
-        let values = buttonEventSubject.compactMap {
+        let values = buttonEventRelay.compactMap {
             [weak self] buttonEvent -> Property? in
-            guard let self, let buttonEvent else { return nil }
+            guard let self, let button = buttonEvent.map(\.control) else { return nil }
             /// 如果标记为不发送事件则直接返回
-            if !self.sendEvent {
-                self.sendEvent = true
+            if !sendEvent {
+                sendEvent = true
                 return nil
             }
             /// 返回Property
-            return buttonEvent.0[keyPath: self.keyPath]
+            return button[keyPath: keyPath]
         }
-        return ControlProperty(values: values.take(until: rx.deallocated).optionalElement, valueSink: propertySink)
+        return ControlProperty(values: values.optionalElement.take(until: rx.deallocated), valueSink: sinkProperty)
     }
     
     /// 用户交互后才发送事件的ControlProperty
     var interactiveControlProperty: ControlProperty<Property?> {
-        let interactiveValues = buttonEventSubject.enumerated().compactMap {
+        let interactiveValues = buttonEventRelay.enumerated().compactMap {
             [weak keyPath] index, buttonEvent -> Property? in
             guard let keyPath, let buttonEvent else { return nil }
-            /// 首次订阅不发送事件
+            /// 首次订阅不发送事件(有第二个订阅者的时候防止订阅到之前的缓存)
             if index == 0 {
                 return nil
             } else {
-                /// 确保UIEvent非空
-                return buttonEvent.1.isValid ? buttonEvent.0[keyPath: keyPath] : nil
+                /// UIEvent非空为用户交互事件
+                return buttonEvent.event.isValid ? buttonEvent.control[keyPath: keyPath] : nil
             }
         }
-        return ControlProperty(values: interactiveValues.take(until: rx.deallocated).optionalElement, valueSink: propertySink)
+        return ControlProperty(values: interactiveValues.optionalElement.take(until: rx.deallocated), valueSink: sinkProperty)
     }
 }

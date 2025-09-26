@@ -8,7 +8,7 @@
 import UIKit
 import RxSwift
 
-final class UIControlEventRelay<Control>: Disposable where Control: UIControl {
+final class UIControlEventRelay<Control: UIControl>: Disposable {
     /// 事件回调闭包
     typealias EventHandler = (Control, UIEvent?) -> Void
     

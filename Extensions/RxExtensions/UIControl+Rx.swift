@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-typealias RxControlEventElement<T> = (T, UIEvent?) where T: UIControl
+typealias RxControlEventElement<T> = (control: T, event: UIEvent?) where T: UIControl
 
 extension Reactive where Base: UIControl {
     

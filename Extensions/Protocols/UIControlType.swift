@@ -12,7 +12,14 @@ protocol UIControlType: UIControl {}
 extension UIControl: UIControlType {}
 
 extension UIControlType {
+     
+    /// UIControlEventRelay别名
+    fileprivate typealias EventRelay = UIControlEventRelay<Self>
     
+    /// 重载事件回调
+    /// - Parameters:
+    ///   - targetEvents: 目标事件
+    ///   - eventHandler: 事件回调闭包
     @available(iOS 14.0, *)
     func reloadEvents(_ targetEvents: UIControl.Event = .touchUpInside, _ eventHandler: @escaping (Self) -> Void) {
         /// 移除旧事件
@@ -51,11 +58,11 @@ extension UIControlType {
             return action.identifier
         } else {
             /// Relay实例
-            let relay = UIControlEventRelay(self, events: events) { control, _ in
+            let relay = EventRelay(self, events: events) { control, _ in
                 eventHandler(control)
             }
             /// 强引用Relay
-            targets[relay.identifier] = relay
+            references[relay.identifier] = relay
             /// 返回Identifier
             return relay.identifier
         }
@@ -69,8 +76,8 @@ extension UIControlType {
         if #available(iOS 14.0, *) {
             removeAction(identifiedBy: identifier, for: events)
         } else {
-            if let target = targets.removeValue(forKey: identifier).as(UIControlEventRelay<Self>.self) {
-                target.dispose()
+            if let relay = references.removeValue(forKey: identifier).as(EventRelay.self) {
+                relay.dispose()
             }
         }
     }
@@ -79,20 +86,21 @@ extension UIControlType {
     /// - Parameters:
     ///   - events: 事件类型
     ///   - eventHandler: 事件回调闭包
-    /// - Returns: UIAction.Identifier, 方便调用
+    /// - Returns: UIAction.Identifier, 方便调用removeEnhancedEvents方法
     @discardableResult
     func enhancedEvents(_ events: UIControl.Event = .touchUpInside, _ eventHandler: @escaping (Self, UIEvent?) -> Void) -> UIAction.Identifier {
-        /// Target实例
-        let target = UIControlEventRelay(self, events: events, eventHandler)
-        /// 强引用target
-        targets[target.identifier] = target
+        /// EventRelay实例
+        let relay = EventRelay(self, events: events, eventHandler)
+        /// 强引用relay
+        references[relay.identifier] = relay
         /// 返回Identifier
-        return target.identifier
+        return relay.identifier
     }
     
     func removeEnhancedEvents(identifiedBy identifier: UIAction.Identifier) {
-        if let target = targets.removeValue(forKey: identifier).as(UIControlEventRelay<Self>.self) {
-            target.dispose()
+        if let relay = references.removeValue(forKey: identifier).as(EventRelay.self) {
+            relay.dispose()
         }
     }
 }
+

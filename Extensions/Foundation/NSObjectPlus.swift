@@ -11,22 +11,23 @@ import Foundation
 extension NSObject {
 	
     enum Associated {
-        @UniqueAddress static var targets
+        @UniqueAddress static var references
         @UniqueAddress static var isPrepared
     }
     
-    var targets: [AnyHashable: Any] {
+    /// 字典储存一组引用对象
+    var references: [AnyHashable: Any] {
         get {
-            if let dict = associated([AnyHashable: Any].self, self, Associated.targets) {
+            if let dict = associated([AnyHashable: Any].self, self, Associated.references) {
                 return dict
             } else {
                 let dict = [AnyHashable: Any].empty
-                setAssociatedObject(self, Associated.targets, dict, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                setAssociatedObject(self, Associated.references, dict, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                 return dict
             }
         }
         set {
-            setAssociatedObject(self, Associated.targets, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            setAssociatedObject(self, Associated.references, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     

@@ -221,7 +221,7 @@ extension UIView {
     }
     
     /// 移除所有子视图
-    public func removeAllSubviews() {
+    public func clearSubviews() {
         var subviews = subviews
         while let subview = subviews.popLast() {
             subview.removeFromSuperview()

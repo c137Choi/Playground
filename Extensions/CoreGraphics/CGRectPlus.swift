@@ -35,9 +35,9 @@ extension CGRect {
     /// - Parameter point: 传入的点
     /// - Returns: 限制后的点
     func constrainedPoint(_ point: CGPoint) -> CGPoint {
-        let x = (minX...maxX) << point.x
-        let y = (minY...maxY) << point.y
-        return CGPoint(x: x, y: y)
+        let xRange = minX...maxX
+        let yRange = minY...maxY
+        return CGPoint(x: xRange << point.x, y: yRange << point.y)
     }
     
     /// 从当前Frame生成随机Frame

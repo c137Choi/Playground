@@ -79,24 +79,17 @@ extension Data {
         return Data.mimeTypeSignatures[c] ?? "application/octet-stream"
     }
     
+    /// 获取二进制文件的后缀
     var fileExtension: String? {
-        switch mimeType {
-        case "image/jpeg":
-            "jpeg"
-        case "image/png":
-            "png"
-        case "image/gif":
-            "gif"
-        case "image/tiff":
-            "tiff"
-        case "application/pdf":
-            "pdf"
-        case "application/vnd":
-            "vnd"
-        case "text/plain":
-            "txt"
-        default:
-            nil
+        guard count >= 8 else { return nil }
+        let header = prefix(1).map { $0 }
+        switch header {
+        case [0x89]: return "png"
+        case [0xFF]: return "jpeg"
+        case [0x47]: return "gif"
+        case [0x25]: return "pdf"  // PDF
+        case [0x50]: return "zip"  // ZIP
+        default: return nil
         }
     }
 }

@@ -9,9 +9,13 @@ import Foundation
 extension Bool {
     
     /// 返回Int值 | true ? 1 : 0
-    var intValue: Int {
+    var int: Int {
         self ? 1 : 0
     }
+	
+	var uInt8: UInt8 {
+		self ? 0x01 : 0x00
+	}
     
     var toggled: Bool {
         !self

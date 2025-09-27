@@ -8,21 +8,20 @@
 
 import UIKit
 
-@resultBuilder
-enum ArrayBuilder<E> {
+@resultBuilder enum ArrayBuilder<E> {
 	
 	static func buildEither(first component: [E]) -> [E] {
 		component
 	}
-
+	
 	static func buildEither(second component: [E]) -> [E] {
 		component
 	}
-
+	
 	static func buildOptional(_ component: [E]?) -> [E] {
 		component ?? []
 	}
-
+	
 	static func buildExpression(_ expression: E) -> [E] {
 		[expression]
 	}
@@ -30,18 +29,19 @@ enum ArrayBuilder<E> {
 	static func buildExpression(_ expression: [E]) -> [E] {
 		expression
 	}
-
+	
 	static func buildExpression(_ expression: ()) -> [E] {
 		[]
 	}
 	
 	static func buildExpression(_ expression: E?) -> [E] {
-		if let e = expression {
-			return [e]
+		if let element = expression {
+			return [element]
+		} else {
+			return []
 		}
-		return []
 	}
-
+	
 	static func buildBlock(_ components: [E]...) -> [E] {
 		components.flatMap { $0 }
 	}
@@ -52,10 +52,10 @@ enum ArrayBuilder<E> {
 }
 
 extension ArrayBuilder where E: Hashable {
-    
-    static func buildExpression(_ expression: Set<E>) -> [E] {
-        expression.array
-    }
+	
+	static func buildExpression(_ expression: Set<E>) -> [E] {
+		expression.array
+	}
 }
 
 @resultBuilder

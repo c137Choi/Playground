@@ -130,6 +130,18 @@ extension Data {
             desc += "\(next.offset.number)_\(next.element)\(next.offset == lastIndex ? "" : "|")"
         }
     }
+	
+	/// 从左至右读取指定个字节并更新自身 | 如果被读取的二进制长度不够则返回空
+	/// - Parameter byteCount: 读取字节数
+	/// - Returns: 指定个字节的二进制片段.
+	@discardableResult
+	public mutating func read(bytes byteCount: Int) -> Data? {
+        guard byteCount <= count else { return nil }
+        defer {
+            self = advanced(by: byteCount)
+        }
+        return prefix(byteCount)
+	}
     
     func jsonString(_ options: JSONSerialization.WritingOptions = []) -> String? {
         guard let jsonObject else { return nil }

@@ -63,8 +63,13 @@ class UIBaseStaticTable: UITableView, UIViewLifeCycle, UITableViewDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if tableView.rowHeight > 0 { return tableView.rowHeight }
-        return sections[indexPath.section].rows[indexPath.row].preferredHeight
+        /// UITableView实例的rowHeight属性默认值为UITableView.automaticDimension(-1.0)
+        /// 如果设置了正值, 则整个TableView使用固定Cell高度. 否则使用Row的高度
+        if tableView.rowHeight > 0 {
+            tableView.rowHeight
+        } else {
+            sections[indexPath.section].rows[indexPath.row].height
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -115,14 +120,24 @@ class UIBaseStaticTable: UITableView, UIViewLifeCycle, UITableViewDelegate, UITa
 
 extension UIBaseStaticTable {
     
-    final class Row {
-        private weak var cell_: UITableViewCell?
-        let preferredHeight: CGFloat
+    final class Row: Configurable {
+        
+        /// 高度(默认值: UITableView.automaticDimension)
+        var height: CGFloat
+        /// 点击回调闭包
         fileprivate var didSelectCallback: SimpleCallback?
+        /// 点击回调闭包数组
         fileprivate var didSelectCallbacks: [SimpleCallback] = []
-        init(cell: UITableViewCell, preferredHeight: CGFloat = UITableView.automaticDimension) {
-            self.cell_ = cell
-            self.preferredHeight = preferredHeight
+        /// 核心Cell对象(弱引用)
+        private weak var core: UITableViewCell?
+        
+        /// 初始化
+        /// - Parameters:
+        ///   - cell: Cell视图
+        ///   - height: 指定高度
+        init(cell: UITableViewCell, height: CGFloat = UITableView.automaticDimension) {
+            self.core = cell
+            self.height = height
         }
         
         /// 设置单个的选中回调方法
@@ -148,7 +163,7 @@ extension UIBaseStaticTable {
         }
         
         var cell: UITableViewCell {
-            cell_ ?? UITableViewCell()
+            core ?? UITableViewCell()
         }
     }
     
@@ -176,14 +191,19 @@ extension UIBaseStaticTable {
         var sectionIndex: Int?
         weak var tableView: UITableView?
         
+        /// 初始化
+        /// - Parameters:
+        ///   - headerHeight: 组头高度
+        ///   - footerHeight: 组尾高度
+        ///   - rowsBuilder: 包含的Rows
         init(headerHeight: CGFloat = 0, footerHeight: CGFloat = 0, @ArrayBuilder<StaticRow> _ rowsBuilder: () -> [StaticRow]) {
             self.headerHeight = headerHeight
             self.footerHeight = footerHeight
             self.rows = rowsBuilder()
         }
         
-        subscript(_ row: Int) -> StaticRow {
-            rows[row]
+        subscript(_ rowIndex: Int) -> StaticRow {
+            rows[rowIndex]
         }
         
         func appendRows(@ArrayBuilder<StaticRow> _ rowsBuilder: () -> [StaticRow]) {
@@ -220,14 +240,14 @@ extension UIBaseStaticTable {
 extension UITableViewCell {
     
     var row: StaticRow {
-        row(preferredHeight: UITableView.automaticDimension)
+        row(height: UITableView.automaticDimension)
     }
     
-    func row(preferredHeight: CGFloat) -> StaticRow {
+    func row(height: CGFloat) -> StaticRow {
         if let row = associated(StaticRow.self, self, Associated.row) {
-            return row
+            return row.with(new: \.height, height)
         } else {
-            let row = StaticRow(cell: self, preferredHeight: preferredHeight)
+            let row = StaticRow(cell: self, height: height)
             setAssociatedObject(self, Associated.row, row, .OBJC_ASSOCIATION_RETAIN)
             return row
         }

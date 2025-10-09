@@ -15,6 +15,10 @@ extension NSObject {
         @UniqueAddress static var isPrepared
     }
     
+    static var className: String {
+        String(describing: self)
+    }
+    
     /// 字典储存一组引用对象
     var references: [AnyHashable: Any] {
         get {

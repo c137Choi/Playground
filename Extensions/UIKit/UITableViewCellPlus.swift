@@ -39,9 +39,9 @@ extension UITableViewCell {
 
 extension UITableViewCell {
     static func registerTo(_ tableView: UITableView) {
-        tableView.register(self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(self, forCellReuseIdentifier: className)
     }
     static func dequeueReusableCell(from tableView: UITableView, indexPath: IndexPath) -> Self {
-        tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! Self
+        tableView.dequeueReusableCell(withIdentifier: className, for: indexPath) as! Self
     }
 }

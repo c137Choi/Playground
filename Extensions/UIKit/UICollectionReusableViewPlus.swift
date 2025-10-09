@@ -13,6 +13,10 @@ extension UICollectionReusableView {
         @UniqueAddress static var collectionView
     }
     
+    static func registerTo(layout: UICollectionViewLayout) {
+        layout.register(self, forDecorationViewOfKind: className)
+    }
+    
     var inferredIndexPath: IndexPath? {
         collectionView?.indexPathForItem(at: center)
     }

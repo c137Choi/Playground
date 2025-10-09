@@ -131,7 +131,7 @@ class BaseCollectionViewController: BaseViewController, UICollectionViewDelegate
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: UICollectionReusableView.reuseIdentifier, for: indexPath)
+        collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: UICollectionReusableView.className, for: indexPath)
     }
     
     /// 滑动多选代理方法

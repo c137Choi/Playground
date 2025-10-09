@@ -15,6 +15,10 @@ extension NSObject {
         @UniqueAddress static var isPrepared
     }
     
+    var className: String {
+        type(of: self).className
+    }
+    
     static var className: String {
         String(describing: self)
     }

@@ -42,6 +42,11 @@ extension Configurable {
         return clone
     }
     
+    @discardableResult
+    mutating func setup(_ configuration: (inout Self) throws -> Void) rethrows -> Self {
+        try configure(configuration)
+    }
+    
     /// 配置
     /// - Parameter configuration: 配置闭包
     /// - Returns: 返回自身
@@ -54,6 +59,11 @@ extension Configurable {
 
 /// 为引用类型另外定义扩展方法, 方便对let对象直接调用方法
 extension Configurable where Self: AnyObject {
+    
+    @discardableResult
+    func setup(_ configuration: (Self) throws -> Void) rethrows -> Self {
+        try configure(configuration)
+    }
     
     /// 配置
     /// - Parameter configuration: 配置闭包
@@ -71,7 +81,7 @@ extension SimpleInitializer where Self: Configurable & AnyObject {
     /// - Parameter configuration: 初始化配置
     /// - Returns: 返回实例
     static func make(_ configuration: (Self) -> Void) -> Self {
-        self.init().configure(configuration)
+        self.init().setup(configuration)
     }
 }
 

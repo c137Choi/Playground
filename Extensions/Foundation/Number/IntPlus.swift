@@ -39,10 +39,9 @@ extension Int {
     }
     
     func digits(_ minimumIntegerDigits: Int = 1) -> String? {
-        NumberFormatter.shared.configure { formatter in
+        NumberFormatter.shared.transform { formatter in
             formatter.minimumIntegerDigits = minimumIntegerDigits
-        }.transform { formatter in
-            formatter.string(from: self.nsNumber)
+            return formatter.string(from: self.nsNumber)
         }
     }
     

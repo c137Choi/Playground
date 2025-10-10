@@ -24,7 +24,7 @@ extension BinaryInteger {
             "0"
         }
 //        /// 注: 不使用下面的方式, 因为遇到播放视频时格式化会偶尔格式化成(14.0000)这样的格式
-//        NumberFormatter.shared.configure { make in
+//        NumberFormatter.shared.setup { make in
 //            make.positivePrefix = "+"
 //            make.negativePrefix = "-"
 //            make.zeroSymbol = "0"

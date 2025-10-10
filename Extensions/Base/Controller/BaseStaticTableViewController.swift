@@ -11,7 +11,7 @@ class BaseStaticTableViewController<StaticTable: UIBaseStaticTable>: BaseTableVi
     lazy var staticTable = StaticTable()
     
     override func makeTableView() -> UITableView {
-        staticTable.configure { table in
+        staticTable.setup { table in
             table.autoresizingMask = .autoResize
             table.backgroundColor = .baseBackground
         }

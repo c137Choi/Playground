@@ -12,7 +12,7 @@ extension JSONEncoder: Configurable {}
 extension Configurable where Self == JSONEncoder {
     
     static func make(_ configuration: (JSONEncoder) -> Void) -> JSONEncoder {
-        JSONEncoder().configure(configuration)
+        JSONEncoder().setup(configuration)
     }
 }
 

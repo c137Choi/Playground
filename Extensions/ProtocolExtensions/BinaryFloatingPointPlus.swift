@@ -121,7 +121,7 @@ extension BinaryFloatingPoint {
     
     // 默认设置
     fileprivate var decimalFormatter: NumberFormatter {
-        NumberFormatter.shared.configure { make in
+        NumberFormatter.shared.setup { make in
             /// 数字格式: 小数
             make.numberStyle = .decimal
             /// 最大小数位: 2
@@ -131,14 +131,14 @@ extension BinaryFloatingPoint {
     
     /// 四舍五入的Formatter
     fileprivate var roundDecimalFormatter: NumberFormatter {
-        decimalFormatter.configure { make in
+        decimalFormatter.setup { make in
             make.roundingMode = .halfUp
         }
     }
     
     // 带正负号的Formatter
     fileprivate var signedDecimalFormatter: NumberFormatter {
-        decimalFormatter.configure { make in
+        decimalFormatter.setup { make in
             make.positivePrefix = "+"
             make.negativePrefix = "-"
             make.zeroSymbol = "0" /// 格式化成带有正负号的数字时,0不带符号
@@ -147,10 +147,9 @@ extension BinaryFloatingPoint {
     
     /// 带符号 | 四舍五入
     var signedR2: String {
-        signedDecimalFormatter.configure { make in
-            make.roundingMode = .halfUp
-        }.transform { fmt -> String in
-            fmt.string(from: nsNumber) ?? ""
+        signedDecimalFormatter.transform { formatter in
+            formatter.roundingMode = .halfUp
+            return formatter.string(from: nsNumber) ?? ""
         }
     }
     
@@ -163,10 +162,9 @@ extension BinaryFloatingPoint {
     
     /// 带符号 | 保留两位小数
     var signedF2: String {
-        signedDecimalFormatter.configure { make in
-            make.minimumFractionDigits = 2
-        }.transform { fmt -> String in
-            fmt.string(from: nsNumber) ?? ""
+        signedDecimalFormatter.transform { formatter in
+            formatter.minimumFractionDigits = 2
+            return formatter.string(from: nsNumber) ?? ""
         }
     }
     
@@ -179,11 +177,10 @@ extension BinaryFloatingPoint {
     
     /// 原样输出
     var f: String {
-        decimalFormatter.configure { make in
-            make.minimumFractionDigits = 0
-            make.maximumFractionDigits = .max
-        }.transform { fmt -> String in
-            fmt.string(from: nsNumber) ?? ""
+        decimalFormatter.transform { formatter in
+            formatter.minimumFractionDigits = 0
+            formatter.maximumFractionDigits = .max
+            return formatter.string(from: nsNumber) ?? ""
         }
     }
     
@@ -203,33 +200,31 @@ extension BinaryFloatingPoint {
     
     /// 格式化0...1.0到百分比
     private func percentString(fractions: Int = 0) -> String? {
-        NumberFormatter.shared.configure { fmt in
-            fmt.numberStyle = .percent
+        NumberFormatter.shared.transform { formatter in
+            formatter.numberStyle = .percent
             /// 因为shared属性内对复用的Formatter所有属性都作了重置(numberStyle被重置为了.none)
             /// 可能还在同一个runloop中,设置了numberStyle = .percent之后相关属性还未生效
             /// 这里改了numberStyle之后要重新设置相关属性(大概.numberStyle对数字格式化并不重要,因为设置了.numberStyle之后本质是设置了相关的一组属性)
             /// 就算把上面设置.numberStyle一行注释掉, 只保留下面的一组属性设置, 也可以达到想要的格式化效果
             /// 可能这就是苹果为什么推行format新API的原因吧
-            fmt.positiveSuffix = "%"
+            formatter.positiveSuffix = "%"
             /// 数字 -> 字符串转换因子 | 0...1.0的小数乘以这个数, shared属性重置后此值为空
             /// 所以之前格式化时输出的字符串总是0或1, 就是因为这个值
             /// 还可以设置它为360, 这样就可以直接格式化色相了666 | 2024年09月25日18:17:30
-            fmt.multiplier = 100.nsNumber
+            formatter.multiplier = 100.nsNumber
             /// 这里还同时设置了进位规则, 避免出现.9999999的情况
-            fmt.roundingMode = .halfEven
-            fmt.minimumFractionDigits = fractions
-            fmt.maximumFractionDigits = fractions
-        }.transform { fmt in
-            fmt.string(for: self)
+            formatter.roundingMode = .halfEven
+            formatter.minimumFractionDigits = fractions
+            formatter.maximumFractionDigits = fractions
+            return formatter.string(for: self)
         }
     }
     
     func signedF(_ fractionDigits: Int) -> String {
-        signedDecimalFormatter.configure { fmt in
-            fmt.minimumFractionDigits = fractionDigits
-            fmt.maximumFractionDigits = fractionDigits
-        }.transform { fmt -> String in
-            fmt.string(from: nsNumber) ?? ""
+        signedDecimalFormatter.transform { formatter in
+            formatter.minimumFractionDigits = fractionDigits
+            formatter.maximumFractionDigits = fractionDigits
+            return formatter.string(from: nsNumber) ?? ""
         }
     }
     
@@ -244,15 +239,14 @@ extension BinaryFloatingPoint {
     ///   - roundingIncrement: 进位精度
     /// - Returns: 格式化后的字符串
     func f(_ fractionsRange: ClosedIntRange, roundingMode: NumberFormatter.RoundingMode = .down, roundingIncrement: NSNumber? = nil) -> String {
-        decimalFormatter.configure { fmt in
-            fmt.minimumFractionDigits = fractionsRange.lowerBound
-            fmt.maximumFractionDigits = fractionsRange.upperBound
-            fmt.roundingMode = roundingMode
+        decimalFormatter.transform { formatter in
+            formatter.minimumFractionDigits = fractionsRange.lowerBound
+            formatter.maximumFractionDigits = fractionsRange.upperBound
+            formatter.roundingMode = roundingMode
             if let roundingIncrement {
-                fmt.roundingIncrement = roundingIncrement
+                formatter.roundingIncrement = roundingIncrement
             }
-        }.transform { fmt -> String in
-            fmt.string(for: self).orEmpty
+            return formatter.string(for: self).orEmpty
         }
     }
 }

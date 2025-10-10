@@ -21,7 +21,7 @@ extension NumberFormatter {
 	}
 	
 	public static var spellout: NumberFormatter {
-		shared.configure {
+		shared.setup {
 			$0.numberStyle = .spellOut
 			$0.zeroSymbol = "零"
 			$0.locale = .chineseSimplified

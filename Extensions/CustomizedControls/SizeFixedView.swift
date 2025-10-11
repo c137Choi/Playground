@@ -9,20 +9,25 @@
 import UIKit
 
 final class SizeFixedView: UIView {
-	
-    var fixedSize = CGSize.zero {
-        willSet {
+    
+    /// 固定尺寸
+    var fixedSize: CGSize? {
+        didSet {
             invalidateIntrinsicContentSize()
         }
     }
-	init(_ fixedSize: CGSize) {
-		self.fixedSize = fixedSize
-		super.init(frame: CGRect(origin: .zero, size: fixedSize))
+    
+    /// 初始化
+    /// - Parameter fixedSize: 固定尺寸
+	convenience init(_ fixedSize: CGSize) {
+        let initialFrame = CGRect(origin: .zero, size: fixedSize)
+        self.init(frame: initialFrame)
+        self.fixedSize = fixedSize
 	}
 	
 	override init(frame: CGRect) {
-		self.fixedSize = frame.size
-		super.init(frame: frame)
+        super.init(frame: frame)
+        self.fixedSize = frame.size
 	}
 	
 	required init?(coder: NSCoder) {
@@ -30,6 +35,6 @@ final class SizeFixedView: UIView {
 	}
 	
 	override var intrinsicContentSize: CGSize {
-		fixedSize
+        fixedSize ?? super.intrinsicContentSize
 	}
 }

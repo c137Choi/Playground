@@ -32,6 +32,14 @@ extension CGSize: SizeExtendable {
 }
 
 extension UIEdgeInsets: SizeExtendable {
-    var vertical: CGFloat { top + bottom }
-    var horizontal: CGFloat { left + right }
+    
+    var vertical: CGFloat {
+        get { top + bottom }
+        set { top = newValue; bottom = newValue }
+    }
+    
+    var horizontal: CGFloat {
+        get { left + right }
+        set { left = newValue; right = newValue }
+    }
 }

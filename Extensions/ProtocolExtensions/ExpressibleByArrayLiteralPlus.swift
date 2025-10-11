@@ -11,3 +11,10 @@ extension ExpressibleByArrayLiteral {
         []
     }
 }
+
+extension Optional where Wrapped: ExpressibleByArrayLiteral {
+    
+    var orEmpty: Wrapped {
+        self ?? Wrapped.empty
+    }
+}

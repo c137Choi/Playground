@@ -54,12 +54,6 @@ public struct ChangedBytes: CustomStringConvertible {
     }
 }
 
-extension Optional where Wrapped == Data {
-    var orEmpty: Data {
-        self ?? Data()
-    }
-}
-
 extension Data {
     
     private static let mimeTypeSignatures: [UInt8 : String] = [
@@ -306,5 +300,11 @@ extension Data {
     /// 显示二进制大小: KB, MB...
     var countDescription: String {
         ByteCountFormatter.string(fromByteCount: count.int64, countStyle: .file)
+    }
+}
+
+extension Data: @retroactive ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: UInt8...) {
+        self.init(elements)
     }
 }

@@ -172,17 +172,3 @@ extension Optional {
         self ?? fallback()
     }
 }
-
-extension Optional where Wrapped: Sequence & ExpressibleByArrayLiteral {
-    
-    var orEmpty: Wrapped {
-        or(.empty)
-    }
-}
-
-extension Optional where Wrapped: ExpressibleByArrayLiteral {
-    
-    var orEmpty: Wrapped {
-        or(.empty)
-    }
-}

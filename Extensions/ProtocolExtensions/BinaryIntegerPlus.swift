@@ -24,12 +24,11 @@ extension BinaryInteger {
             "0"
         }
 //        /// 注: 不使用下面的方式, 因为遇到播放视频时格式化会偶尔格式化成(14.0000)这样的格式
-//        NumberFormatter.shared.setup { make in
-//            make.positivePrefix = "+"
-//            make.negativePrefix = "-"
-//            make.zeroSymbol = "0"
-//        }.map { formatter in
-//            formatter.string(for: self).orEmpty
+//        NumberFormatter.shared.transform { formatter in
+//            formatter.positivePrefix = "+"
+//            formatter.negativePrefix = "-"
+//            formatter.zeroSymbol = "0"
+//            return formatter.string(for: self).orEmpty
 //        }
     }
     

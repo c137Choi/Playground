@@ -67,7 +67,9 @@ extension String: @retroactive LocalizedError {
 // MARK: - __________ String? __________
 extension Optional where Wrapped == String {
 	
-	var orEmpty: String { self ?? "" }
+    var orEmpty: String {
+        self ?? ""
+    }
 	
     var isNotEmptyString: Bool {
         isEmptyString.toggled

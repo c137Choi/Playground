@@ -81,6 +81,10 @@ extension ObservableType {
         map { _ in designated() }
     }
     
+    var toArray: Single<[Element]> {
+        toArray()
+    }
+    
     var shortHistory: Observable<ShortHistory<Element>> {
         lastAndLatest.map(ShortHistory.init)
     }

@@ -224,15 +224,6 @@ extension Array where Element: Numeric {
     }
 }
 
-// MARK: - ArraySlice
-extension ArraySlice {
-    
-    /// 转换为Array
-    var array: Array<Element> {
-        Array(self)
-    }
-}
-
 // MARK: - 数据交换
 extension Array {
     /// 交换数组中两个元素的位置

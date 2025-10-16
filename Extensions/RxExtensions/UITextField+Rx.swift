@@ -10,23 +10,11 @@ import RxCocoa
 
 extension Reactive where Base: UITextField {
     
-    /// 编辑状态的UnmarkedText
-    /// 注: 需要与QMUITextField配合使用, 设置其.shouldResponseToProgrammaticallyTextChanges为false
-    /// 再订阅此事件
-    /// - Parameter skipFirstEditingText: 是否跳过每一次进入编辑状态时的text值
-    func typingUnmarkedText(skipFirstEditingText: Bool) -> Observable<String> {
-        isEditing.observable
-            .withUnretained(base)
-            .flatMapLatest { textField, isEditing -> Observable<String> in
-                if isEditing {
-                    return text.withUnretained(textField)
-                        .map(\.0.unmarkedText)
-                        .unwrapped
-                        .skip(skipFirstEditingText ? 1 : 0)
-                } else {
-                    return .empty()
-                }
-            }
+    /// 输入的UnmarkedText
+    var typingUnmarkedText: Observable<String> {
+        controlEvent(.editingChanged).compactMap {
+            [weak base] _ in base?.unmarkedText
+        }
     }
     
     var isEditing: Driver<Bool> {

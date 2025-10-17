@@ -510,10 +510,10 @@ extension UIView {
     func fix(widthHeightRatio: CGFloat?, priority: UILayoutPriority = .required) -> Self {
         /// 移除旧约束
         NSLayoutConstraint.deactivate {
-            constraints.filter { constraint in
-                guard constraint.relation == .equal else { return false }
-                guard constraint.firstAttribute == .width else { return false }
-                guard constraint.secondAttribute == .height else { return false }
+            constraints.filter {
+                guard $0.firstAttribute == .width else { return false }
+                guard $0.relation == .equal else { return false }
+                guard $0.secondAttribute == .height else { return false }
                 return true
             }
         }
@@ -544,10 +544,10 @@ extension UIView {
         
         func deactivateOldWidthConstraintsIfNeeded() {
             NSLayoutConstraint.deactivate {
-                constraints.filter { constraint in
-                    guard constraint.relation == .equal else { return false }
-                    guard constraint.firstAttribute == .width else { return false }
-                    guard constraint.secondAttribute == .notAnAttribute else { return false }
+                constraints.filter {
+                    guard $0.firstAttribute == .width else { return false }
+                    guard $0.relation == .equal else { return false }
+                    guard $0.secondAttribute == .notAnAttribute else { return false }
                     return true
                 }
             }
@@ -555,10 +555,10 @@ extension UIView {
         
         func deactivateOldHeightConstraintsIfNeeded() {
             NSLayoutConstraint.deactivate {
-                constraints.filter { constraint in
-                    guard constraint.relation == .equal else { return false }
-                    guard constraint.firstAttribute == .height else { return false }
-                    guard constraint.secondAttribute == .notAnAttribute else { return false }
+                constraints.filter {
+                    guard $0.firstAttribute == .height else { return false }
+                    guard $0.relation == .equal else { return false }
+                    guard $0.secondAttribute == .notAnAttribute else { return false }
                     return true
                 }
             }
@@ -594,45 +594,38 @@ extension UIView {
         return self
     }
     
-    @discardableResult func limit(widthRange: ClosedRange<CGFloat>? = nil, heightRange: ClosedRange<CGFloat>? = nil) -> Self {
-        limit(minWidth: widthRange.map(\.lowerBound),
-              maxWidth: widthRange.map(\.upperBound),
-              minHeight: heightRange.map(\.lowerBound),
-              maxHeight: heightRange.map(\.upperBound))
-    }
-    
     @discardableResult func limit(minWidth: CGFloat? = nil, maxWidth: CGFloat? = nil, minHeight: CGFloat? = nil, maxHeight: CGFloat? = nil) -> Self {
-        limit(minWidth: minWidth.map(\.constraint),
-              maxWidth: maxWidth.map(\.constraint),
-              minHeight: minHeight.map(\.constraint),
-              maxHeight: maxHeight.map(\.constraint))
+        limit(minWidth: minWidth?.constraint,
+              maxWidth: maxWidth?.constraint,
+              minHeight: minHeight?.constraint,
+              maxHeight: maxHeight?.constraint)
     }
     
     @discardableResult func limit(minWidth: UILayoutConstraint? = nil, maxWidth: UILayoutConstraint? = nil, minHeight: UILayoutConstraint? = nil, maxHeight: UILayoutConstraint? = nil) -> Self {
         /// 移除旧约束
         NSLayoutConstraint.deactivate {
-            constraints.filter { constraint in
-                guard constraint.relation == .greaterThanOrEqual else { return false }
-                guard constraint.firstAttribute == .width else { return false }
-                guard constraint.secondAttribute == .notAnAttribute else { return false }
+            constraints.filter {
+                guard $0.firstAttribute == .width else { return false }
+                guard $0.relation == .greaterThanOrEqual else { return false }
+                guard $0.secondAttribute == .notAnAttribute else { return false }
                 return true
             }
-            constraints.filter { constraint in
-                guard constraint.relation == .lessThanOrEqual else { return false }
-                guard constraint.firstAttribute == .width else { return false }
-                guard constraint.secondAttribute == .notAnAttribute else { return false }
+            constraints.filter {
+                guard $0.firstAttribute == .width else { return false }
+                guard $0.relation == .lessThanOrEqual else { return false }
+                guard $0.secondAttribute == .notAnAttribute else { return false }
                 return true
             }
-            constraints.filter { constraint in
-                guard constraint.relation == .greaterThanOrEqual else { return false }
-                guard constraint.firstAttribute == .height else { return false }
-                guard constraint.secondAttribute == .notAnAttribute else { return false }
+            constraints.filter {
+                guard $0.firstAttribute == .height else { return false }
+                guard $0.relation == .greaterThanOrEqual else { return false }
+                guard $0.secondAttribute == .notAnAttribute else { return false }
                 return true
             }
-            constraints.filter { constraint in
-                guard constraint.relation == .lessThanOrEqual else { return false }
-                guard constraint.firstAttribute == .height else { return false }
-                guard constraint.secondAttribute == .notAnAttribute else { return false }
+            constraints.filter {
+                guard $0.firstAttribute == .height else { return false }
+                guard $0.relation == .lessThanOrEqual else { return false }
+                guard $0.secondAttribute == .notAnAttribute else { return false }
                 return true
             }
         }

@@ -9,6 +9,11 @@ import Foundation
 
 extension SetAlgebra {
     
+    /// 是否和另一个集合相交
+    public func intersects(with other: Self) -> Bool {
+        !isDisjoint(with: other)
+    }
+    
     /// 对比两个集合, 返回对比后的结果
     /// - Parameter updated: 新集合
     /// - Returns: 元组(移除的元素, 不变的元素, 新增的元素)

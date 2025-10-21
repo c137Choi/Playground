@@ -1,5 +1,5 @@
 //
-//  UILayoutConstraint.swift
+//  ConstraintComponents.swift
 //  KnowLED
 //
 //  Created by Choi on 2023/8/15.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-public struct UILayoutConstraint {
+public struct ConstraintComponents {
     let constant: Double
     let priority: UILayoutPriority
     init(constant: Double, priority: UILayoutPriority) {
@@ -17,29 +17,29 @@ public struct UILayoutConstraint {
 }
 
 extension CGFloat {
-    var constraint: UILayoutConstraint {
+    var constraint: ConstraintComponents {
         constraint(priority: .required)
     }
-    func constraint(priority: UILayoutPriority) -> UILayoutConstraint {
-        UILayoutConstraint(constant: self, priority: priority)
+    func constraint(priority: UILayoutPriority) -> ConstraintComponents {
+        ConstraintComponents(constant: self, priority: priority)
     }
 }
 
 extension Double {
-    var constraint: UILayoutConstraint {
+    var constraint: ConstraintComponents {
         constraint(priority: .required)
     }
-    func constraint(priority: UILayoutPriority) -> UILayoutConstraint {
-        UILayoutConstraint(constant: self, priority: priority)
+    func constraint(priority: UILayoutPriority) -> ConstraintComponents {
+        ConstraintComponents(constant: self, priority: priority)
     }
 }
 
 extension Int {
-    var constraint: UILayoutConstraint {
+    var constraint: ConstraintComponents {
         constraint(priority: .required)
     }
-    func constraint(priority: UILayoutPriority) -> UILayoutConstraint {
-        UILayoutConstraint(constant: Double(self), priority: priority)
+    func constraint(priority: UILayoutPriority) -> ConstraintComponents {
+        ConstraintComponents(constant: Double(self), priority: priority)
     }
 }
 

@@ -537,10 +537,10 @@ extension UIView {
     /// 固定宽高
     /// - Returns: 自己
     @discardableResult func fix(width: CGFloat? = nil, height: CGFloat? = nil) -> Self {
-        fix(widthConstraint: width.map(\.constraint), heightConstraint: height.map(\.constraint))
+        fix(widthConstraint: width?.constraint, heightConstraint: height.map(\.constraint))
     }
     
-    @discardableResult func fix(widthConstraint: UILayoutConstraint? = nil, heightConstraint: UILayoutConstraint? = nil) -> Self {
+    @discardableResult func fix(widthConstraint: ConstraintComponents? = nil, heightConstraint: ConstraintComponents? = nil) -> Self {
         
         func deactivateOldWidthConstraintsIfNeeded() {
             NSLayoutConstraint.deactivate {
@@ -601,7 +601,7 @@ extension UIView {
               maxHeight: maxHeight?.constraint)
     }
     
-    @discardableResult func limit(minWidth: UILayoutConstraint? = nil, maxWidth: UILayoutConstraint? = nil, minHeight: UILayoutConstraint? = nil, maxHeight: UILayoutConstraint? = nil) -> Self {
+    @discardableResult func limit(minWidth: ConstraintComponents? = nil, maxWidth: ConstraintComponents? = nil, minHeight: ConstraintComponents? = nil, maxHeight: ConstraintComponents? = nil) -> Self {
         /// 移除旧约束
         NSLayoutConstraint.deactivate {
             constraints.filter {

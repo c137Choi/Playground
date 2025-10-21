@@ -541,34 +541,14 @@ extension UIView {
     }
     
     @discardableResult func fix(widthConstraint: ConstraintComponents? = nil, heightConstraint: ConstraintComponents? = nil) -> Self {
-        
-        func deactivateOldWidthConstraintsIfNeeded() {
-            NSLayoutConstraint.deactivate {
-                constraints.filter {
-                    guard $0.firstAttribute == .width else { return false }
-                    guard $0.relation == .equal else { return false }
-                    guard $0.secondAttribute == .notAnAttribute else { return false }
-                    return true
-                }
-            }
-        }
-        
-        func deactivateOldHeightConstraintsIfNeeded() {
-            NSLayoutConstraint.deactivate {
-                constraints.filter {
-                    guard $0.firstAttribute == .height else { return false }
-                    guard $0.relation == .equal else { return false }
-                    guard $0.secondAttribute == .notAnAttribute else { return false }
-                    return true
-                }
-            }
-        }
-        
         /// 其中一个必须有值
         guard widthConstraint.isValid || heightConstraint.isValid else {
-            /// 如果两个参数都无效, 则移除已经存在的约束
-            deactivateOldWidthConstraintsIfNeeded()
-            deactivateOldHeightConstraintsIfNeeded()
+            /// 如果两个参数都无效, 则移除已经存在的(宽高固定的)约束
+            NSLayoutConstraint.deactivate {
+                constraints.filter {
+                    $0.isFixWidthConstraint || $0.isFixHeightConstraint
+                }
+            }
             return self
         }
         /// 开始自动布局
@@ -576,7 +556,9 @@ extension UIView {
         /// 约束宽度
         if let widthConstraint {
             /// 移除存在的约束
-            deactivateOldWidthConstraintsIfNeeded()
+            NSLayoutConstraint.deactivate {
+                constraints.filter(\.isFixWidthConstraint)
+            }
             /// 激活新的约束
             let constraint = widthAnchor.constraint(equalToConstant: widthConstraint.constant)
             constraint.priority = widthConstraint.priority
@@ -585,7 +567,9 @@ extension UIView {
         /// 约束高度
         if let heightConstraint {
             /// 移除存在的高度约束
-            deactivateOldHeightConstraintsIfNeeded()
+            NSLayoutConstraint.deactivate {
+                constraints.filter(\.isFixHeightConstraint)
+            }
             /// 激活新的约束
             let constraint = heightAnchor.constraint(equalToConstant: heightConstraint.constant)
             constraint.priority = heightConstraint.priority
@@ -605,28 +589,10 @@ extension UIView {
         /// 移除旧约束
         NSLayoutConstraint.deactivate {
             constraints.filter {
-                guard $0.firstAttribute == .width else { return false }
-                guard $0.relation == .greaterThanOrEqual else { return false }
-                guard $0.secondAttribute == .notAnAttribute else { return false }
-                return true
-            }
-            constraints.filter {
-                guard $0.firstAttribute == .width else { return false }
-                guard $0.relation == .lessThanOrEqual else { return false }
-                guard $0.secondAttribute == .notAnAttribute else { return false }
-                return true
-            }
-            constraints.filter {
-                guard $0.firstAttribute == .height else { return false }
-                guard $0.relation == .greaterThanOrEqual else { return false }
-                guard $0.secondAttribute == .notAnAttribute else { return false }
-                return true
-            }
-            constraints.filter {
-                guard $0.firstAttribute == .height else { return false }
-                guard $0.relation == .lessThanOrEqual else { return false }
-                guard $0.secondAttribute == .notAnAttribute else { return false }
-                return true
+                $0.isMinWidthConstraint ||
+                $0.isMaxWidthConstraint ||
+                $0.isMinHeightConstraint ||
+                $0.isMaxHeightConstraint
             }
         }
         /// 开始约束

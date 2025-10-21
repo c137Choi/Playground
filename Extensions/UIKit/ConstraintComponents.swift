@@ -8,38 +8,42 @@
 import UIKit
 
 public struct ConstraintComponents {
-    let constant: Double
+    /// 常量
+    let constant: CGFloat
+    /// 优先级
     let priority: UILayoutPriority
-    init(constant: Double, priority: UILayoutPriority) {
-        self.constant = constant
-        self.priority = priority
-    }
 }
 
 extension CGFloat {
+    
     var constraint: ConstraintComponents {
         constraint(priority: .required)
     }
+    
     func constraint(priority: UILayoutPriority) -> ConstraintComponents {
         ConstraintComponents(constant: self, priority: priority)
     }
 }
 
 extension Double {
+    
     var constraint: ConstraintComponents {
         constraint(priority: .required)
     }
+    
     func constraint(priority: UILayoutPriority) -> ConstraintComponents {
         ConstraintComponents(constant: self, priority: priority)
     }
 }
 
 extension Int {
+    
     var constraint: ConstraintComponents {
         constraint(priority: .required)
     }
+    
     func constraint(priority: UILayoutPriority) -> ConstraintComponents {
-        ConstraintComponents(constant: Double(self), priority: priority)
+        ConstraintComponents(constant: CGFloat(self), priority: priority)
     }
 }
 

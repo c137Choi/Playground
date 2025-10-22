@@ -71,14 +71,11 @@ extension Array {
     /// 替换指定位置的元素
     /// - Parameters:
     ///   - index: 元素Index
-    ///   - element: 新元素
-    public mutating func replace(elementAt index: Index, with element: Element) {
+    ///   - newElement: 新元素
+    public mutating func safeReplace(elementAt index: Index, with newElement: Element) {
         guard isValidIndex(index) else { return }
-        self.index(index, offsetBy: 1, limitedBy: endIndex).unwrap { subrangeEnd in
-            let subrange = index..<subrangeEnd
-            let elements = [element]
-            replaceSubrange(subrange, with: elements)
-        }
+        guard let subrangeEnd = self.index(index, offsetBy: 1, limitedBy: endIndex) else { return }
+        replaceSubrange(index..<subrangeEnd, with: [newElement])
     }
     
     /// 安全移除指定位置的元素

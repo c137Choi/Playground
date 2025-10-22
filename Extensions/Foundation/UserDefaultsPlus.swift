@@ -9,12 +9,19 @@ import Foundation
 
 extension UserDefaults {
     
-    static func maybeInt(forKey key: String) -> Int? {
-        object(forKey: key).as(Int.self)
+    /// 尝试将object转换, 转换失败则返回空
+    static func intOrNil(forKey key: String) -> Int? {
+        object(forKey: key) as? Int
     }
     
-    static func maybeBool(forKey key: String) -> Bool? {
-        object(forKey: key).as(Bool.self)
+    /// 尝试将object转换, 转换失败则返回空
+    static func doubleOrNil(forKey key: String) -> Double? {
+        object(forKey: key) as? Double
+    }
+    
+    /// 尝试将object转换, 转换失败则返回空
+    static func boolOrNil(forKey key: String) -> Bool? {
+        object(forKey: key) as? Bool
     }
     
     static func integer(forKey key: String) -> Int {

@@ -4,58 +4,63 @@
 //
 //  Created by Choi on 2024/1/19.
 //
-// 源代码: https://github.com/KyoheiG3/RxDisplayLink
 
 import UIKit
 import RxSwift
 
-public extension Reactive where Base: CADisplayLink {
-    /**
-     Link to the Display.
-     - Parameter runloop: It can choose RunLoop to link for display. Default is main.
-     - Parameter mode: The RunLoopMode has several modes. Default is commonModes. For details about RunLoopMode, see the [documents](https://developer.apple.com/reference/foundation/runloopmode).
-     - Parameter fps: Frames per second. Default and max are 60.
-     - Returns: Observable of CADisplayLink.
-     */
-    static func link(to runloop: RunLoop = .main, forMode mode: RunLoop.Mode = .common, fps: Int = UIScreen.main.maximumFramesPerSecond) -> Observable<CADisplayLink> {
-        return RxDisplayLink(to: runloop, forMode: mode, fps: fps).asObservable()
-    }
-}
-
 public final class RxDisplayLink: ObservableType {
-    
     public typealias Element = CADisplayLink
     
-    private let runloop: RunLoop
-    private let mode: RunLoop.Mode
-    private let fps: Int
-    private var observer: AnyObserver<Element>?
+    /// 弱引用RunLoop
+    private weak var runloop: RunLoop?
+    /// 运行模式
+    private let runloopMode: RunLoop.Mode
+    /// 帧率范围
+    private var frameRateRange: ClosedRange<Float>?
+    /// 观察者
+    private var observer: AnyObserver<CADisplayLink>?
     
-    @objc dynamic private func displayLinkHandler(link: Element) {
-        observer?.onNext(link)
-    }
-    
-    public init(to runloop: RunLoop, forMode mode: RunLoop.Mode, fps: Int) {
+    /// 初始化
+    /// - Parameters:
+    ///   - runloop: RunLoop
+    ///   - mode: RunLoop.Mode
+    ///   - frameRateRange: 帧率范围(传空则使用屏幕最大帧率)
+    public init(runloop: RunLoop, mode: RunLoop.Mode, frameRateRange: ClosedRange<Float>? = nil) {
         self.runloop = runloop
-        self.mode = mode
-        self.fps = fps
+        self.runloopMode = mode
+        self.frameRateRange = frameRateRange
     }
     
-    public func subscribe<O: ObserverType>(_ observer: O) -> Disposable where O.Element == Element {
-        var displayLink: Element? = Element(target: self, selector: #selector(displayLinkHandler))
-        displayLink?.add(to: runloop, forMode: mode)
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            displayLink?.preferredFramesPerSecond = fps
+    @objc private func nextFrame(_ sender: CADisplayLink) {
+        observer?.onNext(sender)
+    }
+    
+    public func subscribe<O: ObserverType>(_ observer: O) -> Disposable where O.Element == CADisplayLink {
+        if let runloop {
+            /// 转换成AnyObserver
+            self.observer = AnyObserver(observer)
+            /// 这里target会强引用self
+            let displayLink = CADisplayLink(target: self, selector: #selector(nextFrame))
+            /// 添加至RunLoop
+            displayLink.add(to: runloop, forMode: runloopMode)
+            /// 设置帧率
+            if #available(iOS 15.0, *) {
+                displayLink.preferredFrameRateRange = frameRateRange.or(.default) {
+                    CAFrameRateRange(minimum: $0.lowerBound, maximum: $0.upperBound)
+                }
+            } else {
+                displayLink.preferredFramesPerSecond = frameRateRange.or(0, map: \.upperBound.int)
+            }
+            return Disposables.create(with: displayLink.invalidate)
         } else {
-            displayLink?.frameInterval = max(UIScreen.main.maximumFramesPerSecond / fps, 1)
+            return Disposables.create()
         }
-        
-        self.observer = AnyObserver<Element>(observer)
-        
-        return Disposables.create {
-            self.observer = nil
-            displayLink?.invalidate()
-            displayLink = nil
+    }
+    
+    public convenience init(runloop: RunLoop = .main, mode: RunLoop.Mode = .common, framesPerSecond: Int? = nil) {
+        let frameRateRange = framesPerSecond.flatMap { frameRate in
+            try? ClosedRange(lowerBound: frameRate.float, upperBound: frameRate.float)
         }
+        self.init(runloop: runloop, mode: mode, frameRateRange: frameRateRange)
     }
 }

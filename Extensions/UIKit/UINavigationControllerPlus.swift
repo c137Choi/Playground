@@ -31,4 +31,17 @@ extension UINavigationController {
         tempControllers.insert(newController, at: 0)
         setViewControllers(tempControllers, animated: animated)
     }
+    
+    /// 退到指定类型的控制器
+    /// - Parameters:
+    ///   - classType: 控制器类
+    ///   - animated: 是否动画执行
+    func popToViewControllerTyped(_ classType: AnyClass, animated: Bool) {
+        let targetController = viewControllers.first { controller in
+            controller.isMember(of: classType)
+        }
+        if let targetController {
+            popToViewController(targetController, animated: animated)
+        }
+    }
 }

@@ -26,7 +26,7 @@ public extension Reactive where Base: UIViewController {
 		return ControlEvent(events: source)
 	}
     
-    var viewWillAppearOnce: Observable<Bool> {
+    var viewWillAppearOnce: RxObservable<Bool> {
         viewWillAppear.take(1)
     }
     
@@ -36,7 +36,7 @@ public extension Reactive where Base: UIViewController {
 		return ControlEvent(events: source)
 	}
     
-    var viewDidAppearOnce: Observable<Bool> {
+    var viewDidAppearOnce: RxObservable<Bool> {
         viewDidAppear.take(1)
     }
     
@@ -89,17 +89,17 @@ public extension Reactive where Base: UIViewController {
 	}
 	
     /// 视图控制器的viewWillAppear/viewWillDisappear方法映射出view是否可见的序列 | 比viewDidVisible提前一些
-    var viewWillVisible: Observable<Bool> {
+    var viewWillVisible: RxObservable<Bool> {
         let willAppear = viewWillAppear.mapDesignated(true)
         let willDisappear = viewWillDisappear.mapDesignated(false)
-        return Observable<Bool>.merge(willAppear, willDisappear).startWith(base.view.isVisible)
+        return RxObservable<Bool>.merge(willAppear, willDisappear).startWith(base.view.isVisible)
     }
     
 	/// 视图控制器的viewDidAppear/viewDidDisappear方法映射出view是否可见的序列
-	var viewDidVisible: Observable<Bool> {
+	var viewDidVisible: RxObservable<Bool> {
 		let didAppear = viewDidAppear.mapDesignated(true)
         let didDisappear = viewDidDisappear.mapDesignated(false)
-		return Observable<Bool>.merge(didAppear, didDisappear).startWith(base.view.isVisible)
+		return RxObservable<Bool>.merge(didAppear, didDisappear).startWith(base.view.isVisible)
 	}
 	
 	//表示页面被释放的可观察序列，当VC被dismiss时会触发

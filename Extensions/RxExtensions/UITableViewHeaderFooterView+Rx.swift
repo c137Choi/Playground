@@ -9,7 +9,7 @@ import RxSwift
 import RxCocoa
 
 extension Reactive where Base: UITableViewHeaderFooterView {
-    var prepareForReuse: Observable<[Any]> {
+    var prepareForReuse: RxObservable<[Any]> {
         methodInvoked(#selector(UITableViewHeaderFooterView.prepareForReuse))
     }
 }

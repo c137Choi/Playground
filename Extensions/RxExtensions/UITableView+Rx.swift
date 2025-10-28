@@ -22,7 +22,7 @@ extension UITableView {
     }
     
     /// 最新选中的IndexPaths
-    fileprivate var latestSelectedIndexPaths: Observable<[IndexPath]> {
+    fileprivate var latestSelectedIndexPaths: RxObservable<[IndexPath]> {
         rx.indexPathsAfterSelectionChanged
             .do(onSubscribe: observeToReselect)
             .startWith(indexPathsForSelectedRows.orEmpty)
@@ -38,11 +38,11 @@ extension UITableView {
 
 extension Reactive where Base: UITableView {
     
-    var shouldHideScrollBar: Observable<Bool> {
+    var shouldHideScrollBar: RxObservable<Bool> {
         didLayoutSubviews.map(\.shouldHideScrollBar)
     }
     
-    var numberOfRows: Observable<Int> {
+    var numberOfRows: RxObservable<Int> {
         didReloadData.map(\.numberOfRows)
     }
     
@@ -55,7 +55,7 @@ extension Reactive where Base: UITableView {
     }
     
     /// 选中的IndexPaths
-    fileprivate var observeSelectedIndexPaths: Observable<[IndexPath]> {
+    fileprivate var observeSelectedIndexPaths: RxObservable<[IndexPath]> {
         willReloadData.startWith(base).flatMapLatest(\.latestSelectedIndexPaths)
     }
     fileprivate var selectedIndexPathsBinder: Binder<[IndexPath]> {
@@ -71,30 +71,30 @@ extension Reactive where Base: UITableView {
     }
     
     /// 调用reloadData之后的通知
-    var didReloadData: Observable<Base> {
+    var didReloadData: RxObservable<Base> {
         methodInvoked(#selector(base.reloadData))
             .withUnretained(base)
             .map(\.0)
     }
     
     /// 调用reloadData之前的通知
-    var willReloadData: Observable<Base> {
+    var willReloadData: RxObservable<Base> {
         sentMessage(#selector(base.reloadData))
             .withUnretained(base)
             .map(\.0)
     }
     
-    fileprivate var indexPathsAfterSelectionChanged: Observable<[IndexPath]> {
+    fileprivate var indexPathsAfterSelectionChanged: RxObservable<[IndexPath]> {
         rowSelectionChanged
             .withUnretained(base)
             .map(\.0.indexPathsForSelectedRows.orEmpty)
     }
     
-    private var rowSelectionChanged: Observable<IndexPath> {
-        Observable.merge(selectRowAt, itemSelected.observable, itemDeselected.observable)
+    private var rowSelectionChanged: RxObservable<IndexPath> {
+        RxObservable.merge(selectRowAt, itemSelected.observable, itemDeselected.observable)
     }
     
-    private var selectRowAt: Observable<IndexPath> {
+    private var selectRowAt: RxObservable<IndexPath> {
         methodInvoked(#selector(base.selectRow(at:animated:scrollPosition:)))
             .compactMap(\.first)
             .as(IndexPath.self)

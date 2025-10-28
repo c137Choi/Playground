@@ -11,7 +11,7 @@ import RxCocoa
 extension Reactive where Base: UITextField {
     
     /// 输入的UnmarkedText
-    var typingUnmarkedText: Observable<String> {
+    var typingUnmarkedText: RxObservable<String> {
         controlEvent(.editingChanged).compactMap {
             [weak base] _ in base?.unmarkedText
         }
@@ -43,7 +43,7 @@ extension Reactive where Base: UITextField {
         return ControlProperty(values: observedUnmarkedText.optionalElement, valueSink: setUnmarked)
     }
     
-    private var observedUnmarkedText: Observable<String> {
+    private var observedUnmarkedText: RxObservable<String> {
         /// 注意这里observedText的后面不能加.distinctUntilChanged()操作符
         /// 否则拼音字符编辑完成后会出现unmarkedText事件不发送的问题
         /// 因为在输入拼音时,UITextField的.editingChanged事件会在拼音编辑完成时调用两次
@@ -55,8 +55,8 @@ extension Reactive where Base: UITextField {
             .orEmpty
     }
     
-    var observedText: Observable<String?> {
+    var observedText: RxObservable<String?> {
         /// 分别用于观察直接赋值时的文本变化和编辑时的文本变化
-        Observable.merge(observe(\.text), text.observable)
+        RxObservable.merge(observe(\.text), text.observable)
     }
 }

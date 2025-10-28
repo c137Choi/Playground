@@ -13,13 +13,13 @@ extension Reactive where Base == UIDevice {
     
     /// 设备是否横屏
     /// 结合Size.screenSize方法, 可以映射出当前朝向的屏幕尺寸. e.g. isLandscape.map(Size.screenSize)
-    static var isLandscape: Observable<Bool> {
+    static var isLandscape: RxObservable<Bool> {
         orientation
             .map(\.isScreenLandscape)
             .removeDuplicates
     }
     
-    static var orientation: Observable<UIDeviceOrientation> {
+    static var orientation: RxObservable<UIDeviceOrientation> {
         /// 注: 不要再.do(onDispose: UIDevice.current.endGeneratingDeviceOrientationNotifications)
         NotificationCenter.default.rx.notification(UIDevice.orientationDidChangeNotification)
             .map(\.object)

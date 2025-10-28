@@ -10,11 +10,11 @@ import RxCocoa
 
 extension Reactive where Base: UIPageControl {
     
-    var isFirstPage: Observable<Bool> {
+    var isFirstPage: RxObservable<Bool> {
         currentPage.map(\.isZero)
     }
     
-    var isLastPage: Observable<Bool> {
+    var isLastPage: RxObservable<Bool> {
         currentPage.withUnretained(base).map { pageControl, page in
             page == pageControl.numberOfPages - 1
         }
@@ -27,7 +27,7 @@ extension Reactive where Base: UIPageControl {
         let currentPage = controlEvent(.valueChanged)
             .withUnretained(base)
             .map(\.0.currentPage)
-        let mergedCurrentPage = Observable.merge(observedCurrentPage, currentPage).removeDuplicates
+        let mergedCurrentPage = RxObservable.merge(observedCurrentPage, currentPage).removeDuplicates
         let binder = Binder(base) { pageControl, page in
             guard page != pageControl.currentPage else { return }
             pageControl.currentPage = page

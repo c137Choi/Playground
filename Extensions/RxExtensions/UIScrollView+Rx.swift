@@ -13,7 +13,7 @@ extension Reactive where Base: UIScrollView {
     
     /// 是否在指定方向上隐藏滚动条
     /// - Parameter direction: 滚动方向
-    func shouldHideScrollBar(at direction: UICollectionView.ScrollDirection) -> Observable<Bool> {
+    func shouldHideScrollBar(at direction: UICollectionView.ScrollDirection) -> RxObservable<Bool> {
         didLayoutSubviews.map {
             $0.shouldHideScrollBar(at: direction)
         }
@@ -21,8 +21,8 @@ extension Reactive where Base: UIScrollView {
     
     /// 合并事件
     /// 用于更新自定义滚动条
-    var contentSizeAndVisibleContentBounds: Observable<(CGSize, CGRect)> {
-        Observable.combineLatest(contentSize, visibleContentBounds)
+    var contentSizeAndVisibleContentBounds: RxObservable<(CGSize, CGRect)> {
+        RxObservable.combineLatest(contentSize, visibleContentBounds)
     }
     
     var contentSize: ControlProperty<CGSize> {
@@ -39,7 +39,7 @@ extension Reactive where Base: UIScrollView {
     /// estimatedHeightForHeader
     /// estimatedHeightForFooter
     /// 都设置成比固定高度大的值,才能避免出现返回的尺寸跳变的问题
-    var observedContentSize: Observable<CGSize> {
+    var observedContentSize: RxObservable<CGSize> {
         observe(\.contentSize, options: .live).removeDuplicates
     }
     
@@ -56,7 +56,7 @@ extension Reactive where Base: UIScrollView {
     
     /// base.contentOffset +
     /// base.bounds.size
-    var visibleContentBounds: Observable<CGRect> {
+    var visibleContentBounds: RxObservable<CGRect> {
         didLayoutSubviews.map(\.bounds)
     }
     

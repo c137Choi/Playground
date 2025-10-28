@@ -65,14 +65,14 @@ extension LocationManager: CLLocationManagerDelegate {
 extension Reactive where Base == LocationManager {
     
     /// 位置权限序列
-    static var authorizationStatus: Observable<CLAuthorizationStatus> {
+    static var authorizationStatus: RxObservable<CLAuthorizationStatus> {
         authorizationStatus(requestOnSubscribe: true)
     }
     
     /// 位置权限序列
     /// - Parameter requestOnSubscribe: 订阅时是否立刻请求位置权限
     /// - Returns: 位置权限序列
-    static func authorizationStatus(requestOnSubscribe: Bool) -> Observable<CLAuthorizationStatus> {
+    static func authorizationStatus(requestOnSubscribe: Bool) -> RxObservable<CLAuthorizationStatus> {
         let unwrappedStatus = LocationManager.shared.authorizationStatusRelay
         if requestOnSubscribe {
             return unwrappedStatus.do(onSubscribe: LocationManager.requestAuthorizationIfNeeded)

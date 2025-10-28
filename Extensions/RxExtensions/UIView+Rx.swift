@@ -11,7 +11,7 @@ import RxCocoa
 extension Reactive where Base: UIView {
     
     /// 实时观察Frame变化
-    var frame: Observable<CGRect> {
+    var frame: RxObservable<CGRect> {
         let observables = Array {
             observe(\.frame)
             base.layer.rx.observe(\.frame).withUnretained(base).map(\.0.frame)
@@ -25,43 +25,43 @@ extension Reactive where Base: UIView {
         return observables.merged
     }
     
-    var intrinsicContentSize: Observable<CGSize> {
+    var intrinsicContentSize: RxObservable<CGSize> {
         didLayoutSubviews.map(\.intrinsicContentSize)
     }
     
-    var windowSequence: Observable<UIWindow?> {
+    var windowSequence: RxObservable<UIWindow?> {
         didMoveToWindow.startWith(base.window)
     }
     
-    var didMoveToWindow: Observable<UIWindow?> {
+    var didMoveToWindow: RxObservable<UIWindow?> {
         methodInvoked(#selector(base.didMoveToWindow))
             .withUnretained(base)
             .map(\.0.window)
     }
     
-    var willMoveToWindow: Observable<UIWindow?> {
+    var willMoveToWindow: RxObservable<UIWindow?> {
         methodInvoked(#selector(base.willMove(toWindow:)))
             .map(\.first)
             .asOptional(UIWindow.self)
     }
     
-    var willMoveToSuperView: Observable<UIView?> {
+    var willMoveToSuperView: RxObservable<UIView?> {
         methodInvoked(#selector(base.willMove(toSuperview:)))
             .map(\.first)
             .asOptional(UIView.self)
     }
     
-    var removeFromSuperview: Observable<[Any]> {
+    var removeFromSuperview: RxObservable<[Any]> {
         methodInvoked(#selector(base.removeFromSuperview))
     }
 
-    var didLayoutSubviews: Observable<Base> {
+    var didLayoutSubviews: RxObservable<Base> {
         methodInvoked(#selector(base.layoutSubviews))
             .withUnretained(base)
             .map(\.0)
     }
     
-    var superView: Observable<UIView?> {
+    var superView: RxObservable<UIView?> {
         methodInvoked(#selector(base.didMoveToSuperview))
             .withUnretained(base)
             .map(\.0.superview)
@@ -69,7 +69,7 @@ extension Reactive where Base: UIView {
             .removeDuplicates
     }
     
-    var isVisible: Observable<Bool> {
+    var isVisible: RxObservable<Bool> {
         methodInvoked(#selector(base.didMoveToWindow))
             .withUnretained(base)
             .map(\.0.window.isValid)

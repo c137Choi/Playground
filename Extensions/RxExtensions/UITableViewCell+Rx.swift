@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 extension Reactive where Base: UITableViewCell {
-    var prepareForReuse: Observable<[Any]> {
+    var prepareForReuse: RxObservable<[Any]> {
         methodInvoked(#selector(UITableViewCell.prepareForReuse))
     }
 }

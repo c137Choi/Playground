@@ -13,15 +13,15 @@ import RxCocoa
 extension Reactive where Base == AVPlayer {
     
     /// 播放AVPlayerItem序列
-    var currentItem: Observable<AVPlayerItem?> {
+    var currentItem: RxObservable<AVPlayerItem?> {
         base.rx.observe(\.currentItem, options: .live)
     }
     
     /// 计算当前进度及当前视频帧数据
     /// - Parameter videoOutput: 视频采集Output
     /// - Parameter preferredFPS: 视频帧率 | 单位: 帧/秒
-    func keyFrame(_ videoOutput: AVPlayerItemVideoOutput, preferredFPS: CMTimeScale = 60) -> Observable<AVKeyFrame> {
-        currentItem.flatMapLatest { currentItem -> Observable<AVKeyFrame> in
+    func keyFrame(_ videoOutput: AVPlayerItemVideoOutput, preferredFPS: CMTimeScale = 60) -> RxObservable<AVKeyFrame> {
+        currentItem.flatMapLatest { currentItem -> RxObservable<AVKeyFrame> in
             /// 当前视频
             guard let currentItem else {
                 return .empty()
@@ -29,7 +29,7 @@ extension Reactive where Base == AVPlayer {
             /// 视频时长
             let duration = currentItem.duration
             /// 关键帧序列
-            return Observable.create { observer in
+            return RxObservable.create { observer in
                 /// 观测队列
                 let queue = DispatchQueue(label: "com.observing.playback", qos: .userInitiated, autoreleaseFrequency: .workItem)
                 /// 采样间隔(按60fps计算)

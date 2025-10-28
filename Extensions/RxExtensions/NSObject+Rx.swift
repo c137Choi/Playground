@@ -19,12 +19,12 @@ enum Rx {
 public extension Reactive where Base: AnyObject {
     
     /// 更新数据流(跳过初始值) | 内部使用了.take(until: deallocated)
-    var anyNewUpdate: Observable<Any> {
+    var anyNewUpdate: RxObservable<Any> {
         anyUpdate.skip(1)
     }
     
     /// 更新数据流(包括初始值) | 内部使用了.take(until: deallocated)
-    private var anyUpdate: Observable<Any> {
+    private var anyUpdate: RxObservable<Any> {
         anyUpdateRelay.take(until: deallocated)
     }
     
@@ -170,7 +170,7 @@ extension ObservableConvertibleType where Element: EventConvertible {
     ///   - tracker: 错误跟踪者
     ///   - respondDepth: 响应深度 | nextResponder的深度, 如UIView的父视图
     /// - Returns: 观察序列
-    func trackErrorEvent(_ tracker: ErrorTracker?, respondDepth: Int = 0) -> Observable<Event<Element.Element>> {
+    func trackErrorEvent(_ tracker: ErrorTracker?, respondDepth: Int = 0) -> RxObservable<Event<Element.Element>> {
         asObservable()
             .dematerialize()
             .trackError(tracker, respondDepth: respondDepth)
@@ -185,7 +185,7 @@ extension ObservableConvertibleType {
     ///   - tracker: 错误跟踪者
     ///   - respondDepth: 响应深度 | nextResponder的深度, 如UIView的父视图
     /// - Returns: 观察序列
-    func trackError(_ tracker: ErrorTracker?, isFatal: Bool = true, respondDepth: Int = 0) -> Observable<Element> {
+    func trackError(_ tracker: ErrorTracker?, isFatal: Bool = true, respondDepth: Int = 0) -> RxObservable<Element> {
         observable.do { _ in
             
         } onError: {
@@ -209,7 +209,7 @@ extension ObservableConvertibleType {
 
 extension ObservableConvertibleType where Element: ProgressTrackable {
     
-    func trackProgress(_ tracker: any ProgressTracker) -> Observable<Element> {
+    func trackProgress(_ tracker: any ProgressTracker) -> RxObservable<Element> {
         observable.do {
             [weak tracker] element in
             tracker?.trackProgress(element.progress)

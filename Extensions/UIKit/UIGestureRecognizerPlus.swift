@@ -10,7 +10,7 @@ import UIKit
 extension UIGestureRecognizer {
     /// 将任意类型的手势转换成普通的UIGestureRecognizer
     /// 用于响应式编程中合并两种不同的手势事件
-    /// e.g. Observable.merge(pan.rx.event.map(\.mediocreGestureRecognizer), tap.rx.event.map(\.mediocreGestureRecognizer))
+    /// e.g. RxObservable.merge(pan.rx.event.map(\.mediocreGestureRecognizer), tap.rx.event.map(\.mediocreGestureRecognizer))
     var mediocreGestureRecognizer: UIGestureRecognizer {
         self
     }

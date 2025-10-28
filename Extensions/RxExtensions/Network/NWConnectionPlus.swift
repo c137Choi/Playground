@@ -13,8 +13,8 @@ extension NWConnection: @retroactive ReactiveCompatible {}
 
 extension Reactive where Base == NWConnection {
     
-    var state: Observable<NWConnection.State> {
-        Observable.create {
+    var state: RxObservable<NWConnection.State> {
+        RxObservable.create {
             [weak base] observer in
             /// 默认返回值
             let disposable = Disposables.create()

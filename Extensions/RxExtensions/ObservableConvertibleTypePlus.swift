@@ -15,7 +15,7 @@ extension ObservableConvertibleType {
         lhs.completable + rhs.completable
     }
     
-    static var empty: Observable<Element> {
+    static var empty: RxObservable<Element> {
         .empty()
     }
     
@@ -23,9 +23,9 @@ extension ObservableConvertibleType {
     /// - Parameter dueTime: 超时时间 | 延迟执行时间
     /// - Parameter scheduler: 计时器运行Scheduler
     /// - Returns: 新事件序列
-    func dispose(after dueTime: RxTimeInterval, scheduler: any SchedulerType = MainScheduler.instance) -> Observable<Element> {
+    func dispose(after dueTime: RxTimeInterval, scheduler: any SchedulerType = MainScheduler.instance) -> RxObservable<Element> {
         /// 超时定时器
-        let timeout = Observable<Int>.timer(dueTime, period: .seconds(1), scheduler: scheduler).take(1)
+        let timeout = RxObservable<Int>.timer(dueTime, period: .seconds(1), scheduler: scheduler).take(1)
         /// 返回新的事件序列
         return observable.take(until: timeout)
     }
@@ -33,19 +33,19 @@ extension ObservableConvertibleType {
     /// 发生错误时使用应急方案
     /// - Parameter fallback: 应急方案序列
     /// - Returns: 事件序列
-    func `catch`<T>(fallback: T) -> Observable<Element> where T: ObservableConvertibleType, T.Element == Element {
+    func `catch`<T>(fallback: T) -> RxObservable<Element> where T: ObservableConvertibleType, T.Element == Element {
         observable.catch { _ in
             fallback.asObservable()
         }
     }
     
-    /// Observable 稳定性测试 | 指定时间内是否发出指定个数的事件
+    /// RxObservable 稳定性测试 | 指定时间内是否发出指定个数的事件
     /// - Parameters:
     ///   - timeSpan: 经过的时间 | 默认不检查时间 0 纳秒
     ///   - unStableCount: 最多发出的事件数量 | 默认 1 个
     ///   - scheduler: 运行的Scheduler | 默认留空, 默认创建一个串行队列
-    /// - Returns: Observable是否输出稳定的事件序列
-    func stabilityCheck(timeSpan: RxTimeInterval = .nanoseconds(0), unStableCount: Int = 1, scheduler: SchedulerType? = nil) -> Observable<Bool> {
+    /// - Returns: RxObservable是否输出稳定的事件序列
+    func stabilityCheck(timeSpan: RxTimeInterval = .nanoseconds(0), unStableCount: Int = 1, scheduler: SchedulerType? = nil) -> RxObservable<Bool> {
         let queueName = "com.check.observable.stable.or.not"
         lazy var defaultScheduler = SerialDispatchQueueScheduler(qos: .default, internalSerialQueueName: queueName)
         return asObservable()
@@ -60,7 +60,7 @@ extension ObservableConvertibleType {
     /// 将可观察数组的元素转换为指定的类型
     /// - Parameter type: 指定转换类型
     /// - Returns: 新的数组序列
-    func compactConvertTo<T>(_ type: T.Type) -> Observable<[T]> where Self.Element: Sequence  {
+    func compactConvertTo<T>(_ type: T.Type) -> RxObservable<[T]> where Self.Element: Sequence  {
         asObservable()
             .compactMap { sequence in
                 sequence.compactMap { arrayElement in
@@ -75,7 +75,7 @@ extension ObservableConvertibleType {
             .asCompletable()
     }
     
-    func flatMapLatest<Source: ObservableConvertibleType>(_ source: Source) -> Observable<Source.Element> {
+    func flatMapLatest<Source: ObservableConvertibleType>(_ source: Source) -> RxObservable<Source.Element> {
         observable.flatMapLatest { _ in source }
     }
     
@@ -85,13 +85,13 @@ extension ObservableConvertibleType {
             .asCompletable()
     }
     
-    var once: Observable<Element> {
+    var once: RxObservable<Element> {
         observable.take(1)
     }
     
     /// 用于重新订阅事件 | 如: .retry(when: button.rx.tap.triggered)
     /// Tips: 配合.trackError使用的时候, 注意要把.trackError放在.retry(when:)的前面
-    var triggered: (Observable<Error>) -> Observable<Element> {
+    var triggered: (RxObservable<Error>) -> RxObservable<Element> {
         {
             $0.flatMapLatest { _ in
                 asObservable().take(1)
@@ -139,19 +139,19 @@ extension ObservableConvertibleType {
             }
     }
     
-    var observable: Observable<Element> {
+    var observable: RxObservable<Element> {
         asObservable()
     }
     
-    var optionalElement: Observable<Element?> {
+    var optionalElement: RxObservable<Element?> {
         observable.map { $0 }
     }
     
-    var anyElement: Observable<Any> {
+    var anyElement: RxObservable<Any> {
         observable.map { $0 }
     }
     
-    var voidElement: Observable<Void> {
+    var voidElement: RxObservable<Void> {
         observable.map { _ in () }
     }
     
@@ -169,23 +169,23 @@ extension ObservableConvertibleType {
             .asDriver(onErrorJustReturn: false)
     }
     
-    func repeatWhen<O: ObservableType>(_ notifier: O) -> Observable<Element> {
+    func repeatWhen<O: ObservableType>(_ notifier: O) -> RxObservable<Element> {
         notifier.map { _ in }
             .startWith(())
-            .flatMap { _ -> Observable<Element> in
+            .flatMap { _ -> RxObservable<Element> in
                 self.asObservable()
             }
     }
     
     // MARK: - 生命周期事件发生时将指定参数发送给Observers
-    public func on<T, Observer>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Observer: ObserverType, Observer.Element == T {
+    public func on<T, Observer>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer: ObserverType, Observer.Element == T {
         on(lifeCycle, assign: designated(), to: observers)
     }
-    public func on<T, Observer>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Observer: ObserverType, Observer.Element == T? {
+    public func on<T, Observer>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer: ObserverType, Observer.Element == T? {
         on(lifeCycle, assign: designated(), to: observers)
     }
     
-    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
+    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
         
         let designated = designated()
         /// 给observers发送事件
@@ -232,7 +232,7 @@ extension ObservableConvertibleType {
         }
         return observable.do(onNext: onNext, afterNext: afterNext, onError: onError, afterError: afterError, onCompleted: onCompleted, afterCompleted: afterCompleted, onSubscribe: onSubscribe, onSubscribed: onSubscribed, onDispose: onDispose)
     }
-    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
+    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
         
         let designated = designated()
         /// 给observers发送事件
@@ -281,13 +281,13 @@ extension ObservableConvertibleType {
     }
     
     // MARK: - 指定事件(EventLite)发生时将指定参数发送给Observers
-    public func on<T, Observer: ObserverType>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Observer.Element == T {
+    public func on<T, Observer: ObserverType>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer.Element == T {
         on(event: event, assign: designated(), to: observers)
     }
-    public func on<T, Observer: ObserverType>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Observer.Element == T? {
+    public func on<T, Observer: ObserverType>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer.Element == T? {
         on(event: event, assign: designated(), to: observers)
     }
-    public func on<T, Observers: Sequence>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
+    public func on<T, Observers: Sequence>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
         let designated = designated()
         let onNextEvent: (Event<Self.Element>) throws -> Void = { rxEvent in
             /// 给observers发送事件
@@ -313,7 +313,7 @@ extension ObservableConvertibleType {
             .do(onNext: onNextEvent)
             .dematerialize()
     }
-    public func on<T, Observers: Sequence>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
+    public func on<T, Observers: Sequence>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
         let designated = designated()
         let onNextEvent: (Event<Self.Element>) throws -> Void = { rxEvent in
             /// 给observers发送事件
@@ -341,13 +341,13 @@ extension ObservableConvertibleType {
     }
     
     // MARK: - 指定事件发生时将指定参数发送给Observers | 只匹配.next和.completed事件(参见RxSwift.Event的Equatable协议实现)
-    public func on<T, Observer: ObserverType>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Element: Equatable, Observer.Element == T {
+    public func on<T, Observer: ObserverType>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Element: Equatable, Observer.Element == T {
         on(event: event, assign: designated(), to: observers)
     }
-    public func on<T, Observer: ObserverType>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Element: Equatable, Observer.Element == T? {
+    public func on<T, Observer: ObserverType>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Element: Equatable, Observer.Element == T? {
         on(event: event, assign: designated(), to: observers)
     }
-    public func on<T, Observers: Sequence>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Element: Equatable, Observers.Element.Element == T {
+    public func on<T, Observers: Sequence>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Element: Equatable, Observers.Element.Element == T {
         let designated = designated()
         let nextEvent: (Event<Element>) throws -> Void = { rxEvent in
             if event == rxEvent {
@@ -361,7 +361,7 @@ extension ObservableConvertibleType {
             .do(onNext: nextEvent)
             .dematerialize()
     }
-    public func on<T, Observers: Sequence>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Element: Equatable, Observers.Element.Element == T? {
+    public func on<T, Observers: Sequence>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Element: Equatable, Observers.Element.Element == T? {
         let designated = designated()
         let nextEvent: (Event<Element>) throws -> Void = { rxEvent in
             if event == rxEvent {
@@ -377,13 +377,13 @@ extension ObservableConvertibleType {
     }
     
     // MARK: - 将固定的元素发送给指定的Observers
-    public func assign<T, Observer: ObserverType>(_ designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Observer.Element == T {
+    public func assign<T, Observer: ObserverType>(_ designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer.Element == T {
         assign(designated(), to: observers)
     }
-    public func assign<T, Observer: ObserverType>(_ designated: @escaping @autoclosure () -> T, to observers: Observer...) -> Observable<Element> where Observer.Element == T? {
+    public func assign<T, Observer: ObserverType>(_ designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer.Element == T? {
         assign(designated(), to: observers)
     }
-    public func assign<T, Observers: Sequence>(_ designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
+    public func assign<T, Observers: Sequence>(_ designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
         let designated = designated()
         let onNext: (Element) throws -> Void = { _ in
             observers.forEach { observer in
@@ -392,7 +392,7 @@ extension ObservableConvertibleType {
         }
         return observable.do(onNext: onNext)
     }
-    public func assign<T, Observers: Sequence>(_ designated: @escaping @autoclosure () -> T, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
+    public func assign<T, Observers: Sequence>(_ designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
         let designated = designated()
         let onNext: (Element) throws -> Void = { _ in
             observers.forEach { observer in
@@ -403,13 +403,13 @@ extension ObservableConvertibleType {
     }
     
     // MARK: - 将转换后的元素发送给指定的Observers | 返回原序列
-    public func assign<Transformed, Observer: ObserverType>(_ transform: @escaping (Element) throws -> Transformed, to observers: Observer...) -> Observable<Element> where Observer.Element == Transformed {
+    public func assign<Transformed, Observer: ObserverType>(_ transform: @escaping (Element) throws -> Transformed, to observers: Observer...) -> RxObservable<Element> where Observer.Element == Transformed {
         assign(transform, to: observers)
     }
-    public func assign<Transformed, Observer: ObserverType>(_ transform: @escaping (Element) throws -> Transformed, to observers: Observer...) -> Observable<Element> where Observer.Element == Transformed? {
+    public func assign<Transformed, Observer: ObserverType>(_ transform: @escaping (Element) throws -> Transformed, to observers: Observer...) -> RxObservable<Element> where Observer.Element == Transformed? {
         assign(transform, to: observers)
     }
-    public func assign<Transformed, Observers: Sequence>(_ transform: @escaping (Element) throws -> Transformed, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == Transformed {
+    public func assign<Transformed, Observers: Sequence>(_ transform: @escaping (Element) throws -> Transformed, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == Transformed {
         let onNext: (Element) throws -> Void = { element in
             let transformed = try transform(element)
             observers.forEach { observer in
@@ -418,7 +418,7 @@ extension ObservableConvertibleType {
         }
         return observable.do(onNext: onNext)
     }
-    public func assign<Transformed, Observers: Sequence>(_ transform: @escaping (Element) throws -> Transformed, to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == Transformed? {
+    public func assign<Transformed, Observers: Sequence>(_ transform: @escaping (Element) throws -> Transformed, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == Transformed? {
         let onNext: (Element) throws -> Void = { element in
             let transformed = try transform(element)
             observers.forEach { observer in
@@ -431,22 +431,22 @@ extension ObservableConvertibleType {
     // MARK: - 将元素发送给指定的Observers
     /// 利用旁路特性为观察者赋值
     /// - Parameter observers: 观察者类型
-    /// - Returns: Observable<Element>
-    public func assign<Observer>(to observers: Observer...) -> Observable<Element> where Observer: ObserverType, Observer.Element == Element {
+    /// - Returns: RxObservable<Element>
+    public func assign<Observer>(to observers: Observer...) -> RxObservable<Element> where Observer: ObserverType, Observer.Element == Element {
         assign(to: observers)
     }
     
     /// 利用旁路特性为观察者赋值
     /// - Parameter observers: 观察者类型
-    /// - Returns: Observable<Element?>
-    public func assign<Observer>(to observers: Observer...) -> Observable<Element> where Observer: ObserverType, Observer.Element == Element? {
+    /// - Returns: RxObservable<Element?>
+    public func assign<Observer>(to observers: Observer...) -> RxObservable<Element> where Observer: ObserverType, Observer.Element == Element? {
         assign(to: observers)
     }
     
     /// 利用旁路特性为观察者赋值
     /// - Parameter observers: 观察者类型
-    /// - Returns: Observable<Element>
-    public func assign<Observers: Sequence>(to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == Element {
+    /// - Returns: RxObservable<Element>
+    public func assign<Observers: Sequence>(to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == Element {
         let onNext: (Element) -> Void = { element in
             observers.forEach { observer in
                 observer.onNext(element)
@@ -457,8 +457,8 @@ extension ObservableConvertibleType {
     
     /// 利用旁路特性为观察者赋值
     /// - Parameter observers: 观察者类型
-    /// - Returns: Observable<Element?>
-    public func assign<Observers: Sequence>(to observers: Observers) -> Observable<Element> where Observers.Element: ObserverType, Observers.Element.Element == Element? {
+    /// - Returns: RxObservable<Element?>
+    public func assign<Observers: Sequence>(to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == Element? {
         let onNext: (Element) -> Void = { element in
             observers.forEach { observer in
                 observer.onNext(element)
@@ -470,7 +470,7 @@ extension ObservableConvertibleType {
 
 extension ObservableConvertibleType where Element: Equatable {
     
-    func isEqualOriginValue() -> Observable<(value: Element, isEqualOriginValue: Bool)> {
+    func isEqualOriginValue() -> RxObservable<(value: Element, isEqualOriginValue: Bool)> {
         asObservable()
             .scan(nil) { acum, x -> (origin: Element, current: Element)? in
                 if let acum = acum {
@@ -485,39 +485,39 @@ extension ObservableConvertibleType where Element: Equatable {
     }
 }
 
-// MARK: - Observable of Collection
+// MARK: - RxObservable of Collection
 extension ObservableConvertibleType where Element: Collection {
     
-    func removeDuplicates<Value>(at keyPath: KeyPath<Element.Element, Value>) -> Observable<[Element.Element]> where Value: Equatable {
+    func removeDuplicates<Value>(at keyPath: KeyPath<Element.Element, Value>) -> RxObservable<[Element.Element]> where Value: Equatable {
         asObservable().map { collection in
             collection.removingDuplicates(at: keyPath)
         }
     }
     
-    var isEmpty: Observable<Bool> {
+    var isEmpty: RxObservable<Bool> {
         observable.map(\.isEmpty)
     }
     
-    var isNotEmpty: Observable<Bool> {
+    var isNotEmpty: RxObservable<Bool> {
         observable.map(\.isNotEmpty)
     }
     
     /// Emit filled elements only.
-    var filled: Observable<Element> {
+    var filled: RxObservable<Element> {
         asObservable().compactMap(\.filledOrNil)
     }
     
     /// Emit nil if the collection is empty.
-    var filledOrNil: Observable<Element?> {
+    var filledOrNil: RxObservable<Element?> {
         asObservable().map(\.filledOrNil)
     }
 }
 
-// MARK: - Observable of OptionalConvertible
+// MARK: - RxObservable of OptionalConvertible
 extension ObservableConvertibleType where Element: OptionalConvertible {
     
     /// 将元素转换为指定的类型,如果转换失败则使用备选值
-    func or<Result>(_ fallback: Result, transform: @escaping (Element.Wrapped) throws -> Result) -> Observable<Result> {
+    func or<Result>(_ fallback: Result, transform: @escaping (Element.Wrapped) throws -> Result) -> RxObservable<Result> {
         asObservable()
             .map { element in
                 try element.optionalValue.or(fallback, map: transform)
@@ -525,24 +525,24 @@ extension ObservableConvertibleType where Element: OptionalConvertible {
     }
     
     /// 元素如果为空则使用备选值
-    func or(_ fallback: Element.Wrapped) -> Observable<Element.Wrapped> {
+    func or(_ fallback: Element.Wrapped) -> RxObservable<Element.Wrapped> {
         asObservable()
             .map { element in
                 element.optionalValue.or(fallback)
             }
     }
     
-    var unwrapped: Observable<Element.Wrapped> {
+    var unwrapped: RxObservable<Element.Wrapped> {
         asObservable().compactMap(\.optionalValue)
     }
 }
 
 extension ObservableConvertibleType where Element == String? {
-    var orEmpty: Observable<String> {
+    var orEmpty: RxObservable<String> {
         asObservable()
             .map(\.orEmpty)
     }
-    func mapValidString(or defaultValue: String) -> Observable<String> {
+    func mapValidString(or defaultValue: String) -> RxObservable<String> {
         asObservable()
             .map { element in
                 element.unwrappedValidStringOr(defaultValue)
@@ -552,11 +552,11 @@ extension ObservableConvertibleType where Element == String? {
 
 extension ObservableConvertibleType where Element == Int {
     
-    var isNotEmpty: Observable<Bool> {
+    var isNotEmpty: RxObservable<Bool> {
         isEmpty.map { isEmpty in !isEmpty }
     }
     
-    var isEmpty: Observable<Bool> {
+    var isEmpty: RxObservable<Bool> {
         asObservable()
             .map { $0 <= 0 }
     }
@@ -564,7 +564,7 @@ extension ObservableConvertibleType where Element == Int {
 
 extension ObservableConvertibleType where Element: Equatable {
     /// 忽略重复的元素
-    var removeDuplicates: Observable<Element> {
+    var removeDuplicates: RxObservable<Element> {
         asObservable()
             .distinctUntilChanged()
     }

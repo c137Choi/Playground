@@ -36,7 +36,7 @@ extension Reactive where Base: UIButton {
     
     /// 限制按钮连续点击
     /// 时间:800毫秒
-    var throttledTap: Observable<Void> {
+    var throttledTap: RxObservable<Void> {
         tap.throttle(.milliseconds(800), latest: false, scheduler: MainScheduler.instance)
     }
 }

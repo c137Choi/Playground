@@ -12,7 +12,7 @@ import RxCocoa
 /// 所以UICollectionViewCell也用这个属性
 
 extension Reactive where Base: UICollectionReusableView {
-    var prepareForReuse: Observable<[Any]> {
+    var prepareForReuse: RxObservable<[Any]> {
         methodInvoked(#selector(UICollectionReusableView.prepareForReuse))
     }
 }

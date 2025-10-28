@@ -10,40 +10,40 @@ import RxCocoa
 
 extension Reactive where Base: UIApplication {
     
-    var latestResponderViewAndKeyboardPresentation: Observable<(UIView, KeyboardPresentation)> {
-        Observable.combineLatest(firstResponderView, latestKeyboardPresentation)
+    var latestResponderViewAndKeyboardPresentation: RxObservable<(UIView, KeyboardPresentation)> {
+        RxObservable.combineLatest(firstResponderView, latestKeyboardPresentation)
     }
     
-    var latestKeyboardPresentation: Observable<KeyboardPresentation> {
+    var latestKeyboardPresentation: RxObservable<KeyboardPresentation> {
         latestKeyboardNotification.compactMap(KeyboardPresentation.init)
     }
     
-    var latestKeyboardNotification: Observable<Notification> {
-        Observable.of(keyboardWillShowNotification, keyboardWillHideNotification).merge()
+    var latestKeyboardNotification: RxObservable<Notification> {
+        RxObservable.of(keyboardWillShowNotification, keyboardWillHideNotification).merge()
     }
     
-    var keyboardWillShowNotification: Observable<Notification> {
+    var keyboardWillShowNotification: RxObservable<Notification> {
         NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
     }
     
-    var keyboardDidShowNotification: Observable<Notification> {
+    var keyboardDidShowNotification: RxObservable<Notification> {
         NotificationCenter.default.rx.notification(UIResponder.keyboardDidShowNotification)
     }
     
-    var keyboardWillHideNotification: Observable<Notification> {
+    var keyboardWillHideNotification: RxObservable<Notification> {
         NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
     }
     
-    var keyboardDidHideNotification: Observable<Notification> {
+    var keyboardDidHideNotification: RxObservable<Notification> {
         NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification)
     }
     
-    var firstResponderView: Observable<UIView> {
+    var firstResponderView: RxObservable<UIView> {
         firstResponder.as(UIView.self)
     }
     
     /// 观察当前的第一响应者
-    var firstResponder: Observable<UIResponder> {
+    var firstResponder: RxObservable<UIResponder> {
         /// func sendAction(_ action: Selector, to target: Any?, from sender: Any?, for event: UIEvent?) -> Bool
         methodInvoked(#selector(UIApplication.sendAction))
             .compactMap { args in

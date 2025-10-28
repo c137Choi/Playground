@@ -50,13 +50,13 @@ extension Reactive where Base == PHAsset {
     
     /// 获取缩略图
     /// - Parameter targetSize: 缩略图尺寸(单位pt)
-    func thumbnail(targetSize: CGSize) -> Observable<UIImage> {
+    func thumbnail(targetSize: CGSize) -> RxObservable<UIImage> {
         let schedular = SerialDispatchQueueScheduler(qos: .userInitiated)
-        return Observable.create { observer in
+        return RxObservable.create { observer in
             let mgr = PHCachingImageManager.default()
             let option = PHImageRequestOptions()
             option.isSynchronous = true
-            /// 后面的block回调可能调用多次,故此方法使用Observable初始化
+            /// 后面的block回调可能调用多次,故此方法使用RxObservable初始化
             mgr.requestImage(for: base, targetSize: targetSize.pixelSize, contentMode: .aspectFill, options: option) { uiImage, info in
                 guard let uiImage else { return }
                 observer.onNext(uiImage)

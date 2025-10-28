@@ -13,7 +13,7 @@ extension Reactive where Base: UICollectionView {
     var page: ControlProperty<Int> {
         let finalOffset = didEndDecelerating.withUnretained(base).map(\.0.contentOffset)
         let targetOffset = willEndDragging.map(\.targetContentOffset.pointee)
-        let mergedOffset = Observable.merge(finalOffset, targetOffset)
+        let mergedOffset = RxObservable.merge(finalOffset, targetOffset)
         
         let observedPage = mergedOffset.withUnretained(base).map { collectionView, offset in
             let contentSize = collectionView.contentSize
@@ -53,7 +53,7 @@ extension Reactive where Base: UICollectionView {
         return ControlProperty(values: observedPage, valueSink: binder)
     }
     
-    var numberOfItems: Observable<Int> {
+    var numberOfItems: RxObservable<Int> {
         dataReloaded.map { collectionView in
             guard let dataSource = collectionView.dataSource else { return 0 }
             guard let sectionCount = dataSource.numberOfSections?(in: base) else { return 0 }
@@ -63,7 +63,7 @@ extension Reactive where Base: UICollectionView {
         }
     }
     
-    var dataReloaded: Observable<Base> {
+    var dataReloaded: RxObservable<Base> {
         methodInvoked(#selector(base.reloadData))
             .withUnretained(base)
             .map(\.0)
@@ -73,7 +73,7 @@ extension Reactive where Base: UICollectionView {
     /// 必须在设置了delegate之后订阅才能订阅到itemSelectionChanged里的
     /// delegateInvokedItemSelected, delegateInvokedItemDeselected事件
     /// 如果要实现大量数据的全选/反选功能,需要单独处理选中的IndexPath并在更新之后刷新CollectionView以保证高性能
-    var liveSelectedIndexPaths: Observable<[IndexPath]> {
+    var liveSelectedIndexPaths: RxObservable<[IndexPath]> {
         /// 这里使用.startWith(base)操作符是为了保证在任何时间订阅都能产生事件序列
         dataReloaded
             .startWith(base)
@@ -88,15 +88,15 @@ extension Reactive where Base: UICollectionView {
     
     /// 非实时的: 代码执行选中/取消选中 & 代理执行选中/取消选中之后
     /// 映射indexPathsForSelectedItems属性. 如果为空则返回空数组
-    var selectedIndexPaths: Observable<[IndexPath]> {
+    var selectedIndexPaths: RxObservable<[IndexPath]> {
         itemSelectionChanged
             .withUnretained(base)
             .map(\.0.indexPathsForSelectedItems.orEmpty)
             .startWith(base.indexPathsForSelectedItems.orEmpty)
     }
     
-    var itemSelectionChanged: Observable<IndexPath> {
-        Observable<IndexPath>.merge {
+    var itemSelectionChanged: RxObservable<IndexPath> {
+        RxObservable<IndexPath>.merge {
             /// 代码执行选中
             selectItemAtIndexPath
             /// 代码执行取消选中
@@ -108,18 +108,18 @@ extension Reactive where Base: UICollectionView {
         }
     }
     
-    var delegateDidSelectItemAtIndexPath: Observable<IndexPath> {
+    var delegateDidSelectItemAtIndexPath: RxObservable<IndexPath> {
         itemSelected.observable
     }
     
-    var delegateDidDeselectItemAtIndexPath: Observable<IndexPath> {
+    var delegateDidDeselectItemAtIndexPath: RxObservable<IndexPath> {
         itemDeselected.observable
     }
     
     /// Instance method selectItem(at:animated:scrollPosition:) invoked
     /// Element: The input indexPath
     /// Tip: The method doesn’t cause any selection-related delegate methods to be called.
-    var selectItemAtIndexPath: Observable<IndexPath> {
+    var selectItemAtIndexPath: RxObservable<IndexPath> {
         methodInvoked(#selector(UICollectionView.selectItem(at:animated:scrollPosition:)))
             .map(\.first)
             .unwrapped
@@ -129,7 +129,7 @@ extension Reactive where Base: UICollectionView {
     /// Instance method deselectItem(at:animated:) invoked
     /// Element: The input deselected indexPath
     /// Tip: The method doesn’t cause any selection-related delegate methods to be called.
-    var deselectItemAtIndexPath: Observable<IndexPath> {
+    var deselectItemAtIndexPath: RxObservable<IndexPath> {
         methodInvoked(#selector(UICollectionView.deselectItem(at:animated:)))
             .map(\.first)
             .unwrapped

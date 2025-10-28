@@ -10,7 +10,7 @@ import RxCocoa
 
 extension Reactive where Base: UITextView {
     
-    var unmarkedText: Observable<String> {
+    var unmarkedText: RxObservable<String> {
         didChange
             .withUnretained(base)
             .map(\.0.unmarkedText)

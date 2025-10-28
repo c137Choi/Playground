@@ -23,7 +23,7 @@ class Variable<Wrapped>: ObservableType {
     /// 有条件的事件序列 | blockEvents为true时不发送事件
     /// 常用于控件之间的双向绑定
     /// 配合setValue(:sendEvent:)方法使用
-    var conditionalValue: Observable<Wrapped> {
+    var conditionalValue: RxObservable<Wrapped> {
         relay.withUnretained(self).compactMap { weakSelf, element in
             /// 始终取消阻断事件
             defer {
@@ -83,11 +83,11 @@ class Variable<Wrapped>: ObservableType {
         }
     }
     
-    var skipFirst: Observable<Wrapped> {
+    var skipFirst: RxObservable<Wrapped> {
         relay.skip(1)
     }
     
-    func asObservable() -> RxSwift.Observable<Wrapped> {
+    func asObservable() -> RxSwift.RxObservable<Wrapped> {
         relay.asObservable()
     }
     
@@ -216,7 +216,7 @@ final class CycledVariable<T>: Variable<T> where T: Comparable {
         }
     }
     
-    var rangeBoundError: Observable<RangeBoundError> {
+    var rangeBoundError: RxObservable<RangeBoundError> {
         rangeBoundErrorSubject.observable
     }
 }
@@ -241,7 +241,7 @@ struct WeakVariable<Wrapped: AnyObject>: ObservableType {
         self.weakReference = wrappedValue
     }
     
-    func asObservable() -> RxSwift.Observable<Wrapped?> {
+    func asObservable() -> RxSwift.RxObservable<Wrapped?> {
         subject.startWith(weakReference)
     }
     

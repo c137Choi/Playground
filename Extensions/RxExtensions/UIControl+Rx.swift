@@ -13,22 +13,22 @@ typealias RxControlEventElement<T> = (control: T, event: UIEvent?) where T: UICo
 
 extension Reactive where Base: UIControl {
     
-    /// ControlEvent -> Observable<Base>
-    var touchUpInside: Observable<Base> {
+    /// ControlEvent -> RxObservable<Base>
+    var touchUpInside: RxObservable<Base> {
         touchUpInside(toggleSelected: false)
     }
     
     /// 订阅按钮点击事件
     /// - Parameter toggleSelected: 点击时是否切换isSelected
     /// - Returns: Base序列
-    func touchUpInside(toggleSelected: Bool) -> Observable<Base> {
+    func touchUpInside(toggleSelected: Bool) -> RxObservable<Base> {
         controlEvent(.touchUpInside).withUnretained(base).map { base, _ in
             toggleSelected ? base.with(new: \.isSelected, base.isSelected.toggled) : base
         }
     }
     
-    var state: Observable<UIControl.State> {
-        Observable.combineLatest(isEnabled, isSelected, isHighlighted)
+    var state: RxObservable<UIControl.State> {
+        RxObservable.combineLatest(isEnabled, isSelected, isHighlighted)
             .withUnretained(base)
             .map(\.0.state)
             .startWith(base.state)
@@ -74,7 +74,7 @@ extension Reactive where Base: UIControl {
     /// 增强的ControlEvent: 事件序列的元素返回控件和UIEvent?
     /// - Parameter events: 触发事件
     func enhancedControlEvent(_ events: UIControl.Event) -> ControlEvent<ControlEventElement> {
-        let sequence = Observable<ControlEventElement>.create {
+        let sequence = RxObservable<ControlEventElement>.create {
             [weak control = self.base] observer in
             /// 确保主线程运行
             MainScheduler.ensureRunningOnMainThread()

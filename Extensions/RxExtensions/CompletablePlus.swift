@@ -18,7 +18,7 @@ extension Completable {
     }
     
     func concatMap<Source: ObservableConvertibleType>(_ selector: () throws -> Source)
-    -> Observable<Source.Element> {
+    -> RxObservable<Source.Element> {
         do {
             let next = try selector().asObservable()
             return andThen(next)

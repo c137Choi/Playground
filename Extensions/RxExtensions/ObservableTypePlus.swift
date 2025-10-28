@@ -11,8 +11,8 @@ extension ObservableType {
     
     /// 转换成指定的类型 | 转换失败则不发送事件
     /// - Parameter type: 转换的类型
-    /// - Returns: Observable
-    public func compactMap<T>(_ type: T.Type) -> Observable<T> {
+    /// - Returns: RxObservable
+    public func compactMap<T>(_ type: T.Type) -> RxObservable<T> {
         compactMap { element in
             element as? T
         }
@@ -22,8 +22,8 @@ extension ObservableType {
     /// - Parameters:
     ///   - type: 转换的类型
     ///   - defaultValue: 转换失败返回的默认值
-    /// - Returns: Observable
-    public func `as`<T>(_ type: T.Type, or defaultValue: T) -> Observable<T> {
+    /// - Returns: RxObservable
+    public func `as`<T>(_ type: T.Type, or defaultValue: T) -> RxObservable<T> {
         asOptional(type).map { maybeT in
             maybeT.or(defaultValue)
         }
@@ -31,15 +31,15 @@ extension ObservableType {
     
     /// 转换成Optional<T>
     /// - Parameter type: 转换的类型
-    /// - Returns: Observable
-    public func asOptional<T>(_ type: T.Type) -> Observable<T?> {
+    /// - Returns: RxObservable
+    public func asOptional<T>(_ type: T.Type) -> RxObservable<T?> {
         map { element in element as? T }
     }
     
     /// 转换成指定类型 | 如果转换失败则序列抛出错误
     /// - Parameter type: 转换的类型
-    /// - Returns: Observable
-    public func `as`<T>(_ type: T.Type) -> Observable<T> {
+    /// - Returns: RxObservable
+    public func `as`<T>(_ type: T.Type) -> RxObservable<T> {
         map { element in
             if let valid = element as? T {
                 return valid
@@ -76,8 +76,8 @@ extension ObservableType {
     
     /// 映射成指定的值
     /// - Parameter designated: 生成元素的自动闭包
-    /// - Returns: Observable<T>
-    public func mapDesignated<T>(_ designated: @escaping @autoclosure () -> T) -> Observable<T> {
+    /// - Returns: RxObservable<T>
+    public func mapDesignated<T>(_ designated: @escaping @autoclosure () -> T) -> RxObservable<T> {
         map { _ in designated() }
     }
     
@@ -85,12 +85,12 @@ extension ObservableType {
         toArray()
     }
     
-    var shortHistory: Observable<ShortHistory<Element>> {
+    var shortHistory: RxObservable<ShortHistory<Element>> {
         lastAndLatest.map(ShortHistory.init)
     }
     
     /// 获取上一个元素 和 当前元素
-    var lastAndLatest: Observable<(Element?, Element)> {
+    var lastAndLatest: RxObservable<(Element?, Element)> {
         scan(Array<Element>.empty) { history, next in
             history.appending(next).suffix(2)
         }
@@ -188,19 +188,19 @@ extension ObservableType {
 extension ObservableType where Element == Bool {
     
     /// 条件成立时发送元素
-    var isTrue: Observable<Element> {
+    var isTrue: RxObservable<Element> {
         filter(\.isTrue)
     }
     
     /// 条件不成立时发送元素
-    var isFalse: Observable<Element> {
+    var isFalse: RxObservable<Element> {
         filter(\.isFalse)
     }
 }
 
 extension ObservableType where Element: ObservableConvertibleType {
     
-    public var switchLatest: Observable<Element.Element> {
+    public var switchLatest: RxObservable<Element.Element> {
         switchLatest()
     }
 }

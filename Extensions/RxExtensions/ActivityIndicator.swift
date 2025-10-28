@@ -10,10 +10,10 @@ import RxSwift
 import RxCocoa
 
 private struct ActivityToken<E> : ObservableConvertibleType, Disposable {
-    private let _source: Observable<E>
+    private let _source: RxObservable<E>
     private let _dispose: Cancelable
 
-    init(source: Observable<E>, disposeAction: @escaping () -> Void) {
+    init(source: RxObservable<E>, disposeAction: @escaping () -> Void) {
         _source = source
         _dispose = Disposables.create(with: disposeAction)
     }
@@ -22,7 +22,7 @@ private struct ActivityToken<E> : ObservableConvertibleType, Disposable {
         _dispose.dispose()
     }
 
-    func asObservable() -> Observable<E> {
+    func asObservable() -> RxObservable<E> {
         _source
     }
 }
@@ -53,8 +53,8 @@ public class ActivityIndicator : SharedSequenceConvertibleType {
         }
     }
     
-    fileprivate func trackActivityOfObservable<Source: ObservableConvertibleType>(_ source: Source) -> Observable<Source.Element> {
-        Observable.using {
+    fileprivate func trackActivityOfObservable<Source: ObservableConvertibleType>(_ source: Source) -> RxObservable<Source.Element> {
+        RxObservable.using {
             self.increment()
             return ActivityToken(source: source.observable, disposeAction: self.decrement)
         } observableFactory: { token in
@@ -93,12 +93,12 @@ extension ActivityIndicator {
     /// - Parameters:
     ///   - elementCount: 追踪的元素个数
     ///   - source: 信号源
-    /// - Returns: Observable
-    fileprivate func trackActivity<Source: ObservableConvertibleType>(first elementCount: Int, of source: Source) -> Observable<Source.Element> {
+    /// - Returns: RxObservable
+    fileprivate func trackActivity<Source: ObservableConvertibleType>(first elementCount: Int, of source: Source) -> RxObservable<Source.Element> {
         let afterNext: (Source.Element) -> Void = { _ in
             self.decrement()
         }
-        return Observable.using { () -> ActivityToken<Source.Element> in
+        return RxObservable.using { () -> ActivityToken<Source.Element> in
             self.increment(elementCount)
             return ActivityToken(source: source.observable, disposeAction: self.decrement)
         } observableFactory: { token in
@@ -109,11 +109,11 @@ extension ActivityIndicator {
 
 extension ObservableConvertibleType {
     
-    public func trackActivity(first elementCount: Int, _ activityIndicator: ActivityIndicator) -> Observable<Element> {
+    public func trackActivity(first elementCount: Int, _ activityIndicator: ActivityIndicator) -> RxObservable<Element> {
         activityIndicator.trackActivity(first: elementCount, of: self)
     }
     
-    public func trackActivity(_ activityIndicator: ActivityIndicator) -> Observable<Element> {
+    public func trackActivity(_ activityIndicator: ActivityIndicator) -> RxObservable<Element> {
         activityIndicator.trackActivityOfObservable(self)
     }
 }

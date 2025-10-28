@@ -70,20 +70,20 @@ extension AVAuthorizationStatus {
 extension AVAuthorizationStatus {
     
     /// 返回可以拍照的权限 | 否则抛出错误
-    static var checkValidVideoStatus: Observable<AVAuthorizationStatus> {
+    static var checkValidVideoStatus: RxObservable<AVAuthorizationStatus> {
         checkVideoStatus.observable.map { status in
             try status.validStatus
         }
     }
     
     /// 检查当前状态并根据当前状态请求权限
-    static func checkAndRequestAccess(for mediaType: AVMediaType) -> Observable<AVAuthorizationStatus> {
+    static func checkAndRequestAccess(for mediaType: AVMediaType) -> RxObservable<AVAuthorizationStatus> {
         currentStatusFor(mediaType).observable.flatMap { currentStatus in
             switch currentStatus {
             case .notDetermined:
                 return AVAuthorizationStatus.requestAccess(for: mediaType).observable
             default:
-                return Observable.just(currentStatus)
+                return RxObservable.just(currentStatus)
             }
         }
     }

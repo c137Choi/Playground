@@ -13,8 +13,8 @@ typealias RxElementFilter<T> = (Int, T) -> Bool
 
 extension Array where Element: ObservableConvertibleType {
     
-    var merged: Observable<Element.Element> {
-        Observable.from(self).merge()
+    var merged: RxObservable<Element.Element> {
+        RxObservable.from(self).merge()
     }
     
     /// 串联事件序列数组(无时间间隔)
@@ -34,7 +34,7 @@ extension Array where Element: ObservableConvertibleType {
         }
         /// 间隔序列
         let pause = pauseInterval.map {
-            Observable.just(0).delay($0, scheduler: scheduler).completable
+            RxObservable.just(0).delay($0, scheduler: scheduler).completable
         }
         return enumerated().reduce(Completable.empty) { completable, tuple in
             /// 下一个Completable事件序列
@@ -79,7 +79,7 @@ extension Array where Element: UIButton {
     func switchButton(
         _ controlEvents: UIControl.Event = .touchUpInside,
         startIndex: Index?,
-        eventFilter: RxElementFilter<Element>? = nil) -> Observable<Element>
+        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<Element>
     {
         switchButton(controlEvents, startWith: element(at: startIndex), eventFilter: eventFilter)
     }
@@ -93,7 +93,7 @@ extension Array where Element: UIButton {
     func switchButton(
         _ controlEvents: UIControl.Event = .touchUpInside,
         startWith firstButton: Element? = nil,
-        eventFilter: RxElementFilter<Element>? = nil) -> Observable<Element>
+        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<Element>
     {
         switchButtonEvent(controlEvents, startWith: firstButton, eventFilter: eventFilter).map(\.0)
     }
@@ -101,7 +101,7 @@ extension Array where Element: UIButton {
     func switchButtonEvent(
         _ controlEvents: UIControl.Event = .touchUpInside,
         startIndex: Index? = nil,
-        eventFilter: RxElementFilter<Element>? = nil) -> Observable<ControlEventElement>
+        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<ControlEventElement>
     {
         switchButtonEvent(controlEvents, startWith: element(at: startIndex), eventFilter: eventFilter)
     }
@@ -115,7 +115,7 @@ extension Array where Element: UIButton {
     func switchButtonEvent(
         _ controlEvents: UIControl.Event = .touchUpInside,
         startWith firstButton: Element? = nil,
-        eventFilter: RxElementFilter<Element>? = nil) -> Observable<ControlEventElement>
+        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<ControlEventElement>
     {
         mergedControlEvent(controlEvents, startWith: firstButton, eventFilter: eventFilter).lastAndLatest.compactMap {
             lastControlEvent, controlEvent -> ControlEventElement? in
@@ -145,7 +145,7 @@ extension Array where Element: UIButton {
     fileprivate func mergedControlEvent(
         _ controlEvents: UIControl.Event,
         startWith firstButton: Element?,
-        eventFilter: RxElementFilter<Element>? = nil) -> Observable<ControlEventElement>
+        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<ControlEventElement>
     {
         /// 第一个元素
         let firstElement = firstButton.flatMap { button -> ControlEventElement? in

@@ -80,8 +80,8 @@ extension UIStackView {
         reArrange(arrangedSubviews())
     }
     
-    func arrange(@ArrayBuilder<UIView> arrangedSubviews: () -> [UIView]) {
-        arrange(arrangedSubviews: arrangedSubviews())
+    func addArrangedSubviews(@ArrayBuilder<UIView> arrangedSubviews: () -> [UIView]) {
+        addArrangedSubviews(arrangedSubviews())
     }
     
     func reArrange<T>(_ arrangedSubviews: T...) where T: UIView {
@@ -90,10 +90,14 @@ extension UIStackView {
     
     func reArrange<T>(_ arrangedSubviews: T) where T: Sequence, T.Element: UIView {
         clearEachArrangedSubviews()
-        arrange(arrangedSubviews: arrangedSubviews)
+        addArrangedSubviews(arrangedSubviews)
     }
     
-    func arrange<T>(arrangedSubviews: T) where T: Sequence, T.Element: UIView {
+    func addArrangedSubviews(_ arrangedSubviews: UIView...) {
+        addArrangedSubviews(arrangedSubviews)
+    }
+    
+    func addArrangedSubviews<S>(_ arrangedSubviews: S) where S: Sequence, S.Element: UIView {
         arrangedSubviews.forEach { subview in
             addArrangedSubview(subview)
             /// Tip: 如果后面还有别的arrangedSubview的时候，customSpacing才有效

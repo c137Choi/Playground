@@ -12,6 +12,7 @@ extension NSObject {
 	
     enum Associated {
         @UniqueAddress static var references
+        @UniqueAddress static var weakReferences
         @UniqueAddress static var isPrepared
     }
     
@@ -36,6 +37,22 @@ extension NSObject {
         }
         set {
             setAssociatedObject(self, Associated.references, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    /// 弱引用字典
+    var weakReferences: [AnyHashable: WeakLeash] {
+        get {
+            if let dict = associated([AnyHashable: WeakLeash].self, self, Associated.weakReferences) {
+                return dict
+            } else {
+                let dict = [AnyHashable: WeakLeash].empty
+                setAssociatedObject(self, Associated.weakReferences, dict, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                return dict
+            }
+        }
+        set {
+            setAssociatedObject(self, Associated.weakReferences, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     

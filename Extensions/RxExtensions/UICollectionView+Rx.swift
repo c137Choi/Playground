@@ -64,7 +64,7 @@ extension Reactive where Base: UICollectionView {
     }
     
     var dataReloaded: RxObservable<Base> {
-        methodInvoked(#selector(base.reloadData))
+        methodInvoked(#selector(UICollectionView.reloadData))
             .withUnretained(base)
             .map(\.0)
     }

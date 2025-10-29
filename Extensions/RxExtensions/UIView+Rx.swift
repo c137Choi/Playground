@@ -34,35 +34,35 @@ extension Reactive where Base: UIView {
     }
     
     var didMoveToWindow: RxObservable<UIWindow?> {
-        methodInvoked(#selector(base.didMoveToWindow))
+        methodInvoked(#selector(UIView.didMoveToWindow))
             .withUnretained(base)
             .map(\.0.window)
     }
     
     var willMoveToWindow: RxObservable<UIWindow?> {
-        methodInvoked(#selector(base.willMove(toWindow:)))
+        methodInvoked(#selector(UIView.willMove(toWindow:)))
             .map(\.first)
             .asOptional(UIWindow.self)
     }
     
     var willMoveToSuperView: RxObservable<UIView?> {
-        methodInvoked(#selector(base.willMove(toSuperview:)))
+        methodInvoked(#selector(UIView.willMove(toSuperview:)))
             .map(\.first)
             .asOptional(UIView.self)
     }
     
     var removeFromSuperview: RxObservable<[Any]> {
-        methodInvoked(#selector(base.removeFromSuperview))
+        methodInvoked(#selector(UIView.removeFromSuperview))
     }
 
     var didLayoutSubviews: RxObservable<Base> {
-        methodInvoked(#selector(base.layoutSubviews))
+        methodInvoked(#selector(UIView.layoutSubviews))
             .withUnretained(base)
             .map(\.0)
     }
     
     var superView: RxObservable<UIView?> {
-        methodInvoked(#selector(base.didMoveToSuperview))
+        methodInvoked(#selector(UIView.didMoveToSuperview))
             .withUnretained(base)
             .map(\.0.superview)
             .startWith(base.superview)
@@ -70,7 +70,7 @@ extension Reactive where Base: UIView {
     }
     
     var isVisible: RxObservable<Bool> {
-        methodInvoked(#selector(base.didMoveToWindow))
+        methodInvoked(#selector(UIView.didMoveToWindow))
             .withUnretained(base)
             .map(\.0.window.isValid)
             .removeDuplicates

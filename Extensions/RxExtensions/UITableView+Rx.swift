@@ -72,14 +72,14 @@ extension Reactive where Base: UITableView {
     
     /// 调用reloadData之后的通知
     var didReloadData: RxObservable<Base> {
-        methodInvoked(#selector(base.reloadData))
+        methodInvoked(#selector(UITableView.reloadData))
             .withUnretained(base)
             .map(\.0)
     }
     
     /// 调用reloadData之前的通知
     var willReloadData: RxObservable<Base> {
-        sentMessage(#selector(base.reloadData))
+        sentMessage(#selector(UITableView.reloadData))
             .withUnretained(base)
             .map(\.0)
     }
@@ -95,7 +95,7 @@ extension Reactive where Base: UITableView {
     }
     
     private var selectRowAt: RxObservable<IndexPath> {
-        methodInvoked(#selector(base.selectRow(at:animated:scrollPosition:)))
+        methodInvoked(#selector(UITableView.selectRow(at:animated:scrollPosition:)))
             .compactMap(\.first)
             .as(IndexPath.self)
     }

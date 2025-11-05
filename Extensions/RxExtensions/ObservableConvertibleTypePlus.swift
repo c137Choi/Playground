@@ -545,7 +545,7 @@ extension ObservableConvertibleType where Element == String? {
     func mapValidString(or defaultValue: String) -> RxObservable<String> {
         asObservable()
             .map { element in
-                element.unwrappedValidStringOr(defaultValue)
+                element.nonEmptyStringOr(defaultValue)
             }
     }
 }

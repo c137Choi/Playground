@@ -93,12 +93,12 @@ extension Optional where Wrapped == String {
 		isEmptyString ? "" : unsafelyUnwrapped
 	}
     
-    func unwrappedValidStringOr(_ defaultValue: Wrapped) -> Wrapped {
-        unwrappedValidStringOrNone.or(defaultValue)
+    func nonEmptyStringOr(_ defaultValue: Wrapped) -> Wrapped {
+        nonEmptyStringOrNil.or(defaultValue)
     }
 	
 	/// 返回有效的字符串或.none
-	var unwrappedValidStringOrNone: Self {
+	var nonEmptyStringOrNil: Self {
 		isEmptyString ? .none : unsafelyUnwrapped
 	}
     

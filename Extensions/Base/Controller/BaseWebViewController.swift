@@ -28,7 +28,7 @@ class BaseWebViewController: BaseViewController, WKUIDelegate, WKNavigationDeleg
         titleObservation = webview.observe(\.title, options: .live) {
             [unowned self] web, change in
             guard let webTitle = change.newValue else { return }
-            title = webTitle.unwrappedValidStringOrNone ?? fixedTitle
+            title = webTitle.nonEmptyStringOrNil ?? fixedTitle
         }
         
         /// 观察网页加载进度

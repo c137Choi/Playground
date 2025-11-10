@@ -13,6 +13,16 @@ struct BidirectionalDictionary<Key, Value> where Key: Hashable, Value: Hashable 
     /// Value -> Key
     private(set) var valueToKey: [Value: Key] = [:]
     
+    init() {}
+    
+    init<S>(uniqueKeysWithValues keysAndValues: S) where S : Sequence, S.Element == (Key, Value) {
+        let valuesAndKeys = keysAndValues.map { key, value in
+            (value, key)
+        }
+        self.keyToValue = Dictionary(uniqueKeysWithValues: keysAndValues)
+        self.valueToKey = Dictionary(uniqueKeysWithValues: valuesAndKeys)
+    }
+    
     mutating func setValue(_ value: Value, forKey key: Key) {
         removeValue(forKey: key)
         keyToValue[key] = value
@@ -69,5 +79,11 @@ struct BidirectionalDictionary<Key, Value> where Key: Hashable, Value: Hashable 
                 removeValue(forKey: key)
             }
         }
+    }
+}
+
+extension BidirectionalDictionary: ExpressibleByDictionaryLiteral {
+    init(dictionaryLiteral elements: (Key, Value)...) {
+        self.init(uniqueKeysWithValues: elements)
     }
 }

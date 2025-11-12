@@ -9,6 +9,11 @@ import UIKit
 
 extension UIControl {
     
+    public func sendActionsIfEnabled(for controlEvents: Event) {
+        guard isEnabled else { return }
+        sendActions(for: controlEvents)
+    }
+    
     /// 是否禁用
     public var isDisabled: Bool {
         get { isEnabled.toggled }

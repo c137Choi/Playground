@@ -9,6 +9,10 @@ import UIKit
 
 extension UIControl {
     
+    enum Associated {
+        @UniqueAddress static var stateSnapshot
+    }
+    
     public func sendActionsIfEnabled(for controlEvents: Event) {
         guard isEnabled else { return }
         sendActions(for: controlEvents)
@@ -24,6 +28,35 @@ extension UIControl {
     public func setStateUpdated() {
         isEnabled.toggle()
         isEnabled.toggle()
+    }
+    
+    /// 储存UIControl的状态快照
+    private var stateSnapshot: UIControl.State? {
+        get {
+            getAssociatedObject(self, Associated.stateSnapshot).as(UInt.self).flatMap(UIControl.State.init)
+        }
+        set {
+            setAssociatedObject(self, Associated.stateSnapshot, newValue?.rawValue, .OBJC_ASSOCIATION_ASSIGN)
+        }
+    }
+    
+    /// 记录当前状态
+    public func snapshotState() {
+        stateSnapshot = state
+    }
+    
+    /// 根据之前的state快照恢复状态
+    public func restoreState() {
+        guard let stateSnapshot = stateSnapshot.take() else { return }
+        if stateSnapshot.contains(.disabled) {
+            isEnabled = false
+        }
+        if stateSnapshot.contains(.highlighted) {
+            isHighlighted = true
+        }
+        if stateSnapshot.contains(.selected) {
+            isSelected = true
+        }
     }
 }
 

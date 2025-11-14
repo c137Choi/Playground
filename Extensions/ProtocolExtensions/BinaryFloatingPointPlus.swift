@@ -145,6 +145,11 @@ extension BinaryFloatingPoint {
         }
     }
     
+    /// 原样输出(有小数位则显示,无小数位则显示整数)
+    var string: String {
+        String(format: "%g", double) // 备选方案: nsNumber.description
+    }
+    
     /// 带符号 | 四舍五入
     var signedR2: String {
         signedDecimalFormatter.transform { formatter in
@@ -172,15 +177,6 @@ extension BinaryFloatingPoint {
     var r2: String {
         roundDecimalFormatter.transform { fmt -> String in
             fmt.string(from: nsNumber) ?? ""
-        }
-    }
-    
-    /// 原样输出
-    var f: String {
-        decimalFormatter.transform { formatter in
-            formatter.minimumFractionDigits = 0
-            formatter.maximumFractionDigits = .max
-            return formatter.string(from: nsNumber) ?? ""
         }
     }
     

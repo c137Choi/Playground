@@ -11,3 +11,10 @@ extension CFString {
         self as String
     }
 }
+
+extension CFDictionary {
+    
+    var nsDictionary: NSDictionary {
+        self as NSDictionary
+    }
+}

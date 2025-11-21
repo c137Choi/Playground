@@ -9,10 +9,6 @@ import UIKit
 
 extension UIControl {
     
-    enum Associated {
-        @UniqueAddress static var stateSnapshot
-    }
-    
     public func sendActionsIfEnabled(for controlEvents: Event) {
         guard isEnabled else { return }
         sendActions(for: controlEvents)
@@ -29,35 +25,6 @@ extension UIControl {
         isEnabled.toggle()
         isEnabled.toggle()
     }
-    
-    /// 储存UIControl的状态快照
-    private var stateSnapshot: UIControl.State? {
-        get {
-            getAssociatedObject(self, Associated.stateSnapshot).as(UInt.self).flatMap(UIControl.State.init)
-        }
-        set {
-            setAssociatedObject(self, Associated.stateSnapshot, newValue?.rawValue, .OBJC_ASSOCIATION_ASSIGN)
-        }
-    }
-    
-    /// 记录当前状态
-    public func snapshotState() {
-        stateSnapshot = state
-    }
-    
-    /// 根据之前的state快照恢复状态
-    public func restoreState() {
-        guard let stateSnapshot = stateSnapshot.take() else { return }
-        if stateSnapshot.contains(.disabled) {
-            isEnabled = false
-        }
-        if stateSnapshot.contains(.highlighted) {
-            isHighlighted = true
-        }
-        if stateSnapshot.contains(.selected) {
-            isSelected = true
-        }
-    }
 }
 
 extension UIControl.Event {
@@ -70,7 +37,8 @@ extension UIControl.Event {
 }
 
 extension UIControl.State {
-    
+    /// UIControl受限状态
+    static let restricted = UIControl.State(rawValue: 1 << 16)
     /// 方便自定义状态的时候调用: .customState.andHighlighted
     public var andHighlighted: UIControl.State {
         union(.highlighted)
@@ -89,16 +57,29 @@ extension UIControl.State {
     /// 即: 0b0000_0000_1111_1111_0000_0000_0000_0000, 向左移位16-23为合法范围
     /// 注: 如果需要外部触发UIControl的状态变化, 可以调用自定义的UIControl.setStateUpdated()扩展方法
     /// 如果要自定义UIControl, 记得覆写state属性. 如:
-    /// final class CustomStatesButton: UIButton {
-    ///     var customState: UIControl.State?
-    ///     override var state: UIControl.State {
-    ///         if let customState {
-    ///             return super.state.union(customState)
-    ///         } else {
-    ///             return super.state
-    ///         }
-    ///     }
-    /// }
+    /*
+    final class CustomStatesButton: UIButton {
+        var internalState: UIControl.State = []
+        override var state: UIControl.State {
+            super.state.union(internalState)
+        }
+        var isRestricted: Bool {
+            get {
+                internalState.contains(.restricted)
+            }
+            set {
+                defer {
+                    setStateUpdated()
+                }
+                if newValue {
+                    internalState.formUnion(.restricted)
+                } else {
+                    internalState.subtract(.restricted)
+                }
+            }
+        }
+    }
+     */
     private static let state16 = UIControl.State(rawValue: 1 << 16)
     private static let state17 = UIControl.State(rawValue: 1 << 17)
     private static let state18 = UIControl.State(rawValue: 1 << 18)

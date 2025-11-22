@@ -53,7 +53,7 @@ class UIBaseScrollView: UIScrollView, UIViewLifeCycle {
         let receiver = super.hitTest(point, with: event)
         if blockScrollWhenHitUIControls {
             /// UIControl或其子类
-            let isKindOfControl = receiver.or(false) {
+            let isKindOfControl = receiver.map(fallback: false) {
                 $0.isKind(of: UIControl.self)
             }
             if isKindOfControl {

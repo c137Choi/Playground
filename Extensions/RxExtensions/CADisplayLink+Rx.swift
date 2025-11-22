@@ -45,11 +45,11 @@ public final class RxDisplayLink: ObservableType {
             displayLink.add(to: runloop, forMode: runloopMode)
             /// 设置帧率
             if #available(iOS 15.0, *) {
-                displayLink.preferredFrameRateRange = frameRateRange.or(.default) {
+                displayLink.preferredFrameRateRange = frameRateRange.map(fallback: .default) {
                     CAFrameRateRange(minimum: $0.lowerBound, maximum: $0.upperBound)
                 }
             } else {
-                displayLink.preferredFramesPerSecond = frameRateRange.or(0, map: \.upperBound.int)
+                displayLink.preferredFramesPerSecond = frameRateRange.map(fallback: 0, \.upperBound.int)
             }
             return Disposables.create(with: displayLink.invalidate)
         } else {

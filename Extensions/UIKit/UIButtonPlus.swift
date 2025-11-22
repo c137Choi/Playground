@@ -246,7 +246,7 @@ extension UIButton {
     private var titleWidth: CGFloat { titleSize.width }
     private var titleHeight: CGFloat { titleSize.height }
     private var imageSize: CGSize {
-        currentImage.or(.zero, map: \.size)
+        currentImage.map(fallback: .zero, \.size)
     }
     private var titleSize: CGSize {
         /// 适配iOS14,否则此属性会按照字体的Font返回一个值,从而影响intrinsicContentSize的计算

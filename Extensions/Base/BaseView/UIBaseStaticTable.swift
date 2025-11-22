@@ -81,7 +81,7 @@ class UIBaseStaticTable: UITableView, UIViewLifeCycle, UITableViewDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        sections.element(at: section).or(0) { staticSection in
+        sections.element(at: section).map(fallback: 0) { staticSection in
             staticSection.tableView = tableView
             staticSection.sectionIndex = section
             return staticSection.rows.count

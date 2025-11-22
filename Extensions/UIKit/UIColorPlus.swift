@@ -270,7 +270,7 @@ extension UIColor {
     }
     
     var hue: CGFloat {
-        hsba.or(0, map: \.hue)
+        hsba.map(fallback: 0, \.hue)
     }
     
     var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat)? {
@@ -575,7 +575,7 @@ extension UIColor {
         /// 色温
         let x = temperature.or(6500.0)
         /// 红绿补偿 | KNOWLED项目里滑块逻辑和这里是相反的,所以这里要取相反数
-        let y = gm.or(0) { -1.0 * $0 }
+        let y = gm.map(fallback: 0) { -1.0 * $0 }
         /// 设置相关参数
         filter.setValue(inputCIImage, forKey: kCIInputImageKey)
         filter.setValue(CIVector(x: x, y: y), forKey: "inputNeutral")

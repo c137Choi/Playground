@@ -44,8 +44,6 @@ enum NavigationBarStyle {
 
 // MARK: - 基类控制器
 class BaseViewController: UIViewController, UIGestureRecognizerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, ViewControllerConfiguration, ErrorTracker, ActivityTracker {
-	
-    lazy var presentor = ControllerPresentor(presentingController: self)
     
     var targetImageSize: CGSize?
     
@@ -458,16 +456,13 @@ extension BaseViewController {
     func popCameraAccessDeniedDialog(title: String) {
         let message = NSLocalizedString("是否打开权限设置页面?", comment: "")
         let yes = NSLocalizedString("是", comment: "")
-        presentor.popDialog {
-            AlertDialog(
-                title: title,
-                message: message) {
-                    DialogAction.cancel
-                    DialogAction(title: yes) {
-                        UIApplication.openSettings()
-                    }
-                }
+        let dialog = AlertDialog(title: title, message: message) {
+            DialogAction.cancel
+            DialogAction(title: yes) {
+                UIApplication.openSettings()
+            }
         }
+        popDialog(dialog)
     }
     
     func popToast(_ message: String?) {
@@ -486,7 +481,7 @@ extension BaseViewController {
                 [unowned self] in getPhotos(count: 1, from: .camera, allowsEditing: allowsEditing)
             }
         }
-        presentor.slideIn(sheet)
+        slideIn(sheet)
     }
     
     func getPhotos(count: Int, from source: UIImagePickerController.SourceType, allowsEditing: Bool = false) {

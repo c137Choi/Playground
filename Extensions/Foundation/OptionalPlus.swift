@@ -143,23 +143,6 @@ extension Optional {
         return try transform(self)
     }
     
-    /// 解包
-    /// - Parameters:
-    ///   - defaultValue: 默认值
-    ///   - transform: 转换闭包
-    /// - Returns: 转换后的值
-    /// 注: 和上面的unwrap方法作用一样, 但是在将尾随闭包作为转换回调时可以使代码看起来更清晰. 如:
-    /// let num: Int? = 0
-    /// num.or("") { num in
-    ///     num.string
-    /// }
-    func or<T>(_ fallback: @autoclosure () -> T, map transform: (Wrapped) throws -> T) rethrows -> T {
-        guard let self else {
-            return fallback()
-        }
-        return try transform(self)
-    }
-    
     /// 解包Optional
     /// - Parameter fallback: 解包失败使用的默认值
     /// - Returns: Wrapped Value

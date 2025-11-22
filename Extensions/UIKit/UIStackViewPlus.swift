@@ -179,7 +179,7 @@ extension UIStackView {
         set {
             isLayoutMarginsRelativeArrangement = newValue.isValid
             if #available(iOS 11, *) {
-                directionalLayoutMargins = newValue.or(.zero, map: \.directionalEdgeInsets)
+                directionalLayoutMargins = newValue.map(fallback: .zero, \.directionalEdgeInsets)
             } else {
                 layoutMargins = newValue.or(.zero)
             }

@@ -104,7 +104,7 @@ extension Optional where Wrapped == String {
     
     /// 转换为字符集
     var characterSet: CharacterSet {
-        self.or("", map: \.characterSet)
+        self.map(fallback: "", \.characterSet)
     }
 }
 

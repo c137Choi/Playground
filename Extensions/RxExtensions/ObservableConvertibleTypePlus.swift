@@ -520,7 +520,7 @@ extension ObservableConvertibleType where Element: OptionalConvertible {
     func or<Result>(_ fallback: Result, transform: @escaping (Element.Wrapped) throws -> Result) -> RxObservable<Result> {
         asObservable()
             .map { element in
-                try element.optionalValue.or(fallback, map: transform)
+                try element.optionalValue.map(fallback: fallback, transform)
             }
     }
     

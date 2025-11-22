@@ -27,7 +27,7 @@ struct ControllerPresentor {
             let size = presentationSize.or(defaultSize).presentationSize
             let targetUiConfiguration = uiConfiguration ?? PresentationUIConfiguration(
                 cornerRadius: 10,
-                backgroundStyle: .dimmed(alpha: 0.7),
+                backgroundStyle: .dimmed(alpha: 0.618),
                 isTapBackgroundToDismissEnabled: tapToDismiss
             )
             let presentation = CoverPresentation(
@@ -49,7 +49,7 @@ struct ControllerPresentor {
             size: controller.preferredContentSize.presentationSize,
             ui: ui ?? PresentationUIConfiguration(
                 cornerRadius: 10.0,
-                backgroundStyle: .dimmed(alpha: 0.7),
+                backgroundStyle: .dimmed(alpha: 0.618),
                 isTapBackgroundToDismissEnabled: tapBackgroundToDismissEnabled,
                 corners: .allCorners
             )
@@ -74,7 +74,7 @@ struct ControllerPresentor {
             ),
             ui: PresentationUIConfiguration(
                 cornerRadius: 10,
-                backgroundStyle: .dimmed(alpha: 0.7),
+                backgroundStyle: .dimmed(alpha: 0.618),
                 isTapBackgroundToDismissEnabled: tapBackgroundToDismissEnabled,
                 corners: .allCorners
             )
@@ -95,7 +95,7 @@ struct ControllerPresentor {
             directionDismiss: direction,
             uiConfiguration: PresentationUIConfiguration(
                 cornerRadius: cornerRadius.or(0),
-                backgroundStyle: .dimmed(alpha: 0.7),
+                backgroundStyle: .dimmed(alpha: 0.618),
                 isTapBackgroundToDismissEnabled: tapToDismiss
             ),
             size: contentSize.or(controller.preferredContentSize).presentationSize,
@@ -113,7 +113,7 @@ struct ControllerPresentor {
             directionDismiss: .bottom,
             uiConfiguration: PresentationUIConfiguration(
                 cornerRadius: 20,
-                backgroundStyle: .dimmed(alpha: 0.7),
+                backgroundStyle: .dimmed(alpha: 0.618),
                 isTapBackgroundToDismissEnabled: true,
                 corners: [.layerMinXMinYCorner, .layerMaxXMinYCorner]
             ),

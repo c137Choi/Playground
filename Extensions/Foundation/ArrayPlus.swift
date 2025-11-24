@@ -72,10 +72,11 @@ extension Array {
     /// - Parameters:
     ///   - index: 元素Index
     ///   - newElement: 新元素
-    public mutating func safeReplace(elementAt index: Index, with newElement: Element) {
-        guard isValidIndex(index) else { return }
-        guard let subrangeEnd = self.index(index, offsetBy: 1, limitedBy: endIndex) else { return }
-        replaceSubrange(index..<subrangeEnd, with: [newElement])
+    /// - Returns: index处的旧元素
+    public mutating func safeReplace(at index: Index?, with newElement: Element) {
+        if let index, isValidIndex(index) {
+            self[index] = newElement
+        }
     }
     
     /// 安全移除指定位置的元素

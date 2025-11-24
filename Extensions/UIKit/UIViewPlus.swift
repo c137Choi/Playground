@@ -58,7 +58,7 @@ extension UIView {
         convert(bounds, to: nil)
     }
     
-    var naturalSize: CGSize {
+    var compressedSize: CGSize {
         systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
     
@@ -657,16 +657,16 @@ extension UIView {
     ///
     /// 故,最好使用UITableViewHeaderFooterView的子类来设置UITableView的headerView属性,因为其自身就带有宽度等于父视图的约束
     /// 可以省去再次配置宽度约束的步骤
-    func fitSizeIfNeeded() {
-        let systemLayoutSize = systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-        let height = systemLayoutSize.height
-        let width = systemLayoutSize.width
-        // Comparison necessary to avoid infinite loop
-        if height != bounds.height {
-            bounds.size.height = height
+    func fitSizeIfNeeded(_ targetSize: CGSize = UIView.layoutFittingCompressedSize) {
+        let targetSize = systemLayoutSizeFitting(targetSize)
+        let targetHeight = targetSize.height
+        let targetWidth = targetSize.width
+        /// Comparison necessary to avoid infinite loop
+        if targetHeight != bounds.height {
+            bounds.size.height = targetHeight
         }
-        if width != bounds.width {
-            bounds.size.width = width
+        if targetWidth != bounds.width {
+            bounds.size.width = targetWidth
         }
     }
     
@@ -799,36 +799,3 @@ extension UIView.AutoresizingMask {
         [.flexibleWidth, .flexibleHeight]
     }
 }
-
-// MARK: - SwiftUI
-#if DEBUG
-@available(iOS 13.0, *)
-extension UIView {
-
-	var previewLayout: PreviewLayout {
-		let previewSize = systemLayoutSizeFitting(
-			CGSize(width: UIScreen.main.bounds.width, height: .greatestFiniteMagnitude),
-			withHorizontalFittingPriority: .required,
-			verticalFittingPriority: .fittingSizeLevel
-		)
-		return .fixed(width: previewSize.width, height: previewSize.height)
-	}
-	
-	private struct Preview: UIViewRepresentable {
-		
-		let view: UIView
-
-		func makeUIView(context: Context) -> UIView { view }
-
-		func updateUIView(_ uiView: UIView, context: Context) { }
-	}
-
-	var preview: some View {
-		// 如何遇见切换UIView和UIView(带设备边框)的情况,可尝试把整个项目关闭在重新打开; 或清除Preview缓存:
-		// .../Xcode/DerivedData/TargetFolder.../Build/Intermediates.noindex/Previews
-		Preview(view: self)
-//			.previewLayout(.device)
-			.previewLayout(previewLayout)
-	}
-}
-#endif

@@ -24,6 +24,7 @@ extension UIControl {
         }
         set {
             setAssociatedObject(self, Associated.customState, newValue.rawValue, .OBJC_ASSOCIATION_ASSIGN)
+            setStateUpdated()
         }
     }
     
@@ -31,6 +32,21 @@ extension UIControl {
     public var isDisabled: Bool {
         get { isEnabled.toggled }
         set { isEnabled = newValue.toggled }
+    }
+    
+    /// 是否为受限状态
+    /// 设置isRestricted为true而不是将isEnabled设置为false, 方便实现受限状态下控件仍然可交互
+    var isRestricted: Bool {
+        get {
+            customState.contains(.restricted)
+        }
+        set {
+            if newValue {
+                customState.formUnion(.restricted)
+            } else {
+                customState.subtract(.restricted)
+            }
+        }
     }
     
     /// 通过'两次'调整isEnabled以触发按钮的状态更新
@@ -69,30 +85,7 @@ extension UIControl.State {
     /// 可用范围比特位为: UIControl.State.application
     /// 即: 0b0000_0000_1111_1111_0000_0000_0000_0000, 向左移位16-23为合法范围
     /// 注: 如果需要外部触发UIControl的状态变化, 可以调用自定义的UIControl.setStateUpdated()扩展方法
-    /// 如果要自定义UIControl, 记得覆写state属性. 如:
-    /*
-    final class CustomStatesButton: UIButton {
-        var internalState: UIControl.State = []
-        override var state: UIControl.State {
-            super.state.union(internalState)
-        }
-        var isRestricted: Bool {
-            get {
-                internalState.contains(.restricted)
-            }
-            set {
-                defer {
-                    setStateUpdated()
-                }
-                if newValue {
-                    internalState.formUnion(.restricted)
-                } else {
-                    internalState.subtract(.restricted)
-                }
-            }
-        }
-    }
-     */
+    /// 如果要自定义UIControl, 记得覆写父类的state属性.
     private static let state16 = UIControl.State(rawValue: 1 << 16)
     private static let state17 = UIControl.State(rawValue: 1 << 17)
     private static let state18 = UIControl.State(rawValue: 1 << 18)

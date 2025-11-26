@@ -9,9 +9,22 @@ import UIKit
 
 extension UIControl {
     
+    private enum Associated {
+        @UniqueAddress static var customState
+    }
+    
     public func sendActionsIfEnabled(for controlEvents: Event) {
         guard isEnabled else { return }
         sendActions(for: controlEvents)
+    }
+    
+    public var customState: State {
+        get {
+            getAssociatedObject(self, Associated.customState).as(UInt.self).flatMap(State.init) ?? []
+        }
+        set {
+            setAssociatedObject(self, Associated.customState, newValue.rawValue, .OBJC_ASSOCIATION_ASSIGN)
+        }
     }
     
     /// 是否禁用
@@ -20,7 +33,7 @@ extension UIControl {
         set { isEnabled = newValue.toggled }
     }
     
-    /// 这里通过'两次'调整isEnabled以触发按钮的状态更新
+    /// 通过'两次'调整isEnabled以触发按钮的状态更新
     public func setStateUpdated() {
         isEnabled.toggle()
         isEnabled.toggle()

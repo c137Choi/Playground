@@ -13,8 +13,9 @@ extension UIControl {
         @UniqueAddress static var customState
     }
     
-    public func sendActionsIfEnabled(for controlEvents: Event) {
-        guard isEnabled else { return }
+    /// 必要时发送事件(禁用状态或限制状态不发送事件)
+    public func sendActionsIfNeeded(for controlEvents: Event) {
+        if isDisabled || isRestricted { return }
         sendActions(for: controlEvents)
     }
     

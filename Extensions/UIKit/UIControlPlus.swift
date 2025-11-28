@@ -13,12 +13,6 @@ extension UIControl {
         @UniqueAddress static var customState
     }
     
-    /// 必要时发送事件(禁用状态或限制状态不发送事件)
-    public func sendActionsIfNeeded(for controlEvents: Event) {
-        if isDisabled || isRestricted { return }
-        sendActions(for: controlEvents)
-    }
-    
     public var customState: State {
         get {
             getAssociatedObject(self, Associated.customState).as(UInt.self).flatMap(State.init) ?? []

@@ -22,8 +22,17 @@ extension Reactive where Base: UIControl {
     /// - Parameter toggleSelected: 点击时是否切换isSelected
     /// - Returns: Base序列
     func touchUpInside(toggleSelected: Bool) -> RxObservable<Base> {
-        controlEvent(.touchUpInside).withUnretained(base).map { base, _ in
-            toggleSelected ? base.with(new: \.isSelected, base.isSelected.toggled) : base
+        catchEvent(.touchUpInside, toggleSelected: toggleSelected)
+    }
+    
+    /// 捕获事件
+    /// - Parameters:
+    ///   - controlEvents: 触发事件
+    ///   - toggleSelected: 是否切换选中状态
+    /// - Returns: Base序列
+    func catchEvent(_ controlEvents: UIControl.Event, toggleSelected: Bool = false) -> RxObservable<Base> {
+        controlEvent(controlEvents).withUnretained(base).map { control, _ in
+            toggleSelected ? control.with(new: \.isSelected, control.isSelected.toggled) : control
         }
     }
     

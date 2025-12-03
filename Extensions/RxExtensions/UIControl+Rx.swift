@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-typealias RxControlEventElement<T> = (control: T, event: UIEvent?) where T: UIControl
+typealias EnhancedControlEvent<T> = (control: T, event: UIEvent?) where T: UIControl
 
 extension Reactive where Base: UIControl {
     
@@ -78,12 +78,12 @@ extension Reactive where Base: UIControl {
     }
     
     /// ControlEvent元素
-    typealias ControlEventElement = RxControlEventElement<Base>
+    typealias RxElement = EnhancedControlEvent<Base>
     
     /// 增强的ControlEvent: 事件序列的元素返回控件和UIEvent?
     /// - Parameter events: 触发事件
-    func enhancedControlEvent(_ events: UIControl.Event) -> ControlEvent<ControlEventElement> {
-        let sequence = RxObservable<ControlEventElement>.create {
+    func enhancedControlEvent(_ events: UIControl.Event) -> ControlEvent<RxElement> {
+        let sequence = RxObservable<RxElement>.create {
             [weak control = self.base] observer in
             /// 确保主线程运行
             MainScheduler.ensureRunningOnMainThread()
@@ -94,7 +94,7 @@ extension Reactive where Base: UIControl {
             }
             /// 创建Target并处理事件回调. 内部添加事件
             return UIControlEventRelay(control, events: events) { sender, event in
-                let tuple: ControlEventElement = (sender, event)
+                let tuple: RxElement = (sender, event)
                 observer.onNext(tuple)
             }
         }

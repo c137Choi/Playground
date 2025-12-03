@@ -54,7 +54,7 @@ extension Array where Element: ObservableConvertibleType {
 extension Array where Element: UIButton {
     
     /// ControlEvent元素
-    typealias ControlEventElement = RxControlEventElement<Element>
+    typealias RxElement = EnhancedControlEvent<Element>
     
     /// 按钮数组转换为ControlProperty
     /// - Parameters:
@@ -101,7 +101,7 @@ extension Array where Element: UIButton {
     func switchButtonEvent(
         _ controlEvents: UIControl.Event = .touchUpInside,
         startIndex: Index? = nil,
-        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<ControlEventElement>
+        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<RxElement>
     {
         switchButtonEvent(controlEvents, startWith: element(at: startIndex), eventFilter: eventFilter)
     }
@@ -115,10 +115,10 @@ extension Array where Element: UIButton {
     func switchButtonEvent(
         _ controlEvents: UIControl.Event = .touchUpInside,
         startWith firstButton: Element? = nil,
-        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<ControlEventElement>
+        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<RxElement>
     {
         mergedControlEvent(controlEvents, startWith: firstButton, eventFilter: eventFilter).lastAndLatest.compactMap {
-            lastControlEvent, controlEvent -> ControlEventElement? in
+            lastControlEvent, controlEvent -> RxElement? in
             /// 上一个按钮取消选中
             if let lastControlEvent {
                 /// 重复的按钮不发送事件
@@ -145,12 +145,12 @@ extension Array where Element: UIButton {
     fileprivate func mergedControlEvent(
         _ controlEvents: UIControl.Event,
         startWith firstButton: Element?,
-        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<ControlEventElement>
+        eventFilter: RxElementFilter<Element>? = nil) -> RxObservable<RxElement>
     {
         /// 第一个元素
-        let firstElement = firstButton.flatMap { button -> ControlEventElement? in
+        let firstElement = firstButton.flatMap { button -> RxElement? in
             /// 元组
-            let tuple: ControlEventElement = (button, nil)
+            let tuple: RxElement = (button, nil)
             /// 如果有事件过滤
             if let eventFilter {
                 /// 查找第一个按钮在数组中的索引. 如果不在数组中则返回空
@@ -184,12 +184,12 @@ final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashabl
     /// [属性:按钮]字典
     typealias PropertyButtonMap = [Property: Button]
     /// 按钮触发事件
-    typealias ButtonControlEvent = RxControlEventElement<Button>
+    typealias ButtonEvent = EnhancedControlEvent<Button>
     
     /// KeyPath对象
     private let keyPath: KeyPath<Button, Property>
     /// 按钮事件Relay
-    private let buttonEventRelay = BehaviorRelay<ButtonControlEvent?>(value: nil)
+    private let buttonEventRelay = BehaviorRelay<ButtonEvent?>(value: nil)
     /// 按钮映射字典
     private var propertyButtonMap = PropertyButtonMap.empty
     /// 储存选中的按钮

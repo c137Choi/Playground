@@ -73,9 +73,14 @@ extension Array {
     ///   - index: 元素Index
     ///   - newElement: 新元素
     /// - Returns: index处的旧元素
-    public mutating func safeReplace(at index: Index?, with newElement: Element) {
+    @discardableResult
+    public mutating func safeReplace(at index: Index?, with newElement: Element) -> Element? {
         if let index, isValidIndex(index) {
+            let oldElement = self[index]
             self[index] = newElement
+            return oldElement
+        } else {
+            return nil
         }
     }
     

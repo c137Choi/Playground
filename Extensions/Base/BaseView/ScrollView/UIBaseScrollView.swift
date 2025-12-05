@@ -13,16 +13,6 @@ class UIBaseScrollView: UIScrollView, UIViewLifeCycle {
         NSLayoutConstraint.Axis.vertical
     }
     
-    /// 是否开启: 触摸到UIControl子类的时候阻断滚动视图的滚动
-    /// 避免如像UISlider类似的控件在滑动时被UIScrollView滑动事件阻断的问题
-    var blockScrollWhenHitUIControls = true {
-        didSet {
-            if blockScrollWhenHitUIControls == false {
-                isScrollEnabled = true
-            }
-        }
-    }
-    
     var defaultBackgroundColor: UIColor? = .baseBackground {
         willSet {
             backgroundColor = newValue
@@ -46,23 +36,6 @@ class UIBaseScrollView: UIScrollView, UIViewLifeCycle {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         prepare()
-    }
-    
-    /// 避免如像UISlider类似的控件在滑动时被UIScrollView滑动事件阻断的问题
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let receiver = super.hitTest(point, with: event)
-        if blockScrollWhenHitUIControls {
-            /// UIControl或其子类
-            let isKindOfControl = receiver.map(fallback: false) {
-                $0.isKind(of: UIControl.self)
-            }
-            if isKindOfControl {
-                isScrollEnabled = false
-            } else {
-                isScrollEnabled = true
-            }
-        }
-        return receiver
     }
     
     func prepare() {

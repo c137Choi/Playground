@@ -503,6 +503,14 @@ extension UIView {
 // MARK: - UIView + NSLayoutConstraint
 extension UIView {
     
+    func padding(top: CGFloat = .zero, left: CGFloat = .zero, bottom: CGFloat = .zero, right: CGFloat = .zero) -> UIStackView {
+        UIEdgeInsets(top: top, left: left, bottom: bottom, right: right).transform(padding)
+    }
+    
+    func padding(_ margins: UIEdgeInsets) -> UIStackView {
+        UIStackView(margins: margins, axis: .vertical, distribution: .fill, alignment: .fill, arrangedSubviews: self)
+    }
+    
     /// 固定比例(宽/高)
     /// - Parameters:
     ///   - widthHeightRatio: 宽高比

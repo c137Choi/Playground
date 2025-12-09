@@ -41,6 +41,8 @@ class UIBaseScrollView: UIScrollView, UIViewLifeCycle {
     func prepare() {
         prepareSubviews()
         prepareConstraints()
+        /// 边距归零
+        layoutMargins = .zero
         /// 内容边距自动调整
         contentInsetAdjustmentBehavior = .automatic
         /// 交互时收起键盘

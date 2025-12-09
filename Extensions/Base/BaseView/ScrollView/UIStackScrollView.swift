@@ -9,7 +9,10 @@ import RxSwift
 
 class UIStackScrollView: UIBaseScrollView {
     
-    lazy var stackView = UIStackView(axis: Self.scrollDirection, distribution: .fill, alignment: .fill, spacing: 0.0)
+    lazy var stackView = UIStackView(axis: Self.scrollDirection, distribution: .fill, alignment: .fill, spacing: 0.0).setup {
+        $0.isLayoutMarginsRelativeArrangement = true
+        $0.preservesSuperviewLayoutMargins = true
+    }
     
     override func makeContentView() -> UIView {
         stackView

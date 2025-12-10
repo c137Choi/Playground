@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Accelerate
 
 typealias Kelvin = CGFloat
 
@@ -311,7 +312,7 @@ extension UIColor {
         /// 求出XYZ = 向量 * 矩阵
         let XYZ = aRGB.rgbArray * colorGamut.M
         /// XYZ求和
-        let XYZSum = XYZ.reduce(0.0, +)
+        let XYZSum = vDSP.sum(XYZ)
         /// 确保值正常否则返回0
         guard XYZSum.isNormal else { return .zero }
         /// 分别求出xyz

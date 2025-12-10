@@ -41,11 +41,11 @@ class BaseNavigationController: UINavigationController, PresentedControllerType 
     
     /// 让最顶部的控制器决定状态栏的样式
     override var childForStatusBarStyle: UIViewController? {
-        topViewController
+        visibleViewController
     }
     
     override var childForStatusBarHidden: UIViewController? {
-        topViewController
+        visibleViewController
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

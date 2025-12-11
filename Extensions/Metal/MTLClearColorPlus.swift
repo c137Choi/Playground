@@ -11,9 +11,9 @@ import MetalKit
 extension MTLClearColor: @retroactive ExpressibleByIntegerLiteral {
     
     public init(integerLiteral value: Int) {
-        guard let argb = value.aRGB else {
+        guard let rgba = value.rgba else {
             fatalError("Illegal color")
         }
-        self.init(red: argb.red, green: argb.green, blue: argb.blue, alpha: 1.0)
+        self.init(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: 1.0)
     }
 }

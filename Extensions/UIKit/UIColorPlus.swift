@@ -9,172 +9,6 @@
 import UIKit
 import Accelerate
 
-typealias Kelvin = CGFloat
-
-/// 色域
-enum ColorGamut: CaseIterable, CustomStringConvertible {
-    case adobeRGB1998
-    case appleRGB
-    case bestRGB
-    case cieRGB
-    case sRGB
-    case wideGamutRGB
-    
-    case rec709
-    case dciP3
-    case bt2020
-    
-    var gamma: Double {
-        switch self {
-        case .adobeRGB1998:
-            return 2.2
-        case .appleRGB:
-            return 1.8
-        case .bestRGB:
-            return 2.2
-        case .cieRGB:
-            return 2.2
-        case .sRGB:
-            return 2.2
-        case .wideGamutRGB:
-            return 2.2
-        case .rec709:
-            return 1.0 /// 未知,使用1.0填充
-        case .dciP3:
-            return 1.0 /// 未知,使用1.0填充
-        case .bt2020:
-            return 1.0 /// 未知,使用1.0填充
-        }
-    }
-    
-    var M: [[Double]] {
-        Array<[Double]> {
-            switch self {
-            case .adobeRGB1998:
-                [0.5767309, 0.1855540, 0.1881852]
-                [0.2973769, 0.6273491, 0.0752741]
-                [0.0270343, 0.0706872, 0.9911085]
-            case .appleRGB:
-                [0.4497288, 0.3162486, 0.1844926]
-                [0.2446525, 0.6720283, 0.0833192]
-                [0.0251848, 0.1411824, 0.9224628]
-            case .bestRGB:
-                [0.6326696, 0.2045558, 0.1269946]
-                [0.2284569, 0.7373523, 0.0341908]
-                [0.0000000, 0.0095142, 0.8156958]
-            case .cieRGB:
-                [0.4887180, 0.3106803, 0.2006017]
-                [0.1762044, 0.8129847, 0.0108109]
-                [0.0000000, 0.0102048, 0.9897952]
-            case .sRGB:
-                [0.4124564, 0.3575761, 0.1804375]
-                [0.2126729, 0.7151522, 0.0721750]
-                [0.0193339, 0.1191920, 0.9503041]
-            case .wideGamutRGB:
-                [0.7161046, 0.1009296, 0.1471858]
-                [0.2581874, 0.7249378, 0.0168748]
-                [0.0000000, 0.0517813, 0.7734287]
-            case .rec709:
-                [0.4124, 0.2126, 0.0190]
-                [0.3575, 0.7151, 0.1191]
-                [0.1804, 0.0721, 0.9503]
-            case .dciP3:
-                [0.4864, 0.2289 , 0.000]
-                [0.2656, 0.6917 , 0.045]
-                [0.1972, 0.07929, 1.043]
-            case .bt2020:
-                [0.6370, 0.2627, 0.0000]
-                [0.1446, 0.6780, 0.0281]
-                [0.1689, 0.0593, 1.0610]
-            }
-        }
-    }
-    
-    var MReverse: [[Double]] {
-        Array<[Double]> {
-            switch self {
-            case .adobeRGB1998:
-                [ 2.0413690, -0.5649464, -0.3446944]
-                [-0.9692660,  1.8760108,  0.0415560]
-                [ 0.0134474, -0.1183897,  1.0154096]
-            case .appleRGB:
-                [ 2.9515373, -1.2894116, -0.4738445]
-                [-1.0851093,  1.9908566,  0.0372026]
-                [ 0.0854934, -0.2694964,  1.0912975]
-            case .bestRGB:
-                [ 1.7552599, -0.4836786, -0.2530000]
-                [-0.5441336,  1.5068789,  0.0215528]
-                [ 0.0063467, -0.0175761,  1.2256959]
-            case .cieRGB:
-                [ 2.3706743, -0.9000405, -0.4706338]
-                [-0.5138850,  1.4253036,  0.0885814]
-                [ 0.0052982, -0.0146949,  1.0093968]
-            case .sRGB:
-                [ 3.2404542, -1.5371385, -0.4985314]
-                [-0.9692660,  1.8760108,  0.0415560]
-                [ 0.0556434, -0.2040259,  1.0572252]
-            case .wideGamutRGB:
-                [ 1.4628067, -0.1840623, -0.2743606]
-                [-0.5217933,  1.4472381,  0.0677227]
-                [ 0.0349342, -0.0968930,  1.2884099]
-            case .rec709:
-                [ 3.2400, -0.9690,  0.0550]
-                [-1.5370,  1.8760, -0.2040]
-                [-0.4985,  0.0415,  1.0572]
-            case .dciP3:
-                [ 2.494, -0.830,  0.036]
-                [-0.932,  1.763, -0.076]
-                [-0.401,  0.023,  0.958]
-            case .bt2020:
-                [ 1.7167, -0.6667,  0.0176]
-                [-0.3557,  1.6165, -0.0428]
-                [-0.2534,  0.0158,  0.9421]
-            }
-        }
-    }
-    
-    var description: String {
-        switch self {
-        case .adobeRGB1998:
-            return "adobeRGB1998"
-        case .appleRGB:
-            return "appleRGB"
-        case .bestRGB:
-            return "bestRGB"
-        case .cieRGB:
-            return "cieRGB"
-        case .sRGB:
-            return "sRGB"
-        case .wideGamutRGB:
-            return "wideGamutRGB"
-        case .rec709:
-            return "rec709"
-        case .dciP3:
-            return "dciP3"
-        case .bt2020:
-            return "bt2020"
-        }
-    }
-}
-
-/// 颜色混合时传入的元素
-struct ColorBlendComponent {
-    let color: UIColor
-    let weight: CGFloat
-    
-    init?(color: UIColor?, weight: CGFloat?) {
-        guard let color, let weight else { return nil }
-        self.color = color
-        self.weight = weight
-    }
-    
-    init?(color: UIColor?, weight: Double?) {
-        guard let color, let weight else { return nil }
-        self.color = color
-        self.weight = weight
-    }
-}
-
 extension UIColor {
     /// 冷白
     static let coldWhite = UIColor(temperature: 10_000.0)
@@ -211,16 +45,16 @@ extension UIColor {
     }
     
     /// 颜色 -> 色温
-    var temperature: Kelvin {
-        guard let aRGB else { return 0 }
-        let r = aRGB.red
-        let g = aRGB.green
-        let b = aRGB.blue
+    var temperature: CGFloat {
+        guard let rgba else { return 0 }
+        let red = rgba.red
+        let green = rgba.green
+        let blue = rgba.blue
         
         /// RGB -> XYZ color space
-        let x = r * 0.4124 + g * 0.3576 + b * 0.1805
-        let y = r * 0.2126 + g * 0.7152 + b * 0.0722
-        let z = r * 0.0193 + g * 0.1192 + b * 0.9505
+        let x = red * 0.4124 + green * 0.3576 + blue * 0.1805
+        let y = red * 0.2126 + green * 0.7152 + blue * 0.0722
+        let z = red * 0.0193 + green * 0.1192 + blue * 0.9505
         
         /// Calculate chromaticty coordinates
         let xc = x / (x + y + z)
@@ -284,33 +118,32 @@ extension UIColor {
     }
     
     /// 计算色温
-    var kelvin: Kelvin? {
-        guard let aRGB else { return nil }
-        let red = aRGB.red
-        let green = aRGB.green
-        let blue = aRGB.blue
+    var kelvin: CGFloat? {
+        guard let rgba else { return nil }
+        let red = rgba.red
+        let green = rgba.green
+        let blue = rgba.blue
         let temp = (0.23881 * red + 0.25499 * green - 0.58291 * blue) / (0.11109 * red - 0.85406 * green + 0.52289 * blue)
         let colorTemperature = 449 * pow(temp, 3) + 3525 * pow(temp, 2) + 6823.3 * temp + 5520.33
         return colorTemperature
     }
     
-    var aRGB: ARGB? {
-        var a: CGFloat = 0.0
-        var r: CGFloat = 0.0
-        var g: CGFloat = 0.0
-        var b: CGFloat = 0.0
-        guard getRed(&r, green: &g, blue: &b, alpha: &a) else { return nil }
-        return ARGB(alpha: a, red: r, green: g, blue: b)
+    var rgba: RGBA? {
+        var retval = RGBA.black
+        getRed(&retval.red, green: &retval.green, blue: &retval.blue, alpha: &retval.alpha)
+        return retval
+    }
+    
+    var xy: XY {
+        rgba.flatMap(fallback: .zero, ColorSpace.adobeRGB.xyFromColor)
     }
     
     /// 转换成xy色域坐标
-    /// - Parameter colorGamut: 色域
-    /// - Returns: xy坐标
-    func xy(colorGamut: ColorGamut) -> XY {
+    fileprivate var xyLegacy: XY {
         /// 取出颜色元素
-        guard let aRGB else { return .zero }
+        guard let rgba else { return .zero }
         /// 求出XYZ = 向量 * 矩阵
-        let XYZ = aRGB.rgbArray * colorGamut.M
+        let XYZ = rgba.rgbArray * ColorGamut.bt2020.M
         /// XYZ求和
         let XYZSum = vDSP.sum(XYZ)
         /// 确保值正常否则返回0
@@ -326,41 +159,23 @@ extension UIColor {
     }
     
     /// 从色温创建颜色
-    /// - Parameter kelvin: 色温 | 单位: 开尔文
+    /// - Parameter cct: 色温 | 单位: 开尔文
     /// - Returns: UIColor对象
-    static func fromTemperature(_ kelvin: Kelvin) -> UIColor {
-        UIColor(temperature: kelvin)
+    static func fromTemperature(_ cct: CGFloat) -> UIColor {
+        UIColor(temperature: cct)
     }
     
     /// 从色温创建颜色
     /// - Parameter temperature: 色温
     /// https://github.com/davidf2281/ColorTempToRGB
     /// https://tannerhelland.com/2012/09/18/convert-temperature-rgb-algorithm-code.html
-    convenience init(temperature: Kelvin) {
+    convenience init(temperature: CGFloat) {
         let components = UIColor.componentsForColorTemperature(temperature)
         self.init(red: components.red, green: components.green, blue: components.blue, alpha: 1.0)
     }
     
-//    convenience init(x: Double, y: Double, colorGamut: ColorGamut) {
-//        let XYZ = [x / y, 1.0, (1.0 - x - y) / y]
-//        let MReverse = colorGamut.MReverse
-//        let range = 0...1.0
-//        let rgb = (XYZ * MReverse).map {
-//            let constrainedValue = range << $0
-//            return pow(constrainedValue, 1.0 / colorGamut.gamma)
-//        }
-//        guard rgb.count >= 3 else {
-//            self.init(white: 0, alpha: 0)
-//            return
-//        }
-//        let r = rgb[0]
-//        let g = rgb[1]
-//        let b = rgb[2]
-//        self.init(red: r, green: g, blue: b, alpha: 1.0)
-//    }
-    
-    convenience init(argb: ARGB) {
-        self.init(red: argb.red, green: argb.green, blue: argb.blue, alpha: argb.alpha)
+    convenience init(rgba: RGBA) {
+        self.init(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha)
     }
     
     convenience init(xy: XY) {
@@ -369,8 +184,13 @@ extension UIColor {
     
     /// XY坐标创建颜色
     convenience init(x: Double, y: Double) {
+        let rgba = ColorSpace.adobeRGB.color(x: x, y: y)
+        self.init(rgba: rgba)
+    }
+    
+    fileprivate convenience init(legacyX x: Double, legacyY y: Double) {
         let z = 1.0 - x - y
-
+        
         let Y = 1.0
         let X = (Y / y) * x
         let Z = (Y / y) * z
@@ -503,11 +323,11 @@ extension UIColor {
         var blue: CGFloat = 0
         var alpha: CGFloat = 0
         components.forEach { component in
-            if let aRGB = component.color.aRGB {
-                red += aRGB.red * component.weight
-                green += aRGB.green * component.weight
-                blue += aRGB.blue * component.weight
-                alpha += aRGB.alpha * component.weight
+            if let rgba = component.color.rgba {
+                red += rgba.red * component.weight
+                green += rgba.green * component.weight
+                blue += rgba.blue * component.weight
+                alpha += rgba.alpha * component.weight
             }
         }
         if let brightness, let hsba = UIColor(red: red, green: green, blue: blue, alpha: alpha).hsba {
@@ -544,7 +364,7 @@ extension UIColor {
         return UIColor(red: red / 255, green: green / 255, blue: blue / 255, alpha: 1.0)
     }
     
-    static func componentsForColorTemperature(_ temperature: Kelvin) -> (red: CGFloat, green: CGFloat, blue: CGFloat) {
+    static func componentsForColorTemperature(_ temperature: CGFloat) -> (red: CGFloat, green: CGFloat, blue: CGFloat) {
         let range = UInt8.range.cgFloatRange
         let percentKelvin = temperature / 100
         let red, green, blue: CGFloat
@@ -564,14 +384,14 @@ extension UIColor {
     ///   - temperature: 色温
     ///   - gm: 红绿补偿 | 范围 -100...100 -> 偏红...偏绿
     /// - Returns: 调整后生成新颜色
-    func whiteBalance(_ temperature: Kelvin? = nil, gm: CGFloat? = nil) -> UIColor {
-        guard let aRGB else { return self }
+    func whiteBalance(_ temperature: CGFloat? = nil, gm: CGFloat? = nil) -> UIColor {
+        guard let rgba else { return self }
         /// 创建色温滤镜
         guard let filter = CIFilter(name: "CITemperatureAndTint") else {
             dprint("过滤器创建失败")
             return self
         }
-        let ciColor = CIColor(red: aRGB.red, green: aRGB.green, blue: aRGB.blue)
+        let ciColor = CIColor(red: rgba.red, green: rgba.green, blue: rgba.blue)
         let inputCIImage = CIImage(color: ciColor)
         /// 色温
         let x = temperature.or(6500.0)
@@ -654,17 +474,16 @@ extension Int {
 	
     @available(iOS 13.0, *)
     var cgColor: CGColor {
-		guard let aRGB else { return UIColor.clear.cgColor }
-		return CGColor(red: aRGB.red, green: aRGB.green, blue: aRGB.blue, alpha: aRGB.alpha)
+		guard let rgba else { return UIColor.clear.cgColor }
+		return CGColor(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha)
 	}
 	
 	var uiColor: UIColor {
-		guard let aRGB else { return .clear }
-		return UIColor(red: aRGB.red, green: aRGB.green, blue: aRGB.blue, alpha: aRGB.alpha)
+        rgba.map(fallback: .clear, UIColor.init)
 	}
     
     /// 整型 -> ARGB
-	var aRGB: ARGB? {
+	var rgba: RGBA? {
         let maxRGB = 0xFF_FF_FF
         let maxARGB = 0xFF_FF_FF_FF
         switch self {
@@ -673,14 +492,14 @@ extension Int {
             let red     = CGFloat((self & 0xFF_00_00) >> 16) / 0xFF
             let green   = CGFloat((self & 0x00_FF_00) >>  8) / 0xFF
             let blue    = CGFloat( self & 0x00_00_FF       ) / 0xFF
-            return ARGB(red: red, green: green, blue: blue)
+            return RGBA(red: red, green: green, blue: blue)
         case maxRGB.number...maxARGB:
             /// 带透明度的情况
             let alpha   = CGFloat((self & 0xFF_00_00_00) >> 24) / 0xFF
             let red     = CGFloat((self & 0x00_FF_00_00) >> 16) / 0xFF
             let green   = CGFloat((self & 0x00_00_FF_00) >>  8) / 0xFF
             let blue    = CGFloat( self & 0x00_00_00_FF       ) / 0xFF
-            return ARGB(alpha: alpha, red: red, green: green, blue: blue)
+            return RGBA(red: red, green: green, blue: blue, alpha: alpha)
         default:
             /// 其他情况
             return nil

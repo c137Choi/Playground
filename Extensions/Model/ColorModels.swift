@@ -9,21 +9,20 @@ import UIKit
 
 // MARK: - RGBA
 struct RGBA {
-    var red: CGFloat
-    var green: CGFloat
-    var blue: CGFloat
-    var alpha: CGFloat = 1.0
+    var red: Double
+    var green: Double
+    var blue: Double
+    var alpha: Double = 1.0
 }
 
 extension RGBA {
     static let white = RGBA(red: 1, green: 1, blue: 1)
     static let black = RGBA(red: 0, green: 0, blue: 0)
     
-    init(red: Double, green: Double, blue: Double) {
-        self.red = red
-        self.green = green
-        self.blue = blue
-        self.alpha = 1.0
+    init?(_ uiColor: UIColor) {
+        var red = CGFloat.zero, green = CGFloat.zero, blue = CGFloat.zero, alpha = CGFloat.zero
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else { return nil }
+        self.red = red; self.green = green; self.blue = blue; self.alpha = alpha
     }
     
     var clamped: RGBA {

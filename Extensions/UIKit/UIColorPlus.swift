@@ -129,9 +129,7 @@ extension UIColor {
     }
     
     var rgba: RGBA? {
-        var retval = RGBA.black
-        getRed(&retval.red, green: &retval.green, blue: &retval.blue, alpha: &retval.alpha)
-        return retval
+        RGBA(self)
     }
     
     var xy: XY {

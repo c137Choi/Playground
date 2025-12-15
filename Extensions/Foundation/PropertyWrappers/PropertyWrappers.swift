@@ -53,6 +53,7 @@ import UIKit
 }
 extension Clampped: Equatable where T: Equatable {}
 extension Clampped: Hashable where T: Hashable {}
+extension Clampped: Codable where T: Codable {}
 
 /// 源源不断的将新赋的有效值储存在内部的数组内, 自身返回最新值.
 /// 用$语法取projectedValue使用

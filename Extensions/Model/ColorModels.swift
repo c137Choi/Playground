@@ -19,6 +19,27 @@ extension RGBA {
     static let white = RGBA(red: 1, green: 1, blue: 1)
     static let black = RGBA(red: 0, green: 0, blue: 0)
     
+    /// 初始化方法
+    /// - Parameter rawInt: ARGB格式的整形数值
+    init?(_ rawInt: Int) {
+        let maxRGB = 0xFF_FF_FF
+        let maxARGB = 0xFF_FF_FF_FF
+        switch rawInt {
+        case let rawInt where rawInt >= 0 && rawInt <= maxRGB:
+            self.red   = Double((rawInt & 0xFF_00_00) >> 16) / 0xFF
+            self.green = Double((rawInt & 0x00_FF_00) >>  8) / 0xFF
+            self.blue  = Double( rawInt & 0x00_00_FF       ) / 0xFF
+            self.alpha = 1.0
+        case let rawInt where rawInt > maxRGB && rawInt <= maxARGB:
+            self.alpha = Double((rawInt & 0xFF_00_00_00) >> 24) / 0xFF
+            self.red   = Double((rawInt & 0x00_FF_00_00) >> 16) / 0xFF
+            self.green = Double((rawInt & 0x00_00_FF_00) >>  8) / 0xFF
+            self.blue  = Double( rawInt & 0x00_00_00_FF       ) / 0xFF
+        default:
+            return nil
+        }
+    }
+    
     init?(_ uiColor: UIColor) {
         var red = CGFloat.zero, green = CGFloat.zero, blue = CGFloat.zero, alpha = CGFloat.zero
         guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else { return nil }

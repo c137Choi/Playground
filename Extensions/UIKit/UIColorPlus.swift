@@ -480,28 +480,9 @@ extension Int {
         rgba.map(fallback: .clear, UIColor.init)
 	}
     
-    /// 整型 -> ARGB
+    /// 整型 -> RGBA
 	var rgba: RGBA? {
-        let maxRGB = 0xFF_FF_FF
-        let maxARGB = 0xFF_FF_FF_FF
-        switch self {
-        case 0...maxRGB:
-            /// 不带透明度的情况
-            let red     = CGFloat((self & 0xFF_00_00) >> 16) / 0xFF
-            let green   = CGFloat((self & 0x00_FF_00) >>  8) / 0xFF
-            let blue    = CGFloat( self & 0x00_00_FF       ) / 0xFF
-            return RGBA(red: red, green: green, blue: blue)
-        case maxRGB.number...maxARGB:
-            /// 带透明度的情况
-            let alpha   = CGFloat((self & 0xFF_00_00_00) >> 24) / 0xFF
-            let red     = CGFloat((self & 0x00_FF_00_00) >> 16) / 0xFF
-            let green   = CGFloat((self & 0x00_00_FF_00) >>  8) / 0xFF
-            let blue    = CGFloat( self & 0x00_00_00_FF       ) / 0xFF
-            return RGBA(red: red, green: green, blue: blue, alpha: alpha)
-        default:
-            /// 其他情况
-            return nil
-        }
+        RGBA(self)
 	}
 }
 

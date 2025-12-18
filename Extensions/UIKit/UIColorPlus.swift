@@ -34,14 +34,8 @@ extension UIColor {
     }
     
     var hexString: String? {
-        hexString(alphaIgnored: true)
-    }
-    
-    func hexString(alphaIgnored: Bool) -> String? {
-        int(alphaIgnored: alphaIgnored).map { int in
-            /// 注意这里不能使用int.hexString,因为如果碰到解析正绿色的时候,字符串会变成4位:#FF00
-            int.argbColorHexString
-        }
+        /// 注意这里不能使用int.hexString,因为如果碰到解析正绿色的时候,字符串会变成4位:#FF00
+        rgbInt.map(\.argbColorHexString)
     }
     
     /// 颜色 -> 色温
@@ -67,40 +61,14 @@ extension UIColor {
     }
     
     /// 返回argb颜色
-    var int: Int? {
-        int(alphaIgnored: true)
-    }
-    
-    /// 返回ARGB的数值
-    /// - Parameter alphaIgnored: 是否忽略透明度
-    /// - Returns: 表示颜色的整型数值
-    func int(alphaIgnored: Bool = true) -> Int? {
-        guard let components = cgColor.components, components.count >= 3 else { return nil }
-        var redComponent = CGFloat.percentRange << components[0]
-        var greenComponent = CGFloat.percentRange << components[1]
-        var blueComponent = CGFloat.percentRange << components[2]
-        /// 检查数值
-        if redComponent.isNaN { redComponent = 0 }
-        if greenComponent.isNaN { greenComponent = 0 }
-        if blueComponent.isNaN { blueComponent = 0 }
-        /// 转换成0...255的整数
-        lazy var red = Int(redComponent * 255.0)
-        lazy var green = Int(greenComponent * 255.0)
-        lazy var blue = Int(blueComponent * 255.0)
-        /// 合成RGB整数
-        lazy var rgb = (red << 16) ^ (green << 8) ^ blue
-        
-        switch components.count {
-        case 3:
-            return rgb
-        case 4:
-            /// 透明度
-            lazy var alphaPercent = CGFloat.percentRange << components[3]
-            lazy var alpha = Int(alphaPercent * 255.0)
-            /// 是否忽略透明通道
-            return alphaIgnored ? rgb : (alpha << 24) ^ rgb
-        default:
-            return nil
+    var rgbInt: Int? {
+        rgba.map {
+            /// 转换成0...255的整数
+            let red = Int($0.red * 255)
+            let green = Int($0.green * 255)
+            let blue = Int($0.blue * 255)
+            /// 合成RGB整数
+            return (red << 16) ^ (green << 8) ^ blue
         }
     }
     

@@ -62,14 +62,7 @@ extension UIColor {
     
     /// 返回argb颜色
     var rgbInt: Int? {
-        rgba.map {
-            /// 转换成0...255的整数
-            let red = Int($0.red * 255)
-            let green = Int($0.green * 255)
-            let blue = Int($0.blue * 255)
-            /// 合成RGB整数
-            return (red << 16) ^ (green << 8) ^ blue
-        }
+        rgba.map(\.rgbValue)
     }
     
     var hue: CGFloat {
@@ -450,7 +443,7 @@ extension Int {
     
     /// 整型 -> RGBA
 	var rgba: RGBA? {
-        RGBA(self)
+        RGBA(rawValue: self)
 	}
 }
 

@@ -15,30 +15,45 @@ struct RGBA {
     var alpha: Double = 1.0
 }
 
-extension RGBA {
-    static let white = RGBA(red: 1, green: 1, blue: 1)
-    static let black = RGBA(red: 0, green: 0, blue: 0)
+extension RGBA: RawRepresentable {
     
-    /// 初始化方法
-    /// - Parameter rawInt: ARGB格式的整形数值
-    init?(_ rawInt: Int) {
+    /// 初始化
+    /// - Parameter rawValue: ARGB形式的Int值
+    init?(rawValue: Int) {
         let maxRGB = 0xFF_FF_FF
         let maxARGB = 0xFF_FF_FF_FF
-        switch rawInt {
-        case let rawInt where rawInt >= 0 && rawInt <= maxRGB:
-            self.red   = Double((rawInt & 0xFF_00_00) >> 16) / 0xFF
-            self.green = Double((rawInt & 0x00_FF_00) >>  8) / 0xFF
-            self.blue  = Double( rawInt & 0x00_00_FF       ) / 0xFF
+        switch rawValue {
+        case let raw where raw >= 0 && raw <= maxRGB:
+            self.red   = Double((raw & 0xFF_00_00) >> 16) / 0xFF
+            self.green = Double((raw & 0x00_FF_00) >>  8) / 0xFF
+            self.blue  = Double( raw & 0x00_00_FF       ) / 0xFF
             self.alpha = 1.0
-        case let rawInt where rawInt > maxRGB && rawInt <= maxARGB:
-            self.alpha = Double((rawInt & 0xFF_00_00_00) >> 24) / 0xFF
-            self.red   = Double((rawInt & 0x00_FF_00_00) >> 16) / 0xFF
-            self.green = Double((rawInt & 0x00_00_FF_00) >>  8) / 0xFF
-            self.blue  = Double( rawInt & 0x00_00_00_FF       ) / 0xFF
+        case let raw where raw > maxRGB && raw <= maxARGB:
+            self.alpha = Double((raw & 0xFF_00_00_00) >> 24) / 0xFF
+            self.red   = Double((raw & 0x00_FF_00_00) >> 16) / 0xFF
+            self.green = Double((raw & 0x00_00_FF_00) >>  8) / 0xFF
+            self.blue  = Double( raw & 0x00_00_00_FF       ) / 0xFF
         default:
             return nil
         }
     }
+    
+    var rawValue: Int {
+        let intAlpha = Int(alpha * 0xFF) << 24
+        let intRed = Int(red * 0xFF) << 16
+        let intGreen = Int(green * 0xFF) << 8
+        let intBlue = Int(blue * 0xFF)
+        return intAlpha | intRed | intGreen | intBlue
+    }
+    
+    var rgbValue: Int {
+        rawValue & 0x00_FF_FF_FF
+    }
+}
+
+extension RGBA {
+    static let white = RGBA(red: 1, green: 1, blue: 1)
+    static let black = RGBA(red: 0, green: 0, blue: 0)
     
     init?(_ uiColor: UIColor) {
         var red = CGFloat.zero, green = CGFloat.zero, blue = CGFloat.zero, alpha = CGFloat.zero

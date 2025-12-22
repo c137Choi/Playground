@@ -428,39 +428,37 @@ extension UIView {
     ///   - corners: 圆角效果施加的角
     ///   - cornerRadius: 圆角大小
     ///   - shadowColor: 阴影颜色: 不为空才添加阴影
-    ///   - shadowOffsetX: 阴影偏移X
-    ///   - shadowOffsetY: 阴影偏移Y
+    ///   - shadowOffset: 阴影偏移
     ///   - shadowRadius: 阴影大小
     ///   - shadowOpacity: 阴影透明度
-    ///   - shadowExpansion: 阴影扩大值:大于零扩大; 小于零收缩; 0:默认值
+    ///   - shadowExpansion: 阴影扩大值: 大于零扩大, 小于零收缩
     func roundCorners(corners: UIRectCorner = .allCorners,
-                      cornerRadius: CGFloat = 0.0,
-                      withShadowColor shadowColor: UIColor? = nil,
-                      shadowOffset: (x: Double, y: Double) = (0, 0),
+                      cornerRadius: CGFloat = 0,
+                      shadowColor: UIColor? = nil,
+                      shadowOffset: CGPoint = .zero,
                       shadowRadius: CGFloat = 0,
                       shadowOpacity: Float = 0,
                       shadowExpansion: CGFloat = 0) {
-        // 圆角
-        var bezier = UIBezierPath(
-            roundedRect: bounds,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width:cornerRadius, height:cornerRadius)
-        )
+        /// 圆角
+        lazy var cornerRadiiSize = CGSize(width:cornerRadius, height:cornerRadius)
+        /// Bounds带圆角的路径
+        lazy var boundsRoundRectBezier = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: cornerRadiiSize)
+        /// 设置圆角
         if cornerRadius > 0 {
-            // 未设置阴影的时候尝试使用iOS 11的API设置圆角
-            if #available(iOS 11.0, *), shadowColor == nil {
-                // 这个方法在UITableViewCell外部调用时 Section的最后一个Cell不起作用,不清楚为啥
+            /// 未设置阴影的时候, 直接设置圆角
+            if shadowColor.isVoid {
                 layer.masksToBounds = true
                 layer.cornerRadius = cornerRadius
                 layer.maskedCorners = corners.caCornerMask
             } else {
                 let shape = CAShapeLayer()
-                shape.path = bezier.cgPath
+                shape.path = boundsRoundRectBezier.cgPath
                 layer.mask = shape
             }
-        } else {
-            if #available(iOS 11.0, *), shadowColor == nil {
-                // 这个方法在UITableViewCell外部调用时 Section的最后一个Cell不起作用,不清楚为啥
+        }
+        /// 圆角小于等于0
+        else {
+            if shadowColor.isVoid {
                 layer.masksToBounds = false
                 layer.cornerRadius = cornerRadius
                 layer.maskedCorners = corners.caCornerMask
@@ -469,30 +467,23 @@ extension UIView {
             }
         }
         
-        // 阴影
-        if let shadowColor = shadowColor {
-            // 调整阴影View的frame
+        /// 阴影
+        if let shadowColor {
+            /// 调整阴影View的frame
             shadowView.frame = frame
-            // 设置阴影属性
+            /// 设置阴影属性
             shadowView.layer.shadowColor = shadowColor.cgColor
             shadowView.layer.shadowOffset = CGSize(width: shadowOffset.x, height: shadowOffset.y)
             shadowView.layer.shadowRadius = shadowRadius
             shadowView.layer.shadowOpacity = shadowOpacity
-            // 设置阴影形状
+            /// 调整阴影路径
             if shadowExpansion != 0 {
-                let insets = UIEdgeInsets(
-                    top: -shadowExpansion,
-                    left: -shadowExpansion,
-                    bottom: -shadowExpansion,
-                    right: -shadowExpansion
-                )
-                bezier = UIBezierPath(
-                    roundedRect: bounds.inset(by: insets),
-                    byRoundingCorners: corners,
-                    cornerRadii: CGSize(width:cornerRadius, height:cornerRadius)
-                )
+                let roundedRect = bounds.insetBy(dx: shadowExpansion.negative, dy: shadowExpansion.negative)
+                shadowView.layer.shadowPath = UIBezierPath(roundedRect: roundedRect, byRoundingCorners: corners, cornerRadii: cornerRadiiSize).cgPath
+            } else {
+                shadowView.layer.shadowPath = boundsRoundRectBezier.cgPath
             }
-            shadowView.layer.shadowPath = bezier.cgPath
+            /// 调整阴影视图层级
             if let superView = superview {
                 superView.insertSubview(shadowView, belowSubview: self)
             }

@@ -25,6 +25,16 @@ extension UIView {
 
 extension UIView {
     
+    convenience init(width: CGFloat, height: CGFloat) {
+        let size = CGSize(width: width, height: height)
+        self.init(size: size)
+    }
+    
+    convenience init(size: CGSize) {
+        let frame = CGRect(origin: .zero, size: size)
+        self.init(frame: frame)
+    }
+    
     /// 初始化
     /// - Parameter color: 初始背景色
     convenience init(color: UIColor?) {

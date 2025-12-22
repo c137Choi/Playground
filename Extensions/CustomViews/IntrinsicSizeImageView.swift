@@ -1,5 +1,5 @@
 //
-//  SizeFixedImageView.swift
+//  IntrinsicSizeImageView.swift
 //  KnowledPhone
 //
 //  Created by Choi on 2025/10/11.
@@ -7,10 +7,10 @@
 
 import UIKit
 
-final class SizeFixedImageView: UIImageView {
+final class IntrinsicSizeImageView: UIImageView {
     
     /// 固定尺寸
-    var fixedSize: CGSize? {
+    var intrinsicSize: CGSize? {
         didSet {
             invalidateIntrinsicContentSize()
         }
@@ -18,15 +18,15 @@ final class SizeFixedImageView: UIImageView {
     
     /// 初始化
     /// - Parameters:
-    ///   - fixedSize: 固定尺寸
+    ///   - size: 固定尺寸
     ///   - image: 图片
-    convenience init(size fixedSize: CGSize, image: UIImage? = nil) {
+    convenience init(size: CGSize, image: UIImage?) {
         self.init(image: image)
-        self.fixedSize = fixedSize
-        self.bounds.size = fixedSize
+        self.bounds.size = size
+        self.intrinsicSize = size
     }
     
     override var intrinsicContentSize: CGSize {
-        fixedSize ?? super.intrinsicContentSize
+        intrinsicSize ?? super.intrinsicContentSize
     }
 }

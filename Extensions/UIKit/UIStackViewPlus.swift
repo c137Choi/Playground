@@ -20,6 +20,7 @@ extension UIStackView {
         distribution: UIStackView.Distribution = .fill,
         alignment: UIStackView.Alignment = .leading,
         spacing: CGFloat = 0.0,
+        afterSpacing: CGFloat? = nil,
         @ArrayBuilder<UIView> arrangedSubviews: () -> [UIView] = { [] })
     {
         self.init(margins: margins,
@@ -27,6 +28,7 @@ extension UIStackView {
                   distribution: distribution,
                   alignment: alignment,
                   spacing: spacing,
+                  afterSpacing: afterSpacing,
                   arrangedSubviews: arrangedSubviews())
     }
     
@@ -36,6 +38,7 @@ extension UIStackView {
         distribution: UIStackView.Distribution = .fill,
         alignment: UIStackView.Alignment = .leading,
         spacing: CGFloat = 0.0,
+        afterSpacing: CGFloat? = nil,
         arrangedSubviews: UIView...)
     {
         self.init(margins: margins,
@@ -43,6 +46,7 @@ extension UIStackView {
                   distribution: distribution,
                   alignment: alignment,
                   spacing: spacing,
+                  afterSpacing: afterSpacing,
                   arrangedSubviews: arrangedSubviews)
     }
     
@@ -52,6 +56,7 @@ extension UIStackView {
         distribution: UIStackView.Distribution = .fill,
         alignment: UIStackView.Alignment = .leading,
         spacing: CGFloat = 0.0,
+        afterSpacing: CGFloat? = nil,
         arrangedSubviews: [UIView])
     {
         self.init(arrangedSubviews: arrangedSubviews)
@@ -60,6 +65,7 @@ extension UIStackView {
         self.distribution = distribution
         self.alignment = alignment
         self.spacing = spacing
+        self.afterSpacing = afterSpacing
         self.arrangedSubviews.forEach { subview in
             guard let afterSpacing = subview.afterSpacing else { return }
             setCustomSpacing(afterSpacing, after: subview)

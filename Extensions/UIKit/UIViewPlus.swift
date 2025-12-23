@@ -766,6 +766,42 @@ extension UIView {
         setContentHuggingPriority(intensity, for: .horizontal)
         return self
     }
+    
+    var horizontalContentHuggingPriority: UILayoutPriority {
+        get {
+            contentHuggingPriority(for: .horizontal)
+        }
+        set {
+            setContentHuggingPriority(newValue, for: .horizontal)
+        }
+    }
+    
+    var horizontalContentCompressionResistancePriority: UILayoutPriority {
+        get {
+            contentCompressionResistancePriority(for: .horizontal)
+        }
+        set {
+            setContentCompressionResistancePriority(newValue, for: .horizontal)
+        }
+    }
+    
+    var verticalContentHuggingPriority: UILayoutPriority {
+        get {
+            contentHuggingPriority(for: .vertical)
+        }
+        set {
+            setContentHuggingPriority(newValue, for: .vertical)
+        }
+    }
+    
+    var verticalContentCompressionResistancePriority: UILayoutPriority {
+        get {
+            contentCompressionResistancePriority(for: .vertical)
+        }
+        set {
+            setContentCompressionResistancePriority(newValue, for: .vertical)
+        }
+    }
 }
 
 // MARK: - Choi<UIView>

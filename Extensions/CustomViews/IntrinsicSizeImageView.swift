@@ -18,6 +18,16 @@ final class IntrinsicSizeImageView: UIImageView {
     
     /// 初始化
     /// - Parameters:
+    ///   - width: 固定宽度
+    ///   - height: 固定高度
+    ///   - image: 初始图片
+    convenience init(width: CGFloat, height: CGFloat, image: UIImage?) {
+        let size = CGSize(width: width, height: height)
+        self.init(size: size, image: image)
+    }
+    
+    /// 初始化
+    /// - Parameters:
     ///   - size: 固定尺寸
     ///   - image: 图片
     convenience init(size: CGSize, image: UIImage?) {

@@ -25,6 +25,11 @@ extension UIView {
 
 extension UIView {
     
+    convenience init(minWidth: CGFloat? = nil, maxWidth: CGFloat? = nil, minHeight: CGFloat? = nil, maxHeight: CGFloat? = nil) {
+        self.init(frame: .zero)
+        self.limit(minWidth: minWidth, maxWidth: maxWidth, minHeight: minHeight, maxHeight: maxHeight)
+    }
+    
     convenience init(width: CGFloat, height: CGFloat) {
         let size = CGSize(width: width, height: height)
         self.init(size: size)

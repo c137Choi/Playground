@@ -7,9 +7,80 @@
 //
 
 import UIKit
+import Photos
+import PhotosUI
+import RxSwift
+import RxCocoa
+
+final class RxImagePickerDelegate: NSObject, ObservableType, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    typealias Element = UIImage
+    
+    private var observers: [AnyObserver<Element>] = []
+    
+    func subscribe<Observer>(_ observer: Observer) -> any RxSwift.Disposable where Observer : RxSwift.ObserverType, Element == Observer.Element {
+        observers.append(observer.asObserver())
+        return Disposables.create()
+    }
+    
+    // MARK: - UIImagePickerControllerDelegate
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard var image = info[.originalImage] as? UIImage else {
+            return imagePickerControllerDidCancel(picker)
+        }
+        if let editedImage = info[.editedImage] as? UIImage {
+            image = editedImage
+        }
+        for observer in observers {
+            observer.onNext(image)
+            observer.onCompleted()
+        }
+        picker.dismiss(animated: true)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        for observer in observers {
+            observer.onCompleted()
+        }
+        picker.dismiss(animated: true)
+    }
+}
 
 extension UIViewController {
     
+    func getPictures(count: Int, from source: UIImagePickerController.SourceType) -> Observable<UIImage> {
+        guard UIImagePickerController.isSourceTypeAvailable(source) else {
+            return .error("Source Unavailable")
+        }
+        return AVAuthorizationStatus.checkValidVideoStatus.withUnretained(self).flatMapLatest(\.0.takePhoto)
+    }
+    
+    fileprivate var takePhoto: Observable<UIImage> {
+        let delegate = RxImagePickerDelegate()
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.allowsEditing = true
+        picker.delegate = delegate
+        picker.references["strongDelegate"] = delegate
+        picker.modalPresentationStyle = .pageSheet
+        
+        present(picker, animated: true)
+        
+        return delegate.asObservable()
+    }
+    
+    private func pickPicture(count: Int) {
+        let photoLibrary = PHPhotoLibrary.shared()
+        
+        var config = PHPickerConfiguration(photoLibrary: photoLibrary)
+        config.filter = .images
+        config.selectionLimit = count
+        config.preferredAssetRepresentationMode = .automatic
+        config.preselectedAssetIdentifiers = []
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.modalPresentationStyle = .pageSheet
+        present(picker, animated: true)
+    }
     
     /// Dismiss所有的presentedViewController | 最后dismiss自己
     func dismissPresentedViewControllerIfNeeded(_ completion: SimpleCallback? = nil) {

@@ -18,7 +18,7 @@ func lprint(_ items: Any...) {
 
 func dprint(_ items: Any..., file: String = #fileID, function: String = #function, line: Int = #line) {
 #if DEBUG
-    let now = Date()
+    let now = Date.now
     var fileName = (file as NSString).lastPathComponent
     let swiftExtension = ".swift"
     if fileName.hasSuffix(swiftExtension) {

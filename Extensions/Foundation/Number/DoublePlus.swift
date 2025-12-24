@@ -37,7 +37,7 @@ extension Double {
     /// - Parameter component: 日期元素 | 可处理的枚举: .day, .hour, .minute, .second, .nanosecond
     /// - Returns: 时间间隔
     static func timeInterval(in component: Calendar.Component) -> TimeInterval {
-        let now = Date()
+        let now = Date.now
         let treatableComponents: [Calendar.Component] = [.day, .hour, .minute, .second, .nanosecond]
         guard treatableComponents.contains(component) else {
             assertionFailure("\(component)'s time interval may vary in current date: \(now)")

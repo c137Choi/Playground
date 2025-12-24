@@ -100,9 +100,6 @@ extension Date {
 		}
 	}
 	
-	/// 返回当前时间
-	static var now: Date { Date() }
-	
 	/// 返回当前时间只包含小时的时间
 	var hourOfClock: Date {
 		dateInterval(of: .hour)?.start ?? self

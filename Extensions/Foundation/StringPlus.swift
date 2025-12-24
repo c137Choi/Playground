@@ -15,7 +15,7 @@ extension String {
     func date(dateFormat: String) -> Date {
         let formatter = DateFormatter.shared
         formatter.dateFormat = dateFormat
-        return formatter.date(from: self) ?? Date()
+        return formatter.date(from: self) ?? Date.now
     }
 }
 

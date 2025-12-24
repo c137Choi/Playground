@@ -20,7 +20,7 @@ private extension UIEdgeInsets {
 struct SafeAreaInsetsKey: PreferenceKey, EnvironmentKey {
     
     static var defaultValue: EdgeInsets {
-        UIWindow.keyWindow?.safeAreaInsets.swiftUIEdgeInsets ?? EdgeInsets()
+        UIApplication.keyWindow?.safeAreaInsets.swiftUIEdgeInsets ?? EdgeInsets()
     }
     
     static func reduce(value: inout EdgeInsets, nextValue: () -> EdgeInsets) {

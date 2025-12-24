@@ -17,7 +17,7 @@ enum Size {
         isLandscape ? screenSize.landscape : screenSize.portrait
     }
     
-	static let commonSafeAreaInsets = UIWindow.keyWindow?.safeAreaInsets ?? .zero
+	static let commonSafeAreaInsets = UIApplication.keyWindow?.safeAreaInsets ?? .zero
 	
 	static let screenScale = UIScreen.main.scale
 	

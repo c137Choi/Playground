@@ -33,4 +33,11 @@ extension URL {
     static func url(for path: FileManager.SearchPathDirectory) -> URL? {
         FileManager.default.urls(for: path, in: .userDomainMask).first
     }
+    
+    /// scheme为https或http的URL
+    var httpURL: URL? {
+        guard let scheme = scheme?.lowercased() else { return nil }
+        guard scheme == "https" || scheme == "http" else { return nil }
+        return self
+    }
 }

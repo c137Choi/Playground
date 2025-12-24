@@ -81,7 +81,7 @@ extension UIDeviceOrientation {
             return self
         } else {
             if #available(iOS 13.0, *) {
-                guard let window = UIApplication.shared.windows.first else {
+                guard let window = UIApplication.keyWindow else {
                     fatalError("Unlikely to happen.")
                 }
                 if let windowScene = window.windowScene {

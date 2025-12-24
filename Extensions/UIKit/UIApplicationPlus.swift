@@ -10,6 +10,36 @@ import UIKit
 
 extension UIApplication {
     
+    public static var keyWindow: UIWindow? {
+        UIApplication.shared.connectedScenes.transform { scenes -> UIWindow? in
+            for scene in scenes {
+                if let windowScene = scene as? UIWindowScene {
+                    for window in windowScene.windows {
+                        if window.isKeyWindow {
+                            return window
+                        }
+                    }
+                }
+            }
+            return nil
+        }
+    }
+    
+    public static func targetWindow(prefix: String) -> UIWindow? {
+        UIApplication.shared.connectedScenes.transform { scenes -> UIWindow? in
+            for scene in scenes {
+                if let windowScene = scene as? UIWindowScene {
+                    for window in windowScene.windows {
+                        if window.description.hasPrefix(prefix) {
+                            return window
+                        }
+                    }
+                }
+            }
+            return nil
+        }
+    }
+    
     struct Release {
         let version: String
         var notes: String?

@@ -47,14 +47,14 @@ final class RxImagePickerDelegate: NSObject, ObservableType, UIImagePickerContro
 
 extension UIViewController {
     
-    func getPictures(count: Int, from source: UIImagePickerController.SourceType) -> Observable<UIImage> {
+    func getPictures(count: Int, from source: UIImagePickerController.SourceType) -> RxObservable<UIImage> {
         guard UIImagePickerController.isSourceTypeAvailable(source) else {
             return .error("Source Unavailable")
         }
         return AVAuthorizationStatus.checkValidVideoStatus.withUnretained(self).flatMapLatest(\.0.takePhoto)
     }
     
-    fileprivate var takePhoto: Observable<UIImage> {
+    fileprivate var takePhoto: RxObservable<UIImage> {
         let delegate = RxImagePickerDelegate()
         let picker = UIImagePickerController()
         picker.sourceType = .camera

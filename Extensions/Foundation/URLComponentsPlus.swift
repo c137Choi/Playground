@@ -12,7 +12,7 @@ extension URLComponents {
     /// 初始化
     /// - Parameters:
     ///   - encodeHost: 是否给传入的host编码
-    init(scheme: String?, host: String?, encodeHost: Bool) {
+    init(scheme: String?, host: String?, encodeHost: Bool = true) {
         self.init()
         self.scheme = scheme
         self.host = host.flatMap {

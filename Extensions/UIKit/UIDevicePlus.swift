@@ -76,15 +76,15 @@ extension UIDeviceOrientation {
     /// 修正为: 正常的四种朝向
     var regularOrientation: UIDeviceOrientation {
         /// 默认朝向 | 横向: 前置摄像头朝左,Home按钮朝右; 或竖向: 前置摄像头朝上
-        lazy var defaultRegularOrientation: UIDeviceOrientation = UIScreen.main.bounds.size.isLandscape ? .landscapeLeft : .portrait
+        lazy var defaultRegularOrientation = UIScreen.main.bounds.size.isLandscape ? UIDeviceOrientation.landscapeLeft : .portrait
         if isRegularOrientation {
             return self
         } else {
             if #available(iOS 13.0, *) {
-                guard let window = UIApplication.keyWindow else {
-                    fatalError("Unlikely to happen.")
+                guard let keyWindow = UIApplication.keyWindow else {
+                    return self
                 }
-                if let windowScene = window.windowScene {
+                if let windowScene = keyWindow.windowScene {
                     return windowScene.interfaceOrientation.regularDeviceOrientation
                 } else {
                     assertionFailure("!Not suppose to happen, chek your windowScene")

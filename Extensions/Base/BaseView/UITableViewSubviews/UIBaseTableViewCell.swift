@@ -226,25 +226,6 @@ class UIBaseTableViewCell: UITableViewCell, UIViewLifeCycle {
                     separator.backgroundColor = tableView.separatorColor
                     /// 设置分割线位置
                     separator.frame = bounds.inset(by: separatorInsets)
-                    
-                    /// 如果发现系统的分割线则隐藏它
-                    /// 注: 第一次进入Table的时候,有的Cell会出现系统分割线
-                    /// 更新注↑: 在TableView初始化的时候就要设置separatorStyle = .none
-                    /// 否则下面的方法里再设置分割线样式就会出现上面的情况
-                    /// (lldb) po subviews
-                    /// ▿ 3 elements
-                    ///   - 0 : <_UISystemBackgroundView>
-                    ///   - 1 : <UITableViewCellContentView>
-                    ///   - 2 : <_UITableViewCellSeparatorView>
-                    ///   系统分隔线常出现子视图数组的最后一个元素 | 这里做反转处理: Complexity: O(1)
-                    /// let maybeSystemSeparator = subviews.reversed()
-                    ///     .first { subview in
-                    ///         subview.className == "_UITableViewCellSeparatorView"
-                    ///     }
-                    /// if let maybeSystemSeparator {
-                    ///     maybeSystemSeparator.isHidden = true
-                    /// }
-                    
                     /// 调整分割线显示/隐藏
                     adjustSeparatorFor(tableView, at: indexPath)
                 } else {
@@ -325,33 +306,33 @@ class UIBaseTableViewCell: UITableViewCell, UIViewLifeCycle {
                 }
                 return result
             }
-            contentView.roundCorners(corners: corners, cornerRadius: cornerRadius)
+            contentView.addCornerRadius(cornerRadius, corners: corners)
         }
         /// 第一行
         else if indexPath.row == 0 {
             /// 有组头
             if haveHeader {
-                contentView.roundCorners(corners: .allCorners, cornerRadius: 0.0)
+                contentView.addCornerRadius(0.0)
             }
             /// 无组头
             else {
-                contentView.roundCorners(corners: sectionMaskedCorners.topCorners, cornerRadius: cornerRadius)
+                contentView.addCornerRadius(cornerRadius, corners: sectionMaskedCorners.topCorners)
             }
         }
         /// 最后一行
         else if tableView.numberOfRows(inSection: indexPath.section) == indexPath.row + 1 {
             /// 有组尾
             if haveFooter {
-                contentView.roundCorners(corners: .allCorners, cornerRadius: 0)
+                contentView.addCornerRadius(0)
             }
             /// 无组尾
             else {
-                contentView.roundCorners(corners: sectionMaskedCorners.bottomCorners, cornerRadius: cornerRadius)
+                contentView.addCornerRadius(cornerRadius, corners: sectionMaskedCorners.bottomCorners)
             }
         }
         /// 中间行
         else {
-            contentView.roundCorners(corners: .allCorners, cornerRadius: 0.0)
+            contentView.addCornerRadius(0.0)
         }
     }
 }

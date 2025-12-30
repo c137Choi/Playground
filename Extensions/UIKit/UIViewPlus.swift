@@ -156,10 +156,7 @@ extension UIView {
             shadow.layer.masksToBounds = false
             shadow.layer.shouldRasterize = true
             shadow.layer.rasterizationScale = UIScreen.main.scale
-            shadow.autoresizingMask = [
-                .flexibleWidth,
-                .flexibleHeight
-            ]
+            shadow.autoresizingMask = .autoResize
             setAssociatedObject(self, Associated.shadowView, shadow, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return shadow
         }
@@ -440,22 +437,22 @@ extension UIView {
     
     /// 为视图添加圆角和阴影 | 只在frame确定的时候才能调用此方法
     /// - Parameters:
-    ///   - corners: 圆角效果施加的角
     ///   - cornerRadius: 圆角大小
+    ///   - corners: 圆角效果施加的角
     ///   - shadowColor: 阴影颜色: 不为空才添加阴影
     ///   - shadowOffset: 阴影偏移
     ///   - shadowRadius: 阴影大小
     ///   - shadowOpacity: 阴影透明度
     ///   - shadowExpansion: 阴影扩大值: 大于零扩大, 小于零收缩
-    func roundCorners(corners: UIRectCorner = .allCorners,
-                      cornerRadius: CGFloat = 0,
-                      shadowColor: UIColor? = nil,
-                      shadowOffset: CGPoint = .zero,
-                      shadowRadius: CGFloat = 0,
-                      shadowOpacity: Float = 0,
-                      shadowExpansion: CGFloat = 0) {
+    func addCornerRadius(_ cornerRadius: CGFloat = 0,
+                         corners: UIRectCorner = .allCorners,
+                         shadowColor: UIColor? = nil,
+                         shadowOffset: CGPoint = .zero,
+                         shadowRadius: CGFloat = 0,
+                         shadowOpacity: Float = 0,
+                         shadowExpansion: CGFloat = 0) {
         /// 圆角
-        lazy var cornerRadiiSize = CGSize(width:cornerRadius, height:cornerRadius)
+        lazy var cornerRadiiSize = CGSize(width: cornerRadius, height: cornerRadius)
         /// Bounds带圆角的路径
         lazy var boundsRoundRectBezier = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: cornerRadiiSize)
         /// 设置圆角
@@ -499,8 +496,8 @@ extension UIView {
                 shadowView.layer.shadowPath = boundsRoundRectBezier.cgPath
             }
             /// 调整阴影视图层级
-            if let superView = superview {
-                superView.insertSubview(shadowView, belowSubview: self)
+            if let superview {
+                superview.insertSubview(shadowView, belowSubview: self)
             }
         }
     }
@@ -845,7 +842,5 @@ extension Array where Element: UIView {
 extension UIView.AutoresizingMask {
     
     /// 自动根据初始的frame调整尺寸
-    static var autoResize: UIView.AutoresizingMask {
-        [.flexibleWidth, .flexibleHeight]
-    }
+    static let autoResize: UIView.AutoresizingMask = [.flexibleWidth, .flexibleHeight]
 }

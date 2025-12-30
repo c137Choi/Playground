@@ -93,7 +93,7 @@ class UIBaseTableViewHeaderFooterView: UITableViewHeaderFooterView, UIViewLifeCy
             let haveRows = headerRect.maxY != footerRect.minY
             let isHeaderView = headerRect != .zero && headerRect == frame
             let maskedCorners = maskedCorners(isHeaderView, haveRows: haveRows)
-            roundCorners(corners: maskedCorners, cornerRadius: preferredCornerRadius)
+            addCornerRadius(preferredCornerRadius, corners: maskedCorners)
         }
     }
     

@@ -279,32 +279,29 @@ class UIBaseTableViewCell: UITableViewCell, UIViewLifeCycle {
     ///   - tableView: Cell容器TableView
     ///   - indexPath: 所在的indexPath
     /// - Returns: Cell本身
-    func setCornerRadius(_ cornerRadius: CGFloat, for tableView: UITableView, at indexPath: IndexPath) {
-        lazy var haveHeader: Bool = {
-            guard let tableDelegate = tableView.delegate else { return false }
-            let headerHeight = tableDelegate.tableView?(tableView, heightForHeaderInSection: indexPath.section) ?? 0.0
-            let headerView = tableDelegate.tableView?(tableView, viewForHeaderInSection: indexPath.section)
-            return headerHeight != 0.0 && headerView.isValid
-        }()
-        lazy var haveFooter: Bool = {
-            guard let tableDelegate = tableView.delegate else { return false }
-            let footerHeight = tableDelegate.tableView?(tableView, heightForFooterInSection: indexPath.section) ?? 0.0
-            let footerView = tableDelegate.tableView?(tableView, viewForFooterInSection: indexPath.section)
-            return footerHeight != 0.0 && footerView.isValid
-        }()
+    @_optimize(none)
+    private func setCornerRadius(_ cornerRadius: CGFloat, for tableView: UITableView, at indexPath: IndexPath) {
+        guard let tableDelegate = tableView.delegate else { return }
+        
+        let headerHeight = tableDelegate.tableView?(tableView, heightForHeaderInSection: indexPath.section) ?? 0.0
+        let headerView = tableDelegate.tableView?(tableView, viewForHeaderInSection: indexPath.section)
+        let haveHeader = headerHeight != 0.0 && headerView.isValid
+        
+        let footerHeight = tableDelegate.tableView?(tableView, heightForFooterInSection: indexPath.section) ?? 0.0
+        let footerView = tableDelegate.tableView?(tableView, viewForFooterInSection: indexPath.section)
+        let haveFooter = footerHeight != 0.0 && footerView.isValid
+        
         /// 分组内只有1行的情况
         if indexPath.row == 0, tableView.numberOfRows(inSection: indexPath.section) == 1 {
-            var corners: UIRectCorner {
-                var result = sectionMaskedCorners
-                if haveHeader {
-                    /// 减去顶部的圆角
-                    result.subtract(.topCorners)
-                }
-                if haveFooter {
-                    /// 减去底部的圆角
-                    result.subtract(.bottomCorners)
-                }
-                return result
+            /// 添加圆角的角
+            var corners = sectionMaskedCorners
+            /// 减去顶部的圆角
+            if haveHeader {
+                corners.subtract(.topCorners)
+            }
+            /// 减去底部的圆角
+            if haveFooter {
+                corners.subtract(.bottomCorners)
             }
             contentView.addCornerRadius(cornerRadius, corners: corners)
         }

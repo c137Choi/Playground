@@ -75,11 +75,6 @@ extension NSObject {
             }
         }
     }
-    
-	/// 转换成指针
-	public var rawPointer: UnsafeMutableRawPointer {
-		Unmanaged.passUnretained(self).toOpaque()
-	}
 	
 	var proxy: _NSObjectProxy<NSObject> {
 		_NSObjectProxy(target: self)

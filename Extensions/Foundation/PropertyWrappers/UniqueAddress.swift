@@ -10,6 +10,6 @@
 public class UniqueAddress {
     public init() {}
     public var wrappedValue: UnsafeRawPointer {
-        UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
+        UnsafeRawPointer(self.pointer)
     }
 }

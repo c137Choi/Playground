@@ -10,17 +10,17 @@ import Foundation
 extension UserDefaults {
     
     /// 尝试将object转换, 转换失败则返回空
-    static func intOrNil(forKey key: String) -> Int? {
+    static func maybeInt(forKey key: String) -> Int? {
         object(forKey: key) as? Int
     }
     
     /// 尝试将object转换, 转换失败则返回空
-    static func doubleOrNil(forKey key: String) -> Double? {
+    static func maybeDouble(forKey key: String) -> Double? {
         object(forKey: key) as? Double
     }
     
     /// 尝试将object转换, 转换失败则返回空
-    static func boolOrNil(forKey key: String) -> Bool? {
+    static func maybeBool(forKey key: String) -> Bool? {
         object(forKey: key) as? Bool
     }
     

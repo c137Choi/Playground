@@ -5,7 +5,7 @@
 //  Created by Choi on 2025/10/13.
 //
 
-import Foundation
+import UIKit
 
 extension NSDiffableDataSourceSnapshot {
     

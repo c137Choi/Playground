@@ -57,7 +57,7 @@ extension Reactive where Base == PHAsset {
             let option = PHImageRequestOptions()
             option.isSynchronous = true
             /// 后面的block回调可能调用多次,故此方法使用RxObservable初始化
-            mgr.requestImage(for: base, targetSize: targetSize.pixelSize, contentMode: .aspectFill, options: option) { uiImage, info in
+            mgr.requestImage(for: base, targetSize: targetSize.scaledSize, contentMode: .aspectFill, options: option) { uiImage, info in
                 guard let uiImage else { return }
                 observer.onNext(uiImage)
             }

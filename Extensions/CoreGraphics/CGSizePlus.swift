@@ -10,19 +10,9 @@ import UIKit
 
 extension CGSize {
     
-    var pointSize: CGSize {
-        let scale = UIScreen.main.scale
-        return CGSize(width: width / scale, height: height / scale)
-    }
-    
-    var pixelSize: CGSize {
+    var scaledSize: CGSize {
         let scale = UIScreen.main.scale
         return CGSize(width: width * scale, height: height * scale)
-    }
-    
-    /// 面积
-    var area: CGFloat {
-        width * height
     }
     
     /// 竖屏尺寸(宽小于高)
@@ -50,12 +40,6 @@ extension CGSize {
         guard width != height else { return true }
         return width > height
     }
-    
-	init(_ edges: CGFloat...) {
-		guard let width = edges.first else { self.init(width: 0, height: 0); return }
-		guard let height = edges.last else { self.init(width: 0, height: 0); return }
-		self.init(width: width, height: height)
-	}
     
     
     /// 限制尺寸 | 不能超过指定尺寸范围的宽高

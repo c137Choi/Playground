@@ -147,7 +147,7 @@ extension BinaryFloatingPoint {
     
     /// 原样输出,有小数位则显示,无小数位则显示整数,最多保留4位小数,进位规则.down
     var str4f: String {
-        rounded(roundingIncrement: 10_000, rule: .down).nsNumber.description
+        String(format: "%.4f", rounded(roundingIncrement: 10_000, rule: .down).double)
     }
     
     /// 带符号 | 四舍五入

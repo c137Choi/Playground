@@ -10,7 +10,11 @@ import RxSwift
 import RxCocoa
 
 extension Reactive where Base: UITableViewCell {
-    var prepareForReuse: RxObservable<[Any]> {
-        methodInvoked(#selector(UITableViewCell.prepareForReuse))
+    
+    var reusedOrDeallocated: RxObservable<Any> {
+        RxObservable<Any>.merge {
+            methodInvoked(#selector(UITableViewCell.prepareForReuse)).anyElement
+            deallocated.anyElement
+        }
     }
 }

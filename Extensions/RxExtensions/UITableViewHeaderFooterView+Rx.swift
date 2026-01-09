@@ -9,7 +9,11 @@ import RxSwift
 import RxCocoa
 
 extension Reactive where Base: UITableViewHeaderFooterView {
-    var prepareForReuse: RxObservable<[Any]> {
-        methodInvoked(#selector(UITableViewHeaderFooterView.prepareForReuse))
+    
+    var reusedOrDeallocated: RxObservable<Any> {
+        RxObservable<Any>.merge {
+            methodInvoked(#selector(UITableViewHeaderFooterView.prepareForReuse)).anyElement
+            deallocated.anyElement
+        }
     }
 }

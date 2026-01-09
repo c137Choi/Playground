@@ -8,11 +8,14 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 因为UICollectionViewCell也继承自UICollectionReusableView
-/// 所以UICollectionViewCell也用这个属性
-
 extension Reactive where Base: UICollectionReusableView {
-    var prepareForReuse: RxObservable<[Any]> {
-        methodInvoked(#selector(UICollectionReusableView.prepareForReuse))
+    
+    /// 因为UICollectionViewCell也继承自UICollectionReusableView
+    /// 所以UICollectionViewCell也用这个属性
+    var reusedOrDeallocated: RxObservable<Any> {
+        RxObservable<Any>.merge {
+            methodInvoked(#selector(UICollectionReusableView.prepareForReuse)).anyElement
+            deallocated.anyElement
+        }
     }
 }

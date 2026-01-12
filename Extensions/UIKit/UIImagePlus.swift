@@ -43,15 +43,24 @@ extension UIImage {
     }
     
     /// 源SVG图片要显示到MTKView上时需要重绘
-    var pngImage: UIImage? {
-        let canvas = CGRect(origin: .zero, size: size)
+    func pngImage(scale: CGFloat = UIScreen.main.scale) -> UIImage? {
+        /// 绘制范围
+        let bounds = CGRect(origin: .zero, size: size)
+        /// 绘制格式
         let format = UIGraphicsImageRendererFormat()
+        /// 开启透明
         format.opaque = false
+        /// 设置scale
+        format.scale = scale
+        /// 设置色域
         format.preferredRange = .extended
-        let renderer = UIGraphicsImageRenderer(bounds: canvas, format: format)
+        /// 创建Renderer
+        let renderer = UIGraphicsImageRenderer(bounds: bounds, format: format)
+        /// 获取png二进制数据
         let pngData = renderer.pngData { _ in
-            self.draw(in: canvas)
+            self.draw(in: bounds)
         }
+        /// 创建UIImage
         return UIImage(data: pngData)
     }
     

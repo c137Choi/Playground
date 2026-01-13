@@ -3,40 +3,40 @@ import RxSwift
 
 extension ObservableType {
     
-    func flatMapLatest<T>(_ handler: @escaping (Element) async throws -> T) -> Observable<T> {
+    func flatMapLatest<T>(_ handler: @escaping (Element) async throws -> T) -> RxObservable<T> {
         flatMapLatest { element in
-            Observable.async {
+            RxObservable.async {
                 try await handler(element)
             }
         }
     }
     
-    func flatMapFirst<T>(_ handler: @escaping (Element) async throws -> T) -> Observable<T> {
+    func flatMapFirst<T>(_ handler: @escaping (Element) async throws -> T) -> RxObservable<T> {
         flatMapFirst { element in
-            Observable.async {
+            RxObservable.async {
                 try await handler(element)
             }
         }
     }
     
-    func flatMap<T>(_ handler: @escaping (Element) async throws -> T) -> Observable<T> {
+    func flatMap<T>(_ handler: @escaping (Element) async throws -> T) -> RxObservable<T> {
         flatMap { element in
-            Observable.async {
+            RxObservable.async {
                 try await handler(element)
             }
         }
     }
     
-    func concatMap<T>(_ handler: @escaping (Element) async throws -> T) -> Observable<T> {
+    func concatMap<T>(_ handler: @escaping (Element) async throws -> T) -> RxObservable<T> {
         concatMap { element in
-            Observable.async {
+            RxObservable.async {
                 try await handler(element)
             }
         }
     }
     
-    static func async(_ handler: @escaping () async throws -> Element) -> Observable<Element> {
-        Observable<Element>.create { observer in
+    static func async(_ handler: @escaping () async throws -> Element) -> RxObservable<Element> {
+        RxObservable<Element>.create { observer in
             let task = Task {
                 do {
                     let result = try await handler()

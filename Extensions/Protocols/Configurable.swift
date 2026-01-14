@@ -28,31 +28,23 @@ extension Configurable {
     ///   - value: 新值
     /// - Returns: 值类型返回拷贝对象. 引用类型返回其自身
     func with<T>(new keyPath: WritableKeyPath<Self, T>, _ value: T) -> Self {
-        with { configurable in
-            configurable[keyPath: keyPath] = value
+        with { make in
+            make[keyPath: keyPath] = value
         }
     }
     
     /// 配置
-    /// - Parameter configuration: 配置闭包
+    /// - Parameter setup: 配置闭包
     /// - Returns: 值类型返回拷贝对象. 引用类型返回自身
-    func with(configuration: (inout Self) throws -> Void) rethrows -> Self {
-        var clone = self
-        try configuration(&clone)
-        return clone
+    func with(setup: (inout Self) throws -> Void) rethrows -> Self {
+        var copy = self
+        try setup(&copy)
+        return copy
     }
     
     @discardableResult
-    mutating func setup(_ configuration: (inout Self) throws -> Void) rethrows -> Self {
-        try configure(configuration)
-    }
-    
-    /// 配置
-    /// - Parameter configuration: 配置闭包
-    /// - Returns: 返回自身
-    @discardableResult
-    mutating func configure(_ configuration: (inout Self) throws -> Void) rethrows -> Self {
-        try configuration(&self)
+    mutating func setup(_ setup: (inout Self) throws -> Void) rethrows -> Self {
+        try setup(&self)
         return self
     }
 }
@@ -61,16 +53,8 @@ extension Configurable {
 extension Configurable where Self: AnyObject {
     
     @discardableResult
-    func setup(_ configuration: (Self) throws -> Void) rethrows -> Self {
-        try configure(configuration)
-    }
-    
-    /// 配置
-    /// - Parameter configuration: 配置闭包
-    /// - Returns: 返回自身
-    @discardableResult
-    func configure(_ configuration: (Self) throws -> Void) rethrows -> Self {
-        try configuration(self)
+    func setup(_ setup: (Self) throws -> Void) rethrows -> Self {
+        try setup(self)
         return self
     }
 }
@@ -78,10 +62,10 @@ extension Configurable where Self: AnyObject {
 extension SimpleInitializer where Self: Configurable & AnyObject {
     
     /// 创建并初始化实例
-    /// - Parameter configuration: 初始化配置
+    /// - Parameter setup: 初始化配置
     /// - Returns: 返回实例
-    static func make(_ configuration: (Self) -> Void) -> Self {
-        self.init().setup(configuration)
+    static func make(_ setup: (Self) -> Void) -> Self {
+        self.init().setup(setup)
     }
 }
 

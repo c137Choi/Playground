@@ -7,13 +7,30 @@
 
 import UIKit
 
+typealias UIButtonConfigurationSetup = (inout UIButton.Configuration) -> Void
+
 extension UIButton.Configuration: Configurable {}
+
 extension UIButton.Configuration {
     
-    static func filled(_ setup: (inout UIButton.Configuration) -> Void) -> Self {
+    static func plain(_ setup: UIButtonConfigurationSetup) -> Self {
+        var config = UIButton.Configuration.plain()
+        return config.setup(setup)
+    }
+    
+    static func tinted(_ setup: UIButtonConfigurationSetup) -> Self {
+        var config = UIButton.Configuration.tinted()
+        return config.setup(setup)
+    }
+    
+    static func gray(_ setup: UIButtonConfigurationSetup) -> Self {
+        var config = UIButton.Configuration.gray()
+        return config.setup(setup)
+    }
+    
+    static func filled(_ setup: UIButtonConfigurationSetup) -> Self {
         var config = UIButton.Configuration.filled()
-        setup(&config)
-        return config
+        return config.setup(setup)
     }
 }
 

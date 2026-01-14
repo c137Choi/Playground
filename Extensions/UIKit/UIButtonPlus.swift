@@ -7,6 +7,16 @@
 
 import UIKit
 
+extension UIButton.Configuration: Configurable {}
+extension UIButton.Configuration {
+    
+    static func filled(_ setup: (inout UIButton.Configuration) -> Void) -> Self {
+        var config = UIButton.Configuration.filled()
+        setup(&config)
+        return config
+    }
+}
+
 extension UIButton {
     
     convenience init(image: UIImage?, selectedImage: UIImage? = nil) {

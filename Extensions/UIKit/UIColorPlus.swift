@@ -453,13 +453,6 @@ extension String {
     var uiColor: UIColor {
         let scanner = Scanner(string: self)
         scanner.charactersToBeSkipped = CharacterSet(charactersIn: "#")
-        if #available(iOS 13.0, *) {
-            guard let int = scanner.scanInt(representation: .hexadecimal) else { return .clear }
-            return int.uiColor
-        } else {
-            var uint: UInt64 = 0
-            scanner.scanHexInt64(&uint)
-            return Int(uint).uiColor
-        }
+        return scanner.scanInt(representation: .hexadecimal).map(fallback: .clear, \.uiColor)
     }
 }

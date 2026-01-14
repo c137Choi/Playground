@@ -39,14 +39,8 @@ extension CharacterSet {
     /// 可打印的ASCII字符集
     static let printableASCII = CharacterSet(charactersIn: 32..<127)
     
-    /// 十六进制字符集(包含大小写)
-    static let hexadecimal = hexadecimalUppercase + hexadecimalLowercase
-    
-    /// 十六进制字符集(小写)
-    static let hexadecimalLowercase = CharacterSet(charactersIn: "0123456789abcdef")
-    
-    /// 十六进制字符集(大写)
-    static let hexadecimalUppercase = CharacterSet(charactersIn: "0123456789ABCDEF")
+    /// 十六进制字符集
+    static let hexadecimal = CharacterSet(charactersIn: "0123456789abcdefABCDEF")
     
 	/// 阿拉伯数字 | 0-9
 	static let arabicNumbers = CharacterSet(charactersIn: "0123456789")

@@ -451,8 +451,6 @@ extension String {
     
     /// 从十六进制字符串转换颜色
     var uiColor: UIColor {
-        let scanner = Scanner(string: self)
-        scanner.charactersToBeSkipped = CharacterSet(charactersIn: "#")
-        return scanner.scanInt(representation: .hexadecimal).map(fallback: .clear, \.uiColor)
+        Int(hexString: self).map(fallback: .clear, \.uiColor)
     }
 }

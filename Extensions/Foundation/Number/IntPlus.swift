@@ -102,6 +102,18 @@ extension Int {
             return ""
         }
     }
+    
+    /// 从十六进制字符串创建Int值
+    /// - Parameter hexString: 十六进制字符串. 如: #FF00AA
+    init?(hexString: String?) {
+        let intValue = hexString.flatMap {
+            Scanner(string: $0)
+                .with(new: \.charactersToBeSkipped, .hexadecimal.inverted)
+                .scanInt(representation: .hexadecimal)
+        }
+        guard let intValue else { return nil }
+        self = intValue
+    }
 }
 
 // MARK: - Int + Calendar

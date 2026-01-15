@@ -118,12 +118,7 @@ extension StringProtocol {
         NSString(string: String(self))
     }
     
-    /// 将字符串按照十六进制转换成十进制
-    var intFromHex: Int? {
-        intFromRadix(16)
-    }
-    
-    /// 将字符串按照指定的进制转换成十进制
+    /// 将字符串按照指定的进制转换成十进制(字符串不能出现除十六进制字符之外的字符)
     /// FF -> 255
     /// 0000FF -> 255
     /// - Parameter radix: 进制: 取值范围: 2...36

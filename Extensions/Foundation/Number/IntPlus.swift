@@ -103,6 +103,10 @@ extension Int {
         }
     }
     
+    static func hexString(_ hexString: String?) -> Int? {
+        Int(hexString: hexString)
+    }
+    
     /// 从十六进制字符串创建Int值
     /// - Parameter hexString: 十六进制字符串. 如: #FF00AA
     init?(hexString: String?) {

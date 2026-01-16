@@ -9,7 +9,10 @@
 import UIKit
 
 extension Int {
-	
+    /// 千分率范围
+    static let permilleRange = 0...1_000
+    /// 百分率范围
+    static let percentRange = 0...100
 	// 获取一个整形数字个十百千...位上的数字. 例如:
 	// 746381295[0] == 5 个位数字
 	// 746381295[1] == 9 十位数字...

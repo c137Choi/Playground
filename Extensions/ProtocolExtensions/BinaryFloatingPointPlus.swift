@@ -113,7 +113,7 @@ extension BinaryFloatingPoint {
     /// - Parameter range: 指定范围
     /// - Returns: 百分比
     func progress(in range: ClosedRange<Self>) -> Self {
-        range.progress(for: self)
+        range.progress(self)
     }
 }
 

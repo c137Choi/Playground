@@ -89,14 +89,14 @@ extension ClosedRange {
     /// 根据传入值计算进度
     /// - Parameter value: 传入值
     /// - Returns: 进度百分比<0~1.0>
-    public func progress(for value: Bound) -> Double where Bound: BinaryInteger {
-        doubleRange.progress(for: value.double)
+    public func progress(_ value: Bound) -> Double where Bound: BinaryInteger {
+        doubleRange.progress(value.double)
     }
     
     /// 根据传入值计算进度
     /// - Parameter value: 传入值
     /// - Returns: 进度百分比<0~1.0>
-    public func progress(for value: Bound) -> Bound where Bound: BinaryFloatingPoint {
+    public func progress(_ value: Bound) -> Bound where Bound: BinaryFloatingPoint {
         do throws(RangeBoundError) {
             /// Range宽度
             let rangeWidth = width

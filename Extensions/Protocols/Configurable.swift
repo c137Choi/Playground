@@ -59,13 +59,15 @@ extension Configurable where Self: AnyObject {
     }
 }
 
-extension SimpleInitializer where Self: Configurable & AnyObject {
+extension Configurable where Self: SimpleInitializer & AnyObject {
     
     /// 创建并初始化实例
     /// - Parameter setup: 初始化配置
     /// - Returns: 返回实例
-    static func make(_ setup: (Self) -> Void) -> Self {
-        self.init().setup(setup)
+    static func make(_ setup: (Self) throws -> Void) rethrows -> Self {
+        let instance = self.init()
+        try setup(instance)
+        return instance
     }
 }
 

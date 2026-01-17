@@ -15,7 +15,7 @@ extension ObservableConvertibleType {
         lhs.completable + rhs.completable
     }
     
-    static var empty: RxObservable<Element> {
+    static var void: RxObservable<Element> {
         .empty()
     }
     

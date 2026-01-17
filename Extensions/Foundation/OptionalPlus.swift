@@ -14,10 +14,8 @@ extension Optional {
     
     var isValid: Bool {
         switch self {
-        case .none:
-            false
-        case .some:
-            true
+        case .none: false
+        case .some: true
         }
     }
     
@@ -44,9 +42,17 @@ extension Optional {
         return unwrapped
     }
     
+    /// 执行take()并进行设置
+    /// - Parameter setup: 设置回调闭包
+    public mutating func take(_ setup: (Wrapped) -> Void) {
+        if let wrapped = take() {
+            setup(wrapped)
+        }
+    }
+    
     /// 只有自身为空时才赋值
     public mutating func fillVoid(_ wrapped: Wrapped?) {
-        guard isVoid else { return }
+        guard case .none = self else { return }
         self = wrapped
     }
     
@@ -109,7 +115,7 @@ extension Optional {
     /// - Parameter execute: 回调闭包
     /// - Parameter failed: 失败回调 | 因为Optional类型的closure会被推断为@escaping closure, 所以这里不能使用SimpleCallback?类型作为失败的回调
     /// - Returns: Optional<Wrapped>
-    @discardableResult 
+    @discardableResult
     func unwrap(execute: (Wrapped) throws -> Void, failed: SimpleCallback = {}) rethrows -> Wrapped? {
         switch self {
         case .none:

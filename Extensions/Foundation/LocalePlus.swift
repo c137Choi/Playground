@@ -32,6 +32,22 @@ extension Locale {
             scriptCode
         }
     }
+    
+    /// Locale(languageCode: .chinese, script: .hanSimplified) -> 简体中文
+    /// Locale(languageCode: .chinese, script: .hanTraditional) -> 繁體中文
+    /// Locale(languageCode: .english) -> English
+    /// Locale(languageCode: .spanish) -> Español
+    /// Locale(languageCode: .japanese) -> 日本語
+    /// Locale(languageCode: .korean) -> 한국어
+    /// Locale(languageCode: .french) -> Français
+    /// Locale(languageCode: .german) -> Deutsch
+    /// Locale(languageCode: .italian) -> Italiano
+    /// Locale转成对应的语言名称
+    var languageName: String? {
+        localizedString(forIdentifier: identifier).map {
+            $0.capitalized(with: self)
+        }
+    }
 }
 
 func localized(

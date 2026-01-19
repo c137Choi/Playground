@@ -11,31 +11,20 @@ class UIBaseCollectionViewCell: UICollectionViewCell, UIViewLifeCycle {
     /// 直接复写Cell的backgroundColor属性会有循环调用问题
     /// 所以重新定义一个背景色属性
     var defaultBackgroundColor: UIColor? {
-        willSet {
-            if #unavailable(iOS 14.0) {
-                contentView.backgroundColor = newValue
-            }
-        }
         didSet {
-            if #available(iOS 14.0, *) {
-                setNeedsUpdateConfiguration()
-            }
+            setNeedsUpdateConfiguration()
         }
     }
     
     var defaultSelectedBackgroundColor: UIColor? {
         didSet {
-            if #available(iOS 14.0, *) {
-                setNeedsUpdateConfiguration()
-            }
+            setNeedsUpdateConfiguration()
         }
     }
     
     var defaultHighlightedBackgroundColor: UIColor? {
         didSet {
-            if #available(iOS 14.0, *) {
-                setNeedsUpdateConfiguration()
-            }
+            setNeedsUpdateConfiguration()
         }
     }
     
@@ -50,7 +39,6 @@ class UIBaseCollectionViewCell: UICollectionViewCell, UIViewLifeCycle {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @available(iOS 14.0, *)
     override func updateConfiguration(using state: UICellConfigurationState) {
         super.updateConfiguration(using: state)
         var background: UIBackgroundConfiguration = .listPlainCell()

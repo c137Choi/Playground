@@ -143,15 +143,12 @@ extension UIStackView {
                             borderWidth: CGFloat? = nil,
                             borderColor: UIColor? = nil)
     {
-        /// iOS 14.0以后UIStackView的layer从CATransformLayer改成了CALayer
-        /// 因此可以直接设置背景色
-        if #available(iOS 14.0, *) {
-            self.backgroundColor = backgroundColor
-            self.layer.cornerRadius = cornerRadius.or(0)
-            self.layer.maskedCorners = maskedCorners
-            self.layer.borderColor = borderColor.map(\.cgColor)
-            self.layer.borderWidth = borderWidth.or(0)
-        }
+        /// iOS 14.0以后UIStackView的layer从CATransformLayer改成了CALayer. 因此可以直接设置背景色
+        self.backgroundColor = backgroundColor
+        self.layer.cornerRadius = cornerRadius.or(0)
+        self.layer.maskedCorners = maskedCorners
+        self.layer.borderColor = borderColor.map(\.cgColor)
+        self.layer.borderWidth = borderWidth.or(0)
     }
     
     var reArrangedSubviews: [UIView] {

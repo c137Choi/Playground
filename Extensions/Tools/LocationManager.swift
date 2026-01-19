@@ -16,7 +16,7 @@ final class LocationManager: NSObject {
     /// 定位管理器核心对象
     let core = CLLocationManager()
     /// 定位权限
-    fileprivate lazy var authorizationStatusRelay = BehaviorRelay(value: core.compatibleAuthorizationStatus)
+    fileprivate lazy var authorizationStatusRelay = BehaviorRelay(value: core.authorizationStatus)
     
     private override init() {
         super.init()
@@ -37,7 +37,7 @@ extension LocationManager {
         guard let infoDictionary = Bundle.main.infoDictionary else { return }
         lazy var infoKeys = infoDictionary.keys
         let core = LocationManager.shared.core
-        if core.compatibleAuthorizationStatus.isNotDetermined {
+        if core.authorizationStatus.isNotDetermined {
             if infoKeys.contains(.whenInUseUsageDescriptionKey) {
                 core.requestWhenInUseAuthorization()
             } else if infoKeys.contains(.alwaysAndWhenInUseUsageDescriptionKey) || infoKeys.contains(.alwaysUsageDescriptionKey) {
@@ -50,15 +50,7 @@ extension LocationManager {
 extension LocationManager: CLLocationManagerDelegate {
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        if #available(iOS 14.0, *) {
-            authorizationStatus = manager.authorizationStatus
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if #unavailable(iOS 14.0) {
-            authorizationStatus = status
-        }
+        authorizationStatus = manager.authorizationStatus
     }
 }
 

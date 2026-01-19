@@ -104,46 +104,26 @@ extension PHAuthorizationStatus {
 
 extension PHPhotoLibrary {
     
-    static var chekValidAuthorizationStatus: Single<PHAuthorizationStatus> {
-        chekAuthorizationStatus.map { status in
+    static var validReadWriteAuthorizationStatus: Single<PHAuthorizationStatus> {
+        readWriteAuthorizationStatus.map { status in
             try status.validStatus
         }
     }
     
     /// 检查或请求相册权限
-    static var chekAuthorizationStatus: Single<PHAuthorizationStatus> {
+    static var readWriteAuthorizationStatus: Single<PHAuthorizationStatus> {
         Single.create { observer in
-            let status = PHPhotoLibrary.authorizationStatus
-            switch status {
+            let authorization = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+            switch authorization {
             case .notDetermined:
-                /// 请求权限
-                PHPhotoLibrary.compatibleRequestAuthorization { updatedStatus in
+                PHPhotoLibrary.requestAuthorization(for: .readWrite) { updatedStatus in
                     observer(.success(updatedStatus))
                 }
             default:
-                observer(.success(status))
+                observer(.success(authorization))
             }
             return Disposables.create()
         }
         .observe(on: MainScheduler.instance)
-    }
-    
-    /// 当前相册权限
-    static var authorizationStatus: PHAuthorizationStatus {
-        if #available(iOS 14.0, *) {
-            return authorizationStatus(for: .readWrite)
-        } else {
-            return authorizationStatus()
-        }
-    }
-    
-    /// 请求相册权限
-    /// - Parameter handler: 处理回调
-    static func compatibleRequestAuthorization(_ handler: @escaping (PHAuthorizationStatus) -> Void) {
-        if #available(iOS 14.0, *) {
-            requestAuthorization(for: .readWrite, handler: handler)
-        } else {
-            requestAuthorization(handler)
-        }
     }
 }

@@ -20,7 +20,6 @@ extension UIControlType {
     /// - Parameters:
     ///   - targetEvents: 目标事件
     ///   - eventHandler: 事件回调闭包
-    @available(iOS 14.0, *)
     func reloadEvents(_ targetEvents: UIControl.Event = .touchUpInside, _ eventHandler: @escaping (Self) -> Void) {
         /// 移除旧事件
         enumerateEventHandlers { action, targetAction, event, stop in
@@ -46,26 +45,15 @@ extension UIControlType {
     /// - Returns: UIAction.Identifier, 用于后续移除操作
     @discardableResult
     func addEvents(_ events: UIControl.Event = .touchUpInside, _ eventHandler: @escaping (Self) -> Void) -> UIAction.Identifier {
-        if #available(iOS 14, *) {
-            /// 创建UIAction对象
-            let action = UIAction { action in
-                guard let sender = action.sender as? Self else { return }
-                eventHandler(sender)
-            }
-            /// 添加UIAction
-            addAction(action, for: events)
-            /// 返回Identifier
-            return action.identifier
-        } else {
-            /// Relay实例
-            let relay = EventRelay(self, events: events) { control, _ in
-                eventHandler(control)
-            }
-            /// 强引用Relay
-            references[relay.identifier] = relay
-            /// 返回Identifier
-            return relay.identifier
+        /// 创建UIAction对象
+        let action = UIAction { action in
+            guard let sender = action.sender as? Self else { return }
+            eventHandler(sender)
         }
+        /// 添加UIAction
+        addAction(action, for: events)
+        /// 返回Identifier
+        return action.identifier
     }
     
     /// 移除回调Closure
@@ -73,13 +61,7 @@ extension UIControlType {
     ///   - identifier: 添加时返回的Identifier
     ///   - events: 相关的事件
     func removeEvents(identifiedBy identifier: UIAction.Identifier, for events: UIControl.Event) {
-        if #available(iOS 14.0, *) {
-            removeAction(identifiedBy: identifier, for: events)
-        } else {
-            if let relay = references.removeValue(forKey: identifier).as(EventRelay.self) {
-                relay.dispose()
-            }
-        }
+        removeAction(identifiedBy: identifier, for: events)
     }
     
     /// 添加事件 | 闭包同时返回UIEvent?对象

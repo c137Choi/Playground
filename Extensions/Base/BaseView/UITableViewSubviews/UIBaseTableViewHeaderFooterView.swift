@@ -25,9 +25,7 @@ class UIBaseTableViewHeaderFooterView: UITableViewHeaderFooterView, UIViewLifeCy
     /// 背景样式设置模式
     var backgroundStyleMode: UIBackgroundStyleMode = .modern {
         didSet {
-            if #available(iOS 14.0, *) {
-                setNeedsUpdateConfiguration()
-            }
+            setNeedsUpdateConfiguration()
             if backgroundStyleMode == .legacy {
                 contentView.backgroundColor = defaultBackgroundColor
             }
@@ -44,7 +42,6 @@ class UIBaseTableViewHeaderFooterView: UITableViewHeaderFooterView, UIViewLifeCy
         prepare()
     }
     
-    @available(iOS 14.0, *)
     override func updateConfiguration(using state: UIViewConfigurationState) {
         super.updateConfiguration(using: state)
         var background: UIBackgroundConfiguration

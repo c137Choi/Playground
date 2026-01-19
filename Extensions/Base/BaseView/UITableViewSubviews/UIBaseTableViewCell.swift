@@ -30,33 +30,22 @@ class UIBaseTableViewCell: UITableViewCell, UIViewLifeCycle {
     
     /// 背景色
     var defaultBackgroundColor: UIColor? = defaultTableViewCellBackgroundColor {
-        willSet {
-            if #unavailable(iOS 14.0) {
-                contentView.backgroundColor = newValue
-            }
-        }
         didSet {
-            if #available(iOS 14.0, *) {
-                setNeedsUpdateConfiguration()
-            }
+            setNeedsUpdateConfiguration()
         }
     }
     
     /// 高亮时的背景色
     var defaultHighlightBackgroundColor: UIColor? = defaultTableViewCellHighlightBackgroundColor {
         didSet {
-            if #available(iOS 14.0, *) {
-                setNeedsUpdateConfiguration()
-            }
+            setNeedsUpdateConfiguration()
         }
     }
     
     /// 选中时的背景色
     var defaultSelectedBackgroundColor: UIColor? = defaultTableViewCellSelectedBackgroundColor {
         didSet {
-            if #available(iOS 14.0, *) {
-                setNeedsUpdateConfiguration()
-            }
+            setNeedsUpdateConfiguration()
         }
     }
     
@@ -89,9 +78,7 @@ class UIBaseTableViewCell: UITableViewCell, UIViewLifeCycle {
     /// 背景样式设置模式
     var backgroundStyleMode = UIBackgroundStyleMode.modern {
         didSet {
-            if #available(iOS 14.0, *) {
-                setNeedsUpdateConfiguration()
-            }
+            setNeedsUpdateConfiguration()
             if backgroundStyleMode == .legacy {
                 setHighlighted(isHighlighted, animated: false)
                 setSelected(isSelected, animated: false)
@@ -102,7 +89,6 @@ class UIBaseTableViewCell: UITableViewCell, UIViewLifeCycle {
     /// 分配的IndexPath
     @Published var indexPath: IndexPath?
     
-    @available(iOS 14.0, *)
     override func updateConfiguration(using state: UICellConfigurationState) {
         super.updateConfiguration(using: state)
         var background = UIBackgroundConfiguration.listPlainCell()
@@ -154,29 +140,16 @@ class UIBaseTableViewCell: UITableViewCell, UIViewLifeCycle {
     
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         super.setHighlighted(highlighted, animated: animated)
-        
-        /// 如果是iOS 14.0以下的系统, 则对contentView直接设置颜色
-        if #unavailable(iOS 14.0) {
+        if backgroundStyleMode == .legacy {
             contentView.backgroundColor = highlighted ? defaultHighlightBackgroundColor : defaultBackgroundColor
-        } else {
-            /// 如果是iOS 14.0以上的系统, 则只有背景样式为.legacy的时候才直接对contentView设置背景色
-            if backgroundStyleMode == .legacy {
-                contentView.backgroundColor = highlighted ? defaultHighlightBackgroundColor : defaultBackgroundColor
-            }
         }
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
-        /// 如果是iOS 14.0以下的系统, 则对contentView直接设置颜色
-        if #unavailable(iOS 14.0) {
+        /// 只有背景样式为.legacy的时候才直接对contentView设置背景色
+        if backgroundStyleMode == .legacy {
             contentView.backgroundColor = selected ? defaultSelectedBackgroundColor : defaultBackgroundColor
-        } else {
-            /// 如果是iOS 14.0以上的系统, 则只有背景样式为.legacy的时候才直接对contentView设置背景色
-            if backgroundStyleMode == .legacy {
-                contentView.backgroundColor = selected ? defaultSelectedBackgroundColor : defaultBackgroundColor
-            }
         }
     }
     

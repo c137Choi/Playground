@@ -411,27 +411,6 @@ class BaseViewController: UIViewController, UIGestureRecognizerDelegate, ViewCon
 
 extension BaseViewController {
     
-    var latestMessage: String? {
-        get { nil }
-        set {
-            popToast(newValue)
-        }
-    }
-    
-    /// 弹出相机授权失败对话框
-    /// - Parameter title: 相应的标题,提示具体使用相机的用途
-    func popCameraAccessDeniedDialog(title: String) {
-        let message = NSLocalizedString("是否打开权限设置页面?", comment: "")
-        let yes = NSLocalizedString("是", comment: "")
-        let dialog = AlertDialog(title: title, message: message) {
-            DialogAction.cancel
-            DialogAction(title: yes) {
-                UIApplication.openSettings()
-            }
-        }
-        popDialog(dialog)
-    }
-    
     func popToast(_ message: String?) {
         view.popToast(message)
     }

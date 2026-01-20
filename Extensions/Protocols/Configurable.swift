@@ -92,5 +92,8 @@ extension CGPoint: Configurable {}
 extension UIEdgeInsets: Configurable {}
 extension NSDirectionalEdgeInsets: Configurable {}
 
+@available(iOS 16, *)
+extension LocalizedStringResource: Configurable {}
+
 @available(iOS 15, *)
 extension AttributeContainer: Configurable {}

@@ -51,32 +51,67 @@ extension Locale {
 }
 
 func localized(
-    _ localized: String.LocalizationValue,
+    _ localizationValue: String.LocalizationValue,
     table: String? = nil,
     locale: Locale = AppLanguage.language.locale,
     comment: StaticString? = nil) -> String
 {
-    if #available(iOS 16.0, *) {
-        /// 创建LocalizedStringResource
-        var stringResource = LocalizedStringResource(localized, table: table, locale: locale, comment: comment)
-        /// 生成本地化字符串
-        let localizedString = String(localized: stringResource)
-        /// 如果字符串为空, 使用英语本地化字符串作为返回值
-        if localizedString.isEmpty {
-            stringResource.locale = .english
-            return String(localized: stringResource)
-        } else {
-            return localizedString
+    /// 中文Bundle
+    lazy var zhHansBundle = Bundle.main.path(forResource: "zh-Hans", ofType: "lproj").flatMap {
+        Bundle(path: $0)
+    }
+    
+    /// 英文Bundle
+    lazy var enBundle = Bundle.main.path(forResource: "en", ofType: "lproj").flatMap {
+        Bundle(path: $0)
+    }
+    
+    /// 中文翻译
+    lazy var chineseTranslation = if #available(iOS 16, *) {
+        zhHansBundle.map(fallback: "N/A") { bundle in
+            let bundleDescription = LocalizedStringResource.BundleDescription.atURL(bundle.bundleURL)
+            return LocalizedStringResource(localizationValue, table: table, locale: .chineseSimplified, bundle: bundleDescription, comment: comment).transform {
+                String(localized: $0)
+            }
         }
     } else {
-        /// 生成本地化字符串
-        let localizedString = String(localized: localized, table: table, locale: locale, comment: comment)
-        /// 如果字符串为空, 使用英语本地化字符串作为返回值
-        if localizedString.isEmpty {
-            return String(localized: localized, table: table, locale: .english, comment: comment)
-        } else {
-            return localizedString
+        zhHansBundle.flatMap(fallback: "N/A") { bundle in
+            String(localized: localizationValue, table: table, bundle: bundle, locale: .chineseSimplified, comment: comment)
         }
+    }
+    
+    /// 英文翻译
+    lazy var englishTranslation = if #available(iOS 16, *) {
+        enBundle.map(fallback: "N/A") {
+            let bundleDescription = LocalizedStringResource.BundleDescription.atURL($0.bundleURL)
+            return LocalizedStringResource(localizationValue, table: table, locale: .english, bundle: bundleDescription, comment: comment).transform {
+                String(localized: $0)
+            }
+        }
+    } else {
+        enBundle.flatMap(fallback: "N/A") {
+            String(localized: localizationValue, table: table, bundle: $0, locale: .english, comment: comment)
+        }
+    }
+    
+    if #available(iOS 16, *) {
+        /// 创建LocalizedStringResource
+        let stringResource = LocalizedStringResource(localizationValue, table: table, locale: locale, comment: comment)
+        /// 生成本地化字符串
+        let localizedString = String(localized: stringResource)
+        /// 未发现翻译文本时, 默认使用英语翻译
+        if locale != .chineseSimplified, localizedString == chineseTranslation {
+            return englishTranslation
+        }
+        return localizedString
+    } else {
+        /// 生成本地化字符串
+        let localizedString = String(localized: localizationValue, table: table, locale: locale, comment: comment)
+        /// 未发现翻译文本时, 默认使用英语翻译
+        if locale != .chineseSimplified, localizedString == chineseTranslation {
+            return englishTranslation
+        }
+        return localizedString
     }
 }
 
@@ -88,13 +123,6 @@ extension Locale {
         Locale(languageCode: .chinese, script: .hanSimplified)
     } else {
         Locale(identifier: "zh-Hans")
-    }
-    
-    /// 繁体中文
-    static let chineseTraditional = if #available(iOS 16, *) {
-        Locale(languageCode: .chinese, script: .hanTraditional)
-    } else {
-        Locale(identifier: "zh-Hant")
     }
     
     /// 英语

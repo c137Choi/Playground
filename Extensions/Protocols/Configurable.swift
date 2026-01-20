@@ -22,6 +22,10 @@ extension Configurable {
         try transformer(self)
     }
     
+    func transform<T>(fallback: T, _ transformer: (Self) throws -> T?) rethrows -> T {
+        try transformer(self) ?? fallback
+    }
+    
     /// 通过KeyPath更新属性:
     /// - Parameters:
     ///   - keyPath: KeyPath

@@ -8,12 +8,12 @@ import Foundation
 
 extension Locale {
     
-    /// 优先使用的Locale
-    static var preferredLocale: Locale {
+    /// 系统列表中列出的语言选项
+    static var compatiblePreferredLocales: [Locale] {
         if #available(iOS 26, *) {
-            Locale.preferredLocales.first ?? Locale.current
+            Locale.preferredLocales
         } else {
-            Locale.preferredLanguages.first.map(Locale.init) ?? Locale.current
+            Locale.preferredLanguages.map(Locale.init)
         }
     }
     
@@ -53,7 +53,7 @@ extension Locale {
 func localized(
     _ localized: String.LocalizationValue,
     table: String? = nil,
-    locale: Locale = .preferredLocale,
+    locale: Locale = AppLanguage.language.locale,
     comment: StaticString? = nil) -> String
 {
     if #available(iOS 16.0, *) {

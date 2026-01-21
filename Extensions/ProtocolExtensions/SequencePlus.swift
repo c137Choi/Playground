@@ -13,6 +13,44 @@ extension Sequence {
         Array(self)
     }
     
+    /// 查找第一个匹配条件的转换项
+    /// - Parameters:
+    ///   - condition: 匹配条件检查
+    ///   - transform: 元素转换
+    /// - Returns: 满足条件的转换项 | 未找到匹配项则返回空
+    func firstMatch<T>(_ condition: (T) -> Bool, transform: (Element) -> T?) -> T? {
+        /// 遍历元素
+        for element in self {
+            /// 元素转换成指定类型, 转换失败则继续遍历
+            guard let unwrapped = transform(element) else {
+                continue
+            }
+            /// 如果满足条件则返回转换项
+            if condition(unwrapped) {
+                return unwrapped
+            }
+        }
+        return nil
+    }
+    
+    /// 查找第一个匹配条件的转换项
+    /// - Parameters:
+    ///   - condition: 匹配条件检查
+    ///   - transform: 元素转换
+    /// - Returns: 满足条件的转换项 | 未找到匹配项则返回空
+    func firstMatch<T>(_ condition: (T?) -> Bool, transform: (Element) -> T?) -> T? {
+        /// 遍历元素
+        for element in self {
+            /// 元素转换成指定类型
+            let transformed = transform(element)
+            /// 如果满足条件则返回转换项
+            if condition(transformed) {
+                return transformed
+            }
+        }
+        return nil
+    }
+    
     /// Result非空时返回结果, 否则返回nil
     func reduceFilledResult<Result>(into initialResult: Result, _ updateAccumulatingResult: (inout Result, Self.Element) throws -> ()) rethrows -> Result? where Result: Collection {
         try reduce(into: initialResult, updateAccumulatingResult).filledOrNil

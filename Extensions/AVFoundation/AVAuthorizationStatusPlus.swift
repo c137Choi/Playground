@@ -17,7 +17,7 @@ extension AVAuthorizationStatus: @retroactive CustomStringConvertible {
         case .restricted:
             return "RESTRICTED"
         case .denied:
-            return NSLocalizedString("相机未授权", comment: "")
+            return String(localized: "相机未授权")
         case .authorized:
             return "AUTHORIZED"
         @unknown default:

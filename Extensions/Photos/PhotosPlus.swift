@@ -20,7 +20,7 @@ extension PHAuthorizationStatus: @retroactive LocalizedError {
         case .restricted:
             return "RESTRICTED"
         case .denied:
-            return String(localized: "相册未授权")
+            return "DENIED"
         case .authorized:
             return "AUTHORIZED"
         case .limited:

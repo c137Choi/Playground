@@ -33,6 +33,14 @@ extension Locale {
         }
     }
     
+    var compatibleRegionCode: String? {
+        if #available(iOS 16, *) {
+            language.region.map(\.identifier)
+        } else {
+            regionCode
+        }
+    }
+    
     /// Locale(languageCode: .chinese, script: .hanSimplified) -> 简体中文
     /// Locale(languageCode: .chinese, script: .hanTraditional) -> 繁體中文
     /// Locale(languageCode: .english) -> English

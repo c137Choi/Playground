@@ -332,7 +332,13 @@ extension Slice where Base == ClosedRange<Int> {
     }
 }
 
-// MARK: - 其他
+/// 边界枚举
+enum RangeBound {
+    case lower
+    case upper
+}
+
+/// 边界错误
 enum RangeBoundError: Error {
     case tooLow
     case tooHigh

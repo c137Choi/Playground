@@ -47,6 +47,42 @@ extension UIView {
         backgroundColor = color
     }
     
+    public static func closestView(_ targetViews: UIView..., to point: CGPoint, axis: NSLayoutConstraint.Axis? = nil) -> UIView? {
+        closestView(targetViews, to: point, axis: axis)
+    }
+    
+    public static func closestView(_ targetViews: UIViewArray, to point: CGPoint, axis: NSLayoutConstraint.Axis? = nil) -> UIView? {
+        /// 确保数组非空否则返回空
+        guard targetViews.isNotEmpty else { return nil }
+        /// 标记最近的View
+        var closestView: UIView?
+        /// 最小距离
+        var minDistance = CGFloat.greatestFiniteMagnitude
+        /// 遍历目标View数组
+        for view in targetViews {
+            /// 目标View的中心点
+            let viewCenter = view.center
+            /// 计算距离
+            let distance: CGFloat
+            /// 根据轴向计算
+            switch axis {
+            case .horizontal:
+                distance = abs(point.x - viewCenter.x)
+            case .vertical:
+                distance = abs(point.y - viewCenter.y)
+            default:
+                distance = hypot(point.x - viewCenter.x, point.y - viewCenter.y)
+            }
+            /// 更新距离最近的View
+            if distance < minDistance {
+                minDistance = distance
+                closestView = view
+            }
+        }
+        /// 返回最近的View
+        return closestView
+    }
+    
     var isVisibleAndPrepared: Bool {
         isVisible && isPrepared
     }

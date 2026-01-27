@@ -76,6 +76,22 @@ extension ClosedRange {
         self.init(uncheckedBounds: (lowerBound, upperBound))
     }
     
+    /// 传入上限, 返回一个新范围
+    public func settingUpperBound(_ newUpperBound: Bound) -> Self {
+        guard newUpperBound >= lowerBound else {
+            return newUpperBound...newUpperBound
+        }
+        return lowerBound...newUpperBound
+    }
+    
+    /// 传入下限, 返回一个新范围
+    public func settingLowerBound(_ newLowerBound: Bound) -> Self {
+        guard newLowerBound <= upperBound else {
+            return newLowerBound...newLowerBound
+        }
+        return newLowerBound...upperBound
+    }
+    
     /// 求与另一个范围的交集
     /// - Parameter other: 传入的闭合范围
     /// - Returns: 两个范围的交集

@@ -246,6 +246,24 @@ extension ClosedRange where Bound: Numeric {
 
 extension ClosedRange where Bound == Double {
     
+    /// 计算相对范围
+    /// - Parameter anchorRange: 锚定范围. 如0...100.0
+    /// - Returns: 0...1.0内的范围
+    func relativeRange(in anchorRange: ClosedDoubleRange) -> ClosedDoubleRange {
+        if lowerBound >= anchorRange.upperBound {
+            return 1...1
+        } else if upperBound <= anchorRange.lowerBound {
+            return 0...0
+        } else {
+            /// 如果自己包含锚定范围则返回0...1
+            if self.contains(anchorRange) {
+                return .percentRange
+            } else {
+                return anchorRange.progress(lowerBound)...anchorRange.progress(upperBound)
+            }
+        }
+    }
+    
     /// 计算ClosedRange × 进度的结果, 保留相应的小数位, 并按指定规则进位
     subscript (multiply progress: Double, fractionDigits fractionDigits: Int? = nil, roundingRule rule: FloatingPointRoundingRule? = nil) -> Bound {
         /// 最终结果

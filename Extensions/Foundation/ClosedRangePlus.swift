@@ -210,9 +210,9 @@ extension ClosedRange where Bound: BinaryFloatingPoint {
     ///   - segments: 分段数. 如1...10.0需要分9段
     ///   - value: 传入值
     /// - Returns: 最接近分段点的值
-    public func segmentedValue(segments: Double?, for value: Bound) -> Bound {
+    public func segmentedValue(segments: Double, for value: Bound) -> Bound {
         let constrainedValue = constrainedValue(value)
-        guard let segments, segments > 0 else {
+        guard segments > 0 else {
             return constrainedValue
         }
         /// 每段的宽度
@@ -230,6 +230,13 @@ extension ClosedRange where Bound: BinaryFloatingPoint {
     public static func * (lhs: Bound, rhs: Self) -> Bound { rhs * lhs }
     public static func * (lhs: Self, percentage: Bound) -> Bound {
         lhs.lowerBound + lhs.width * (Bound.hotPercentRange << percentage)
+    }
+    
+    public static func * (lhs: Self, percentRange: Self) -> Self {
+        let lowerBound = lhs * percentRange.lowerBound
+        let upperBound = lhs * percentRange.upperBound
+        guard let range = try? Self(lowerBound: lowerBound, upperBound: upperBound) else { return lhs }
+        return range
     }
 }
 
@@ -269,20 +276,20 @@ extension ClosedRange where Bound: Numeric {
 
 extension ClosedRange where Bound == Double {
     
-    /// 计算相对范围
-    /// - Parameter anchorRange: 锚定范围. 如0...100.0
-    /// - Returns: 0...1.0内的范围
-    func relativeRange(in anchorRange: ClosedDoubleRange) -> ClosedDoubleRange {
-        if lowerBound >= anchorRange.upperBound {
+    /// 计算自身在baseRange中的progress范围
+    /// - Parameter baseRange: 锚定范围,通常比自身要大
+    /// - Returns: 0...1的范围
+    func percentRange(of baseRange: ClosedDoubleRange) -> ClosedDoubleRange {
+        if lowerBound >= baseRange.upperBound {
             return 1...1
-        } else if upperBound <= anchorRange.lowerBound {
+        } else if upperBound <= baseRange.lowerBound {
             return 0...0
         } else {
             /// 如果自己包含锚定范围则返回0...1
-            if self.contains(anchorRange) {
+            if self.contains(baseRange) {
                 return .percentRange
             } else {
-                return anchorRange.progress(lowerBound)...anchorRange.progress(upperBound)
+                return baseRange.progress(lowerBound)...baseRange.progress(upperBound)
             }
         }
     }

@@ -70,8 +70,8 @@ extension ClosedRange where Bound == Int {
 extension ClosedRange {
     
     public init(lowerBound: Bound, upperBound: Bound) throws {
-        if upperBound < lowerBound {
-            throw "UpperBound is less than lowerBound."
+        guard upperBound >= lowerBound else {
+            throw "上限必须大于等于下限"
         }
         self.init(uncheckedBounds: (lowerBound, upperBound))
     }

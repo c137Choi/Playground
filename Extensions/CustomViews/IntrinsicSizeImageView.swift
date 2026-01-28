@@ -11,6 +11,11 @@ final class IntrinsicSizeImageView: UIImageView {
     
     /// 固定尺寸
     var intrinsicSize: CGSize? {
+        willSet {
+            if let newValue {
+                bounds.size = newValue
+            }
+        }
         didSet {
             invalidateIntrinsicContentSize()
         }

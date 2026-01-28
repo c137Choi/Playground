@@ -12,6 +12,11 @@ final class IntrinsicSizeView: UIView {
 	
     /// 固定尺寸 | 设置后执行invalidateIntrinsicContentSize
     var intrinsicSize: CGSize? {
+        willSet {
+            if let newValue {
+                bounds.size = newValue
+            }
+        }
         didSet {
             invalidateIntrinsicContentSize()
         }

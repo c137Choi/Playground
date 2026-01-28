@@ -47,11 +47,11 @@ extension UIView {
         backgroundColor = color
     }
     
-    public static func closestView(_ targetViews: UIView..., to point: CGPoint, axis: NSLayoutConstraint.Axis? = nil) -> UIView? {
-        closestView(targetViews, to: point, axis: axis)
+    public static func closerView(_ targetViews: UIView..., to point: CGPoint, axis: NSLayoutConstraint.Axis? = nil) -> UIView? {
+        closerView(targetViews, to: point, axis: axis)
     }
     
-    public static func closestView(_ targetViews: UIViewArray, to point: CGPoint, axis: NSLayoutConstraint.Axis? = nil) -> UIView? {
+    public static func closerView(_ targetViews: UIViewArray, to point: CGPoint, axis: NSLayoutConstraint.Axis? = nil) -> UIView? {
         /// 确保数组非空否则返回空
         guard targetViews.isNotEmpty else { return nil }
         /// 标记最近的View

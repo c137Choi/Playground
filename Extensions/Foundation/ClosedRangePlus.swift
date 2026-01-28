@@ -204,6 +204,29 @@ extension ClosedRange where Bound: BinaryInteger {
 }
 
 extension ClosedRange where Bound: BinaryFloatingPoint {
+    
+    /// 返回最接近分段点的值
+    /// - Parameters:
+    ///   - segments: 分段数. 如1...10.0需要分9段
+    ///   - value: 传入值
+    /// - Returns: 最接近分段点的值
+    public func segmentedValue(segments: Double?, for value: Bound) -> Bound {
+        let constrainedValue = constrainedValue(value)
+        guard let segments, segments > 0 else {
+            return constrainedValue
+        }
+        /// 每段的宽度
+        let segmentLength = width / Bound(segments)
+        /// 相对值
+        let relativeValue = constrainedValue - lowerBound
+        /// 分段位置(0 indexed)
+        let segmentIndex = (relativeValue / segmentLength).rounded()
+        /// 确保索引在有效范围内
+        let clampedIndex = Swift.max(0, Swift.min(Bound(segments), segmentIndex))
+        /// 计算最接近的分段点值
+        return lowerBound + clampedIndex * segmentLength
+    }
+    
     public static func * (lhs: Bound, rhs: Self) -> Bound { rhs * lhs }
     public static func * (lhs: Self, percentage: Bound) -> Bound {
         lhs.lowerBound + lhs.width * (Bound.hotPercentRange << percentage)

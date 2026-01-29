@@ -205,6 +205,15 @@ extension ClosedRange where Bound: BinaryInteger {
 
 extension ClosedRange where Bound: BinaryFloatingPoint {
     
+    /// 转换为Int范围
+    /// - Parameter rule: 进位规则
+    /// - Returns: 整形范围
+    public func intRange(rounded rule: FloatingPointRoundingRule) -> ClosedIntRange? {
+        let roundedLowerBound = lowerBound.rounded(rule).int
+        let roundedUpperBound = upperBound.rounded(rule).int
+        return try? ClosedIntRange(lowerBound: roundedLowerBound, upperBound: roundedUpperBound)
+    }
+    
     /// 返回最接近分段点的值
     /// - Parameters:
     ///   - segments: 分段数. 如1...10.0需要分9段

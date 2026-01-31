@@ -67,17 +67,13 @@ extension Date {
             .transform(formattedString)
 	}
 	
-	var beijingTimeString: String {
-		DateFormatter.shared
-            .with(new: \.dateFormat, "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-            .with(new: \.timeZone, .beijing)
-			.transform(formattedString)
-	}
-	
-	var debugTimeString: String {
-		DateFormatter.shared
-            .with(new: \.dateFormat, "HH:mm:ss.SSS")
-			.transform(formattedString)
+	var debugFormatted: String {
+        Date.FormatStyle(locale: .chineseSimplified, calendar: .gregorian, timeZone: .beijing)
+            .hour(.twoDigits(amPM: .omitted))
+            .minute(.twoDigits)
+            .second(.twoDigits)
+            .secondFraction(.fractional(3))
+            .transform(formatted)
 	}
 	
 	private func formattedString(_ formatter: DateFormatter) -> String {

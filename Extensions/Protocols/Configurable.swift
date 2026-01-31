@@ -97,3 +97,6 @@ extension LocalizedStringResource: Configurable {}
 
 @available(iOS 15, *)
 extension AttributeContainer: Configurable {}
+
+@available(iOS 15, *)
+extension Date.FormatStyle: Configurable {}

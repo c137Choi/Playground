@@ -60,6 +60,42 @@ extension UIButton {
         set { contentEdgeInsets = newValue }
     }
     
+    var normalTitle: String? {
+        get {
+            title(for: .normal)
+        }
+        set {
+            setTitle(newValue, for: .normal)
+        }
+    }
+    
+    var selectedTitle: String? {
+        get {
+            title(for: .selected)
+        }
+        set {
+            setTitle(newValue, for: .selected)
+        }
+    }
+    
+    var normalImage: UIImage? {
+        get {
+            image(for: .normal)
+        }
+        set {
+            setImage(newValue, for: .normal)
+        }
+    }
+    
+    var selectedImage: UIImage? {
+        get {
+            image(for: .selected)
+        }
+        set {
+            setImage(newValue, for: .selected)
+        }
+    }
+    
     /// Title字体
     var titleFont: UIFont? {
         get { titleLabel?.font }

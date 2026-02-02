@@ -10,30 +10,6 @@ import RxCocoa
 
 extension Reactive where Base: UIButton {
     
-    var normalTitle: Binder<String?> {
-        title(for: .normal)
-    }
-    
-    var selectedTitle: Binder<String?> {
-        title(for: .selected)
-    }
-    
-    var highlightedTitle: Binder<String?> {
-        title(for: .highlighted)
-    }
-    
-    var normalImage: Binder<UIImage?> {
-        image(for: .normal)
-    }
-    
-    var selectedImage: Binder<UIImage?> {
-        image(for: .selected)
-    }
-    
-    var highlightedImage: Binder<UIImage?> {
-        image(for: .highlighted)
-    }
-    
     /// 限制按钮连续点击
     /// 时间:800毫秒
     var throttledTap: RxObservable<Void> {

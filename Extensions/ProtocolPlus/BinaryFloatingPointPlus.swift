@@ -145,11 +145,6 @@ extension BinaryFloatingPoint {
         }
     }
     
-    /// 原样输出,有小数位则显示,无小数位则显示整数,最多保留4位小数,进位规则.down
-    var str4f: String {
-        String(format: "%.4f", rounded(roundingIncrement: 10_000, rule: .down).double)
-    }
-    
     /// 带符号 | 四舍五入
     var signedR2: String {
         signedDecimalFormatter.transform { formatter in
@@ -182,20 +177,21 @@ extension BinaryFloatingPoint {
     
     /// 保留两位小数的字符串
     var f2: String {
-        f(2)
+        formatted(.f2)
     }
     
+    /// 格式化为字符串: 保留小数位0...4位, 进位规则.down
     var f4: String {
-        f(4)
+        formatted(.f4)
     }
     
-    /// 0...1.0的小数转换成百分比
-    var percentString: String {
-        percentString(fractions: 0) ?? ""
+    /// 0...1.0的小数转换成无小数位的百分比
+    var percentage: String {
+        formatted(.percentage)
     }
     
     /// 格式化0...1.0到百分比
-    private func percentString(fractions: Int = 0) -> String? {
+    private func xxPercentString(fractions: Int = 0) -> String? {
         NumberFormatter.shared.transform { formatter in
             formatter.numberStyle = .percent
             /// 因为shared属性内对复用的Formatter所有属性都作了重置(numberStyle被重置为了.none)

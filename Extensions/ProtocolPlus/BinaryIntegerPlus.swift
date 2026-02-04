@@ -33,7 +33,7 @@ extension BinaryInteger {
     }
     
     var string: String {
-        String(self)
+        String(self, radix: 10)
     }
     
     /// 去掉argb的alpha通道

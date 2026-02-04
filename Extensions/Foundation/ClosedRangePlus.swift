@@ -176,6 +176,18 @@ extension ClosedRange {
 
 extension ClosedRange where Bound: BinaryInteger {
     
+    /// 用于页面显示的范围如: 1-3
+    var uiDescription: String {
+        uiDescription("-")
+    }
+    
+    /// 用于页面显示的范围, 指定分隔符
+    /// - Parameter separator: 分隔符
+    /// - Returns: 页面显示范围字符串
+    func uiDescription(_ separator: String) -> String {
+        isNarrow ? "\(lowerBound)" : "\(lowerBound)\(separator)\(upperBound)"
+    }
+    
     /// 计算ClosedRange × 进度的结果 | 如果结果的小数位>=fractionalPartThreshold直接进一位
     subscript (multiply progress: Double, fractionalPartThreshold: Double = 0.999) -> Bound {
         let doubleBound = (doubleRange * progress).rectified(fractionalPartThreshold)
@@ -204,6 +216,14 @@ extension ClosedRange where Bound: BinaryInteger {
 }
 
 extension ClosedRange where Bound: BinaryFloatingPoint {
+    
+    var uiDescription: String {
+        uiDescription(separator: "-")
+    }
+    
+    func uiDescription(separator: String) -> String {
+        isNarrow ? lowerBound.f4 : "\(lowerBound.f4)\(separator)\(upperBound.f4)"
+    }
     
     /// 转换为Int范围
     /// - Parameter rule: 进位规则

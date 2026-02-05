@@ -594,23 +594,3 @@ extension String {
         URL(string: self)
     }
 }
-
-//MARK: -- 字符串时间格式转换
-extension String {
-	/// 字符串时间格式转换
-	/// - Parameters:
-	///   - inputFormat: 原有的字符串格式
-	///   - outputFormat: 需要转换的字符串格式
-	/// - Returns: 字符串时间
-	func formatDate(from inputFormat: String = "yyyy-MM-dd'T'HH:mm:ss",
-					to outputFormat: String = "yyyy-MM-dd HH:mm") -> String? {
-		let inputFormatter = DateFormatter()
-		inputFormatter.dateFormat = inputFormat
-		
-		let outputFormatter = DateFormatter()
-		outputFormatter.dateFormat = outputFormat
-		
-		guard let date = inputFormatter.date(from: self) else { return nil }
-		return outputFormatter.string(from: date)
-	}
-}

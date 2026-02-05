@@ -34,6 +34,15 @@ extension Date {
         self.init(timeIntervalSince1970: millisecondsSince1970 / 1000.0)
     }
     
+    var debugFormatted: String {
+        Date.FormatStyle(locale: .chineseSimplified, calendar: .gregorian, timeZone: .beijing)
+            .hour(.twoDigits(amPM: .omitted))
+            .minute(.twoDigits)
+            .second(.twoDigits)
+            .secondFraction(.fractional(3))
+            .transform(formatted)
+    }
+    
     /// 转换为GCD使用的绝对时间
 	var dispatchWallTime: DispatchWallTime {
         /// 将小数切成整数,小数两个部分
@@ -53,31 +62,20 @@ extension Date {
         Int(timeIntervalSince1970 * 1000.0)
     }
 	
-    var dateString: String {
-        dateString("/")
-    }
-    
-    func dateString(_ separator: String) -> String {
-        string(dateFormat: "yyyy\(separator)MM\(separator)dd")
+    /// 日期格式: yyyy/MM/dd
+    var yyyyMMdd: String {
+        Date.FormatStyle.dateTime
+            .locale(.chineseSimplified)
+            .year(.padded(4))
+            .month(.twoDigits)
+            .day(.twoDigits)
+            .format(self)
     }
     
 	func string(dateFormat: String) -> String {
-        DateFormatter.shared
-            .with(new: \.dateFormat, dateFormat)
-            .transform(formattedString)
-	}
-	
-	var debugFormatted: String {
-        Date.FormatStyle(locale: .chineseSimplified, calendar: .gregorian, timeZone: .beijing)
-            .hour(.twoDigits(amPM: .omitted))
-            .minute(.twoDigits)
-            .second(.twoDigits)
-            .secondFraction(.fractional(3))
-            .transform(formatted)
-	}
-	
-	private func formattedString(_ formatter: DateFormatter) -> String {
-		formatter.string(from: self)
+        DateFormatter.shared.with(new: \.dateFormat, dateFormat).transform {
+            $0.string(from: self)
+        }
 	}
 	
 	fileprivate static var DefaultCalendarComponents: Set<Calendar.Component> {

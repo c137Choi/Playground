@@ -47,3 +47,18 @@ extension FormatStyle where Self == FloatingPointFormatStyle<Double>.Percent {
             .rounded(rule: .down)
     }
 }
+
+// MARK: - Date
+extension Date.FormatString {
+    /// yyyy-MM-dd HH:mm:ss
+    static let yyyyMMddHHmmss: Date.FormatString = "\(year: .padded(4))-\(month: .twoDigits)-\(day: .twoDigits) \(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits):\(second: .twoDigits)"
+    /// yyyy-MM-dd HH:mm
+    static let yyyyMMddHHmm: Date.FormatString = "\(year: .padded(4))-\(month: .twoDigits)-\(day: .twoDigits) \(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits)"
+}
+
+extension FormatStyle where Self == Date.VerbatimFormatStyle {
+    
+    static func dateFormat(_ format: Date.FormatString) -> Date.VerbatimFormatStyle {
+        Date.VerbatimFormatStyle(format: format, locale: .chineseSimplified, timeZone: .autoupdatingCurrent, calendar: .gregorian)
+    }
+}

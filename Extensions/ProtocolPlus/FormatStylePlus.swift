@@ -7,12 +7,6 @@
 
 import Foundation
 
-extension FormatStyle where FormatOutput == String {
-    static func + (lhs: Self, rhs: String) -> UnitFormatStyle<Self> {
-        UnitFormatStyle(base: lhs, unit: rhs)
-    }
-}
-
 extension FormatStyle where Self == FloatingPointFormatStyle<Double> {
     
     /// 0-2个小数位, 整数位不分组, 进位规则.down
@@ -30,7 +24,7 @@ extension FormatStyle where Self == FloatingPointFormatStyle<Double> {
     }
     
     /// 转换为色相: 0...1.0之间的值 × 360, 无小数位
-    static var hue: Self {
+    static var hueDegrees: Self {
         number.grouping(.never)
             .precision(.fractionLength(0))
             .scale(360)

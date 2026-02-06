@@ -18,6 +18,14 @@ extension DateInterval {
 
 extension Date {
     
+    /// ISO8601日期格式: "yyyy-MM-dd'T'HH:mm:ss"
+    fileprivate static let iso8601Formatter = ISO8601DateFormatter.make {
+        $0.timeZone = TimeZone(secondsFromGMT: 0)
+        $0.formatOptions = [
+            .withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime
+        ]
+    }
+    
     static func millisecondsSince1970(_ interval: Int) -> Date {
         Date(millisecondsSince1970: interval.double)
     }
@@ -40,7 +48,7 @@ extension Date {
             .minute(.twoDigits)
             .second(.twoDigits)
             .secondFraction(.fractional(3))
-            .transform(formatted)
+            .format(self)
     }
     
     /// 转换为GCD使用的绝对时间
@@ -139,15 +147,6 @@ func + (_ lhs: DateComponents, _ rhs: Date) -> Date { rhs + lhs }
 
 // Date - DateComponents
 func - (_ lhs: Date, _ rhs: DateComponents) -> Date { lhs + (-rhs) }
-
-// MARK: - __________ TimeZone __________
-extension TimeZone {
-	
-	/// 北京时间 GMT+8
-	/// TimeZone(identifier: "Asia/Shanghai")
-	/// TimeZone(abbreviation: "GMT+8")
-	static let beijing = TimeZone(secondsFromGMT: 28800).unsafelyUnwrapped
-}
 
 // MARK: - __________ DateComponents __________
 extension DateComponents {

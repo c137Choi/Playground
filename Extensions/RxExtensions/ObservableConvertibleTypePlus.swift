@@ -178,14 +178,14 @@ extension ObservableConvertibleType {
     }
     
     // MARK: - 生命周期事件发生时将指定参数发送给Observers
-    public func on<T, Observer>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer: ObserverType, Observer.Element == T {
+    public func on<T, Observer>(_ lifeCycle: RxLifecycle, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer: ObserverType, Observer.Element == T {
         on(lifeCycle, assign: designated(), to: observers)
     }
-    public func on<T, Observer>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer: ObserverType, Observer.Element == T? {
+    public func on<T, Observer>(_ lifeCycle: RxLifecycle, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer: ObserverType, Observer.Element == T? {
         on(lifeCycle, assign: designated(), to: observers)
     }
     
-    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
+    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycle, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
         
         let designated = designated()
         /// 给observers发送事件
@@ -232,7 +232,7 @@ extension ObservableConvertibleType {
         }
         return observable.do(onNext: onNext, afterNext: afterNext, onError: onError, afterError: afterError, onCompleted: onCompleted, afterCompleted: afterCompleted, onSubscribe: onSubscribe, onSubscribed: onSubscribed, onDispose: onDispose)
     }
-    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycleLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
+    public func on<T, Observers: Sequence>(_ lifeCycle: RxLifecycle, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
         
         let designated = designated()
         /// 给observers发送事件
@@ -280,14 +280,14 @@ extension ObservableConvertibleType {
         return observable.do(onNext: onNext, afterNext: afterNext, onError: onError, afterError: afterError, onCompleted: onCompleted, afterCompleted: afterCompleted, onSubscribe: onSubscribe, onSubscribed: onSubscribed, onDispose: onDispose)
     }
     
-    // MARK: - 指定事件(EventLite)发生时将指定参数发送给Observers
-    public func on<T, Observer: ObserverType>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer.Element == T {
+    // MARK: - 指定事件(RxEventLite)发生时将指定参数发送给Observers
+    public func on<T, Observer: ObserverType>(event: RxEventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer.Element == T {
         on(event: event, assign: designated(), to: observers)
     }
-    public func on<T, Observer: ObserverType>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer.Element == T? {
+    public func on<T, Observer: ObserverType>(event: RxEventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Observer.Element == T? {
         on(event: event, assign: designated(), to: observers)
     }
-    public func on<T, Observers: Sequence>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
+    public func on<T, Observers: Sequence>(event: RxEventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T {
         let designated = designated()
         let onNextEvent: (Event<Self.Element>) throws -> Void = { rxEvent in
             /// 给observers发送事件
@@ -313,7 +313,7 @@ extension ObservableConvertibleType {
             .do(onNext: onNextEvent)
             .dematerialize()
     }
-    public func on<T, Observers: Sequence>(event: EventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
+    public func on<T, Observers: Sequence>(event: RxEventLite, assign designated: @escaping @autoclosure () -> T, to observers: Observers) -> RxObservable<Element> where Observers.Element: ObserverType, Observers.Element.Element == T? {
         let designated = designated()
         let onNextEvent: (Event<Self.Element>) throws -> Void = { rxEvent in
             /// 给observers发送事件
@@ -340,7 +340,7 @@ extension ObservableConvertibleType {
             .dematerialize()
     }
     
-    // MARK: - 指定事件发生时将指定参数发送给Observers | 只匹配.next和.completed事件(参见RxSwift.Event的Equatable协议实现)
+    // MARK: - 指定事件发生时将指定参数发送给Observers | 只匹配.next和.completed事件(参见RxEvent的Equatable协议实现)
     public func on<T, Observer: ObserverType>(event: Event<Element>, assign designated: @escaping @autoclosure () -> T, to observers: Observer...) -> RxObservable<Element> where Element: Equatable, Observer.Element == T {
         on(event: event, assign: designated(), to: observers)
     }

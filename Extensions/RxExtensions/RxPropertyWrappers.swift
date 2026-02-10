@@ -87,7 +87,7 @@ class Variable<Wrapped>: ObservableType {
         relay.skip(1)
     }
     
-    func asObservable() -> RxSwift.RxObservable<Wrapped> {
+    func asObservable() -> RxObservable<Wrapped> {
         relay.asObservable()
     }
     
@@ -241,7 +241,7 @@ struct WeakVariable<Wrapped: AnyObject>: ObservableType {
         self.weakReference = wrappedValue
     }
     
-    func asObservable() -> RxSwift.RxObservable<Wrapped?> {
+    func asObservable() -> RxObservable<Wrapped?> {
         subject.startWith(weakReference)
     }
     

@@ -9,8 +9,19 @@ import RxSwift
 import RxCocoa
 import Combine
 
-/// Rx序列生命周期(简化版)
-public enum RxLifecycleLite {
+public typealias RxEvent = RxSwift.Event
+public typealias RxError = RxSwift.RxError
+public typealias RxObservable = RxSwift.RxObservable
+
+/// RxEvent类型的简化版
+@frozen public enum RxEventLite {
+    case next
+    case error
+    case completed
+}
+
+/// Rx序列生命周期
+public enum RxLifecycle {
     case next
     case afterNext
     case error
@@ -22,31 +33,11 @@ public enum RxLifecycleLite {
     case dispose
 }
 
-///// Rx序列生命周期(暂未启用)
-//public enum RxLifecycle<Element> {
-//    case next(Element)
-//    case afterNext(Element)
-//    case error(Swift.Error)
-//    case afterError(Swift.Error)
-//    case completed
-//    case afterCompleted
-//    case subscribe
-//    case subscribed
-//    case dispose
-//}
-
-/// RxSwift.Event<Element>类型的简化版
-@frozen public enum EventLite {
-    case next
-    case error
-    case completed
-}
-
-/// 扩展RxSwift.Event遵循Equatable协议 | 其Element同时必须是Equatable
-extension RxSwift.Event: @retroactive Equatable where Element: Equatable {
+/// 扩展RxEvent遵循Equatable协议 | 其Element同时必须是Equatable
+extension RxEvent: @retroactive Equatable where Element: Equatable {
     
     /// 只对比.next和.completed事件, 因为Error协议无法对比, 故其他情况一律返回false
-    public static func == (lhs: RxSwift.Event<Element>, rhs: RxSwift.Event<Element>) -> Bool {
+    public static func == (lhs: RxEvent<Element>, rhs: RxEvent<Element>) -> Bool {
         switch (lhs, rhs) {
         case (.next(let leftElement), .next(let rightElement)):
             return leftElement == rightElement

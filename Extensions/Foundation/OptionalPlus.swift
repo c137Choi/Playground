@@ -88,27 +88,14 @@ extension Optional {
     /// 解包->执行Closure->更新自身的值
     /// 普通的unwrap方法不会触发通知
     /// - Parameters:
-    ///   - onUpdate: 执行前回调
-    ///   - onUpdated: 执行后回调
-    ///   - execute: 执行的闭包
-    ///   - failed: 失败回调
-    /// - Returns: 解包后的值
+    ///   - update: 执行的闭包
+    /// - Returns: 更新后的值
     @discardableResult
-    mutating func mutating(
-        onUpdate: ((Wrapped) -> Void)? = nil,
-        onUpdated: ((Wrapped) -> Void)? = nil,
-        execute: (inout Wrapped) throws -> Void,
-        failed: SimpleCallback = {}) rethrows -> Wrapped?
-    {
-        guard var wrapped = self else {
-            failed()
-            return nil
-        }
-        onUpdate?(wrapped)
-        try execute(&wrapped)
-        onUpdated?(wrapped)
-        self = wrapped
-        return wrapped
+    mutating func mutating(update: (inout Wrapped) throws -> Void) rethrows -> Wrapped? {
+        guard var pending = self else { return nil }
+        try update(&pending)
+        self = pending
+        return pending
     }
     
     /// 如果不为空则以解包后的值作为入参执行闭包

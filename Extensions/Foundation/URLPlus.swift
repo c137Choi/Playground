@@ -36,8 +36,11 @@ extension URL {
     
     /// scheme为https或http的URL
     var httpURL: URL? {
-        guard let scheme = scheme?.lowercased() else { return nil }
-        guard scheme == "https" || scheme == "http" else { return nil }
-        return self
+        switch scheme?.lowercased() {
+        case "https", "http":
+            return self
+        default:
+            return nil
+        }
     }
 }

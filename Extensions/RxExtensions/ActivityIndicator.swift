@@ -116,6 +116,10 @@ extension ObservableConvertibleType {
     public func trackActivity(_ activityIndicator: ActivityIndicator) -> RxObservable<Element> {
         activityIndicator.trackActivityOfObservable(self)
     }
+    
+    public func intercept(_ progressIndicator: ProgressIndicator) -> RxObservable<Element> {
+        progressIndicator.track(self)
+    }
 }
 extension Completable {
     

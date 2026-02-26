@@ -106,25 +106,7 @@ public extension Reactive where Base: AnyObject {
     }
 }
 
-// MARK: - Trackers Protocol
-protocol ProgressTrackable {
-    var progress: Double { get }
-}
-
-protocol ProgressTracker: AnyObject {
-    func trackProgress(_ result: Result<Double, Error>)
-}
-
-final class AnyProgressTracker: ProgressTracker {
-    let trackingProgress: (Result<Double, Error>) -> Void
-    init(trackingProgress: @escaping (Result<Double, Error>) -> Void) {
-        self.trackingProgress = trackingProgress
-    }
-    func trackProgress(_ result: Result<Double, Error>) {
-        self.trackingProgress(result)
-    }
-}
-
+// MARK: - Protocols
 protocol ErrorTracker: UIResponder {
     func trackError(_ error: Error?, isFatal: Bool)
 }
@@ -216,12 +198,12 @@ extension ObservableConvertibleType {
     }
 }
 
-extension ObservableConvertibleType where Element: ProgressTrackable {
+extension ObservableConvertibleType where Element: ProgressType {
     
     func trackProgress(_ tracker: any ProgressTracker) -> RxObservable<Element> {
         observable.do {
             [weak tracker] element in
-            tracker?.trackProgress(.success(element.progress))
+            tracker?.trackProgress(.success(element.fractionCompleted))
         } onError: {
             [weak tracker] error in
             tracker?.trackProgress(.failure(error))

@@ -112,8 +112,17 @@ protocol ProgressTrackable {
 }
 
 protocol ProgressTracker: AnyObject {
-    /// 如果progress为空, 则表示未完成
-    func trackProgress(_ progress: Double?)
+    func trackProgress(_ result: Result<Double, Error>)
+}
+
+final class AnyProgressTracker: ProgressTracker {
+    let trackingProgress: (Result<Double, Error>) -> Void
+    init(trackingProgress: @escaping (Result<Double, Error>) -> Void) {
+        self.trackingProgress = trackingProgress
+    }
+    func trackProgress(_ result: Result<Double, Error>) {
+        self.trackingProgress(result)
+    }
 }
 
 protocol ErrorTracker: UIResponder {
@@ -212,13 +221,13 @@ extension ObservableConvertibleType where Element: ProgressTrackable {
     func trackProgress(_ tracker: any ProgressTracker) -> RxObservable<Element> {
         observable.do {
             [weak tracker] element in
-            tracker?.trackProgress(element.progress)
+            tracker?.trackProgress(.success(element.progress))
         } onError: {
-            [weak tracker] _ in
-            tracker?.trackProgress(.none)
+            [weak tracker] error in
+            tracker?.trackProgress(.failure(error))
         } onCompleted: {
             [weak tracker] in
-            tracker?.trackProgress(1.0)
+            tracker?.trackProgress(.success(1.0))
         }
     }
 }

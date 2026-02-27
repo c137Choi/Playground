@@ -9,14 +9,19 @@ import Foundation
 
 extension URLComponents {
     
-    /// 初始化
-    /// - Parameters:
-    ///   - encodeHost: 是否给传入的host编码
-    init(scheme: String?, host: String?, encodeHost: Bool = true) {
+    init(scheme: String?, host: String?) {
         self.init()
         self.scheme = scheme
-        self.host = host.flatMap {
-            encodeHost ? $0.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) : $0
+        self.host = host?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+    }
+    
+    init(scheme: String?, encodedHost: String?) {
+        self.init()
+        self.scheme = scheme
+        if #available(iOS 16, *) {
+            self.encodedHost = encodedHost
+        } else {
+            self.host = encodedHost
         }
     }
 }

@@ -6,6 +6,14 @@
 
 import Foundation
 
+/// UnkeyedDecodingContainer跳过解码失败条目会用到
+public struct VoidCodable: Codable {
+    public func encode(to encoder: Encoder) throws {}
+    public init(from decoder: Decoder) throws {
+        _ = try decoder.singleValueContainer()
+    }
+}
+
 // MARK: - 给无法解析的枚举一个默认值
 protocol CodableEnumeration: RawRepresentable, Codable where RawValue: Codable {
     static var defaultCase: Self { get }

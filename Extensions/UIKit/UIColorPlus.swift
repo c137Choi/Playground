@@ -143,8 +143,13 @@ extension UIColor {
     
     /// XY坐标创建颜色
     convenience init(x: Double, y: Double) {
-        let rgba = ColorSpace.adobeRGB.color(x: x, y: y)
-        self.init(rgba: rgba)
+        /// XY都是0的时候返回黑色, 使用下面的方式初始化会是的解析出来的rgb都变成NaN
+        if x == 0, y == 0 {
+            self.init(red: 0, green: 0, blue: 0, alpha: 1.0)
+        } else {
+            let rgba = ColorSpace.adobeRGB.color(x: x, y: y)
+            self.init(rgba: rgba)
+        }
     }
     
     fileprivate convenience init(legacyX x: Double, legacyY y: Double) {

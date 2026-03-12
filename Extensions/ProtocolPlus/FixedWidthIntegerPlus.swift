@@ -15,7 +15,7 @@ extension FixedWidthInteger {
     }
     
     /// 支持的Int范围
-    static var intRange: ClosedRange<Int> {
+    static var intRange: ClosedIntRange {
         range.intRange
     }
     

@@ -58,11 +58,11 @@ extension ClosedRange where Bound == Int {
     }
     
     /// 将范围映射成索引
-    var indexRange: ClosedRange<Int> {
+    var indexRange: ClosedIntRange {
         lowerBound.index...upperBound.index
     }
     
-    var numberRange: ClosedRange<Int> {
+    var numberRange: ClosedIntRange {
         lowerBound.number...upperBound.number
     }
 }
@@ -200,12 +200,12 @@ extension ClosedRange where Bound: BinaryInteger {
     }
     
     /// 转换成Double范围
-    var doubleRange: ClosedRange<Double> {
+    var doubleRange: ClosedDoubleRange {
         lowerBound.double...upperBound.double
     }
     
     /// 转换成Int范围
-    var intRange: ClosedRange<Int> {
+    var intRange: ClosedIntRange {
         lowerBound.int...upperBound.int
     }
     
@@ -372,7 +372,7 @@ extension ClosedRange: @retroactive Comparable where Bound: Comparable {
 extension ClosedRange where Bound: Strideable, Bound.Stride: SignedInteger {
     
     /// Bound类型的最后一个Index
-    /// 例: ClosedRange<Int>(0..<10).lastBoundIndex == Int(9)
+    /// 例: ClosedIntRange(0..<10).lastBoundIndex == Int(9)
     /// 例: ClosedRange<UInt8>(0..<10).lastBoundIndex == UInt8(9)
     public var lastBoundIndex: Bound {
         if case .inRange(let boundIndex) = lastIndex {
@@ -399,7 +399,7 @@ extension ClosedRange {
 }
 
 /// 同ClosedRange.SubSequence类型
-extension Slice where Base == ClosedRange<Int> {
+extension Slice where Base == ClosedIntRange {
     
     /// 方便将Algorithms模块中
     /// chunks(ofCount count: Int) -> ChunksOfCountCollection<Self>

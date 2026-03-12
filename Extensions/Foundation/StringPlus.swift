@@ -457,7 +457,7 @@ extension Substring {
 
 extension String {
 	
-	subscript (_ range: ClosedRange<Int>) -> String {
+	subscript (_ range: ClosedIntRange) -> String {
 		get {
 			guard range.upperBound < count else {
 				return ""

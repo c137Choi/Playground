@@ -82,12 +82,11 @@ extension UIDeviceOrientation {
         } else {
             if #available(iOS 13.0, *) {
                 guard let keyWindow = UIApplication.keyWindow else {
-                    return self
+                    return defaultRegularOrientation
                 }
                 if let windowScene = keyWindow.windowScene {
                     return windowScene.interfaceOrientation.regularDeviceOrientation
                 } else {
-                    assertionFailure("!Not suppose to happen, chek your windowScene")
                     return defaultRegularOrientation
                 }
             } else {

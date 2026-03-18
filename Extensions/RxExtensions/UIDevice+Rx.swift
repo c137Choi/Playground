@@ -20,14 +20,19 @@ extension Reactive where Base == UIDevice {
     }
     
     static var orientation: RxObservable<UIDeviceOrientation> {
+        let beginGeneratingDeviceOrientationNotifications: SimpleCallback = {
+            Dispatch.once {
+                UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+            }
+        }
         /// 注: 不要再.do(onDispose: UIDevice.current.endGeneratingDeviceOrientationNotifications)
-        NotificationCenter.default.rx.notification(UIDevice.orientationDidChangeNotification)
+        return NotificationCenter.default.rx.notification(UIDevice.orientationDidChangeNotification)
             .map(\.object)
             .asOptional(UIDevice.self)
             .unwrapped
             .map(\.orientation)
             .startWith(UIDevice.current.orientation)
-            .do(onSubscribe: UIDevice.current.beginGeneratingDeviceOrientationNotifications)
+            .do(onSubscribe: beginGeneratingDeviceOrientationNotifications)
     }
     
 }

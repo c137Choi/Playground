@@ -156,7 +156,7 @@ extension Clampped: Codable where T: Codable {}
         set {
             if overflow {
                 let distance = upperBound - lowerBound
-                do throws(RangeBoundError) {
+                do throws(ClosedRangeBoundError) {
                     super.wrappedValue = try range.constrainedResult(newValue).get()
                 } catch {
                     switch error {

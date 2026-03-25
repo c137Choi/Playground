@@ -186,7 +186,7 @@ final class CycledVariable<T>: Variable<T> where T: Comparable {
     /// 范围
     let range: ClosedRange<T>
     /// 用于发送范围错误事件
-    private let rangeBoundErrorSubject = PublishSubject<RangeBoundError>()
+    private let rangeBoundErrorSubject = PublishSubject<ClosedRangeBoundError>()
     /// 初始化方法
     init(wrappedValue: T, range: ClosedRange<T>) {
         self.range = range
@@ -201,7 +201,7 @@ final class CycledVariable<T>: Variable<T> where T: Comparable {
     override var wrappedValue: T {
         get { super.wrappedValue }
         set {
-            do throws(RangeBoundError) {
+            do throws(ClosedRangeBoundError) {
                 super.wrappedValue = try range.constrainedResult(newValue).get()
             } catch {
                 switch error {
@@ -216,7 +216,7 @@ final class CycledVariable<T>: Variable<T> where T: Comparable {
         }
     }
     
-    var rangeBoundError: RxObservable<RangeBoundError> {
+    var rangeBoundError: RxObservable<ClosedRangeBoundError> {
         rangeBoundErrorSubject.observable
     }
 }

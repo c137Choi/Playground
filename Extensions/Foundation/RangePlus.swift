@@ -6,6 +6,44 @@
 
 import Foundation
 
+enum RangeBoundError: Error {
+    case emptyRange
+    case tooLow
+    case tooHigh
+}
+
+extension Range {
+    
+    /// 传入Bound, 返回存在于Range中的Bound. 如: 2 -> (0..<2) -> 1
+    func constrainedBound(_ bound: Bound) -> Bound? where Bound: Strideable, Bound.Stride: SignedInteger {
+        do throws(RangeBoundError) {
+            return try constrainedResult(bound).get()
+        } catch {
+            switch error {
+            case .emptyRange:
+                return nil
+            case .tooLow:
+                return lowerBound
+            case .tooHigh:
+                let index = index(before: endIndex)
+                return self[index]
+            }
+        }
+    }
+    
+    func constrainedResult(_ bound: Bound) -> Result<Bound, RangeBoundError> {
+        if isEmpty {
+            return .failure(.emptyRange)
+        } else {
+            if bound < lowerBound {
+                return .failure(.tooLow)
+            } else {
+                return contains(bound) ? .success(bound) : .failure(.tooHigh)
+            }
+        }
+    }
+}
+
 extension Range where Bound: Strideable, Bound.Stride: SignedInteger {
     
     /// 返回最后一个index | Range非空时有效(如果isEmpty还调用index(before:)方法程序会崩溃)

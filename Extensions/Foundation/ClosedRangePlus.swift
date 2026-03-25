@@ -113,7 +113,7 @@ extension ClosedRange {
     /// - Parameter value: 传入值
     /// - Returns: 进度百分比<0~1.0>
     public func progress(_ value: Bound) -> Bound where Bound: BinaryFloatingPoint {
-        do throws(RangeBoundError) {
+        do throws(ClosedRangeBoundError) {
             /// Range宽度
             let rangeWidth = width
             /// 除数不能为零
@@ -141,15 +141,15 @@ extension ClosedRange {
     ///   - rhs: 值
     /// - Returns: 限制在范围内的值
     static func <<(lhs: Self, rhs: Bound) -> Bound {
-        lhs.constrainedValue(rhs)
+        lhs.constrainedBound(rhs)
     }
     
     /// 将传入的值限制在范围内部 | 过大或过小则取相应的极值
-    /// - Parameter value: 需要限制的传入值
+    /// - Parameter bound: 需要限制的传入值
     /// - Returns: 限制过后的值
-    func constrainedValue(_ value: Bound) -> Bound {
-        do throws(RangeBoundError) {
-            return try constrainedResult(value).get()
+    func constrainedBound(_ bound: Bound) -> Bound {
+        do throws(ClosedRangeBoundError) {
+            return try constrainedResult(bound).get()
         } catch {
             switch error {
             case .tooLow:
@@ -163,7 +163,7 @@ extension ClosedRange {
     /// 将传入值限制在范围内
     /// - Parameter value: 需要限制的值
     /// - Returns: Result包含有效值或错误
-    func constrainedResult(_ value: Bound) -> Result<Bound, RangeBoundError> {
+    func constrainedResult(_ value: Bound) -> Result<Bound, ClosedRangeBoundError> {
         if value < lowerBound {
             return .failure(.tooLow)
         } else if value > upperBound {
@@ -240,7 +240,7 @@ extension ClosedRange where Bound: BinaryFloatingPoint {
     ///   - value: 传入值
     /// - Returns: 最接近分段点的值
     public func segmentedValue(segments: Double, for value: Bound) -> Bound {
-        let constrainedValue = constrainedValue(value)
+        let constrainedValue = constrainedBound(value)
         guard segments > 0 else {
             return constrainedValue
         }
@@ -416,7 +416,7 @@ enum RangeBound {
 }
 
 /// 边界错误
-enum RangeBoundError: Error {
+enum ClosedRangeBoundError: Error {
     case tooLow
     case tooHigh
 }

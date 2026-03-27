@@ -126,11 +126,13 @@ extension UIColor {
     
     /// 从色温创建颜色
     /// - Parameter temperature: 色温
-    /// https://github.com/davidf2281/ColorTempToRGB
-    /// https://tannerhelland.com/2012/09/18/convert-temperature-rgb-algorithm-code.html
     convenience init(temperature: CGFloat) {
-        let components = UIColor.componentsForColorTemperature(temperature)
-        self.init(red: components.red, green: components.green, blue: components.blue, alpha: 1.0)
+        let rgb = RGB(temperature: temperature)
+        self.init(rgb: rgb)
+    }
+    
+    convenience init(rgb: RGB) {
+        self.init(red: rgb.red, green: rgb.green, blue: rgb.blue, alpha: 1.0)
     }
     
     convenience init(rgba: RGBA) {
@@ -326,18 +328,6 @@ extension UIColor {
             blue = 255
         }
         return UIColor(red: red / 255, green: green / 255, blue: blue / 255, alpha: 1.0)
-    }
-    
-    static func componentsForColorTemperature(_ temperature: CGFloat) -> (red: CGFloat, green: CGFloat, blue: CGFloat) {
-        let range = UInt8.range.cgFloatRange
-        let percentKelvin = temperature / 100
-        let red, green, blue: CGFloat
-        
-        red = range << (percentKelvin <= 66 ? 255 : (329.698727446 * pow(percentKelvin - 60, -0.1332047592)))
-        green = range << (percentKelvin <= 66 ? (99.4708025861 * log(percentKelvin) - 161.1195681661) : 288.1221695283 * pow(percentKelvin - 60, -0.0755148492))
-        blue = range << (percentKelvin >= 66 ? 255 : (percentKelvin <= 19 ? 0 : 138.5177312231 * log(percentKelvin - 10) - 305.0447927307))
-        
-        return (red: red / 255.0, green: green / 255.0, blue: blue / 255.0)
     }
     
     // MARK: - __________ Instance __________

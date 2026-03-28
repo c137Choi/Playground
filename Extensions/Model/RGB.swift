@@ -18,7 +18,27 @@ struct RGB {
 }
 
 extension RGB {
-    
+    /// 黑
+    static let black = RGB(red: 0, green: 0, blue: 0)
+    /// 白
+    static let white = RGB(red: 1, green: 1, blue: 1)
+    /// 红
+    static let red = RGB(red: 1, green: 0, blue: 0)
+    /// 绿
+    static let green = RGB(red: 0, green: 1, blue: 0)
+    /// 蓝
+    static let blue = RGB(red: 0, green: 0, blue: 1)
+    /// 青(绿蓝Max)
+    static let cyan = RGB(red: 0, green: 1, blue: 1)
+    /// 品(红蓝Max)
+    static let magenta = RGB(red: 1, green: 0, blue: 1)
+    /// 黄(红绿Max)
+    static let yellow = RGB(red: 1, green: 1, blue: 0)
+    /// 琥珀色(红Max + 绿0.7490)
+    static let amber = RGB(red: 1, green: 0xBF.double / 255.0, blue: 0)
+    /// 浅青柠色(红0.7490 + 绿Max)
+    static let lightLime = RGB(red: 0xBF.double / 255.0, green: 1.0, blue: 0.0)
+
     /// https://github.com/davidf2281/ColorTempToRGB
     /// https://tannerhelland.com/2012/09/18/convert-temperature-rgb-algorithm-code.html
     init(temperature: Double) {

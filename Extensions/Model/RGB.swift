@@ -34,11 +34,17 @@ extension RGB {
     static let magenta = RGB(red: 1, green: 0, blue: 1)
     /// 黄(红绿Max)
     static let yellow = RGB(red: 1, green: 1, blue: 0)
-    /// 琥珀色(红Max + 绿0.7490)
-    static let amber = RGB(red: 1, green: 0xBF.double / 255.0, blue: 0)
-    /// 浅青柠色(红0.7490 + 绿Max)
-    static let lightLime = RGB(red: 0xBF.double / 255.0, green: 1.0, blue: 0.0)
-
+    /// 琥珀色
+    static let amber = RGB(bitRed: 0xFF, bitGreen: 0xBF, bitBlue: 0)
+    /// 浅青柠色
+    static let lightLime = RGB(bitRed: 0xBF, bitGreen: 0xFF, bitBlue: 0)
+    
+    init(bitRed: UInt8, bitGreen: UInt8, bitBlue: UInt8) {
+        self.red = bitRed.double / 255.0
+        self.green = bitGreen.double / 255.0
+        self.blue = bitBlue.double / 255.0
+    }
+    
     /// https://github.com/davidf2281/ColorTempToRGB
     /// https://tannerhelland.com/2012/09/18/convert-temperature-rgb-algorithm-code.html
     init(temperature: Double) {

@@ -58,6 +58,40 @@ extension RGB {
         self.blue = range.progress(blue)
     }
     
+    init(hue: Double, saturation: Double, brightness: Double) {
+        let hPrime = Int(hue * 6)
+        let f = hue * 6 - CGFloat(hPrime)
+        let p = brightness * (1 - saturation)
+        let q = brightness * (1 - f * saturation)
+        let t = brightness * (1 - (1 - f) * saturation)
+        switch hPrime % 6 {
+        case 0:
+            self.red = brightness
+            self.green = t
+            self.blue = p
+        case 1:
+            self.red = q
+            self.green = brightness
+            self.blue = p
+        case 2:
+            self.red = p
+            self.green = brightness
+            self.blue = t
+        case 3:
+            self.red = p
+            self.green = q
+            self.blue = brightness
+        case 4:
+            self.red = t
+            self.green = p
+            self.blue = brightness
+        default:
+            self.red = brightness
+            self.green = p
+            self.blue = q
+        }
+    }
+    
     /// 最大亮度
     var maxBrightness: Double {
         max(red, green, blue)

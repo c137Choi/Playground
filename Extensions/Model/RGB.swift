@@ -59,12 +59,12 @@ extension RGB {
     }
     
     init(hue: Double, saturation: Double, brightness: Double) {
-        let hPrime = Int(hue * 6)
-        let f = hue * 6 - CGFloat(hPrime)
-        let p = brightness * (1 - saturation)
-        let q = brightness * (1 - f * saturation)
-        let t = brightness * (1 - (1 - f) * saturation)
-        switch hPrime % 6 {
+        let hPrime = hue * 6.0
+        let f = hue * 6.0 - hPrime
+        let p = brightness * (1.0 - saturation)
+        let q = brightness * (1.0 - f * saturation)
+        let t = brightness * (1.0 - (1.0 - f) * saturation)
+        switch hPrime.int % 6 {
         case 0:
             self.red = brightness
             self.green = t

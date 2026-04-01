@@ -17,7 +17,7 @@ extension Numeric {
 // MARK: - __________ Common __________
 
 extension Double {
-    /// 这里储存一份静态属性,避免重复创建Range
+    /// 0...1.0 | 这里储存一份静态属性,避免重复创建Range
     static let percentRange = Double.hotPercentRange
     
     var durationDescription: String {

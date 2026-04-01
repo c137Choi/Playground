@@ -21,6 +21,11 @@ struct PercentClip<T: BinaryFloatingPoint> {
         }
     }
     
+    /// 偏移(范围: -1...1) | 偏左则范围为(-1...0), 偏右则范围为(0...1), 居中则为0
+    var shift: T {
+        signedLower ?? upper ?? 0
+    }
+    
     /// 翻转左侧百分比
     /// 0.6 -> 0.4 | 0.3 -> 0.7
     var reverseLower: T? {

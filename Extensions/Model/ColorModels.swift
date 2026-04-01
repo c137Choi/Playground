@@ -187,9 +187,13 @@ enum ColorSpace {
         return XY(uncheckedX: xyY.x, uncheckedY: xyY.y)
     }
     
-    func color(x: Double, y: Double) -> RGBA {
+    func rgb(x: Double, y: Double) -> RGB {
+        /// XY都是0的时候返回黑色, 否则解析出来的rgb都变成NaN
+        if x == 0, y == 0 {
+            return .black
+        }
         let maxY = findMaximumY(x, y: y)
-        return colorFromXYY(x, y, maxY).clamped
+        return colorFromXYY(x, y, maxY)
     }
     
     private func xyYFromColor(_ color: RGBA) -> (x: Double, y: Double, Y: Double) {
@@ -222,18 +226,18 @@ enum ColorSpace {
         return bri
     }
     
-    private func colorFromXYY(_ x: Double, _ y: Double, _ Y: Double) -> RGBA {
+    private func colorFromXYY(_ x: Double, _ y: Double, _ Y: Double) -> RGB {
         let z = 1.0 - x - y
         let Yy = Y / y
         return colorFromXYZ(Yy * x, Y, Yy * z)
     }
     
-    private func colorFromXYZ(_ x: Double, _ y: Double, _ z: Double) -> RGBA {
+    private func colorFromXYZ(_ x: Double, _ y: Double, _ z: Double) -> RGB {
         let elements = matrixInv.timesArray([x, y, z])
         let red = gammaCorrection.transform(elements[0])
         let green = gammaCorrection.transform(elements[1])
         let blue = gammaCorrection.transform(elements[2])
-        return RGBA(red: red, green: green, blue: blue, alpha: 1)
+        return RGB(red: red, green: green, blue: blue)
     }
 }
 

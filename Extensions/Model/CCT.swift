@@ -9,15 +9,17 @@ import UIKit
 
 /// 色温+红绿
 struct CCT {
+    /// 色温
     var temperature: Double
-    var gm: Int?
+    /// 红绿补偿偏移(范围: 0...1)
+    var normalizedGM: Double?
 }
 extension CCT: Hashable {}
 extension CCT: Configurable {}
 extension CCT {
     
-    var uiColor: UIColor {
-        UIColor(temperature: temperature)
+    var rgb: RGB {
+        RGB(temperature: temperature, normalizedGM: normalizedGM)
     }
 }
 

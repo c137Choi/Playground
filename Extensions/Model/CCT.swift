@@ -11,7 +11,7 @@ import UIKit
 struct CCT {
     /// 色温
     var temperature: Double
-    /// 红绿补偿偏移(范围: 0...1)
+    /// 红绿补偿(范围: 0...1)
     var normalizedGM: Double?
 }
 extension CCT: Hashable {}
@@ -19,7 +19,7 @@ extension CCT: Configurable {}
 extension CCT {
     
     var rgb: RGB {
-        RGB(temperature: temperature, normalizedGM: normalizedGM)
+        RGB(cct: self)
     }
 }
 

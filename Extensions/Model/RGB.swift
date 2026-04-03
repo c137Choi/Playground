@@ -53,6 +53,10 @@ extension RGB {
         self.init(red: bitRed.double / 255.0, green: bitGreen.double / 255.0, blue: bitBlue.double / 255.0)
     }
     
+    init(cct: CCT) {
+        self.init(temperature: cct.temperature, normalizedGM: cct.normalizedGM)
+    }
+    
     /// https://github.com/davidf2281/ColorTempToRGB
     /// https://tannerhelland.com/2012/09/18/convert-temperature-rgb-algorithm-code.html
     init(temperature: Double, normalizedGM: Double? = nil) {

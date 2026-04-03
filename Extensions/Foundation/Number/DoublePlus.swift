@@ -20,6 +20,10 @@ extension Double {
     /// 0...1.0 | 这里储存一份静态属性,避免重复创建Range
     static let percentRange = Double.hotPercentRange
     
+    var percentClip: PercentClip {
+        PercentClip(percent: self)
+    }
+    
     var durationDescription: String {
         int.durationDescription
     }

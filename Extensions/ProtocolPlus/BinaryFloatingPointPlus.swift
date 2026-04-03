@@ -14,22 +14,6 @@ extension Optional where Wrapped: BinaryFloatingPoint {
 
 extension BinaryFloatingPoint {
     
-    /// 分割百分比: self必须在0...1.0之间, 返回左右两个百分比
-    /// 通常用于滑块百分比分割
-    /// 往左, 左侧百分比增大, 右侧百分比为空
-    /// 往右, 右侧百分比增大, 左侧百分比为空
-    /// 居中时(0.5), 两侧百分比都为空
-    var percentClip: PercentClip<Self> {
-        let percentage = Self.hotPercentRange << self
-        if self < 0.5 {
-            return PercentClip(lower: 1.0 - percentage / 0.5, upper: nil)
-        } else if self == 0.5 {
-            return PercentClip(lower: nil, upper: nil)
-        } else {
-            return PercentClip(lower: nil, upper: (percentage - 0.5) / 0.5)
-        }
-    }
-    
     /// 小数部分>=0.999的情况直接进一位
     var rectifiedInt: Int {
         rectified.int

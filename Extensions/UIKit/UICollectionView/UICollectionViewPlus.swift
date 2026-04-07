@@ -25,10 +25,17 @@ extension UICollectionView {
         }
     }
     
-    /// 刷新项目
+    /// 刷新项目(无动画)
     /// - Parameter indexPath: 要刷新的IndexPath
-    func reloadItem(at indexPath: IndexPath) {
-        reloadItems(at: [indexPath])
+    func reloadItem(at indexPath: IndexPath, animated: Bool = true) {
+        let indexPathes = [indexPath]
+        if animated {
+            reloadItems(at: indexPathes)
+        } else {
+            UIView.performWithoutAnimation {
+                reloadItems(at: indexPathes)
+            }
+        }
     }
     
     /// 判断分组内的Item是否全部选中

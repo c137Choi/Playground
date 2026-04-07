@@ -56,3 +56,13 @@ extension Collection {
         !isEmpty
     }
 }
+
+extension Collection where Index == Int {
+    
+    /// 从index处根剧自身count生成新范围
+    /// - Parameter index: 索引处
+    /// - Returns: index..<(index + count)
+    func indexRange(from index: Index) -> Range<Index> {
+        index..<(index + count)
+    }
+}

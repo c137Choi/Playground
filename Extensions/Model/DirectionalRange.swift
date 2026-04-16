@@ -7,15 +7,14 @@
 
 import Foundation
 
-enum RangeDirection: CustomStringConvertible {
-    case forward
+enum RangeDirection: Int {
+    case forward = 0
     case backward
-    
-    var description: String {
-        switch self {
-        case .forward: "正向"
-        case .backward: "反向"
-        }
+}
+extension RangeDirection: RawRepresentable {}
+extension RangeDirection: CustomDebugStringConvertible {
+    var debugDescription: String {
+        self == .forward ? "正向" : "反向"
     }
 }
 
@@ -38,24 +37,12 @@ extension DirectionalRange {
         self.direction = .forward
         self.range = range
     }
-    
-    var isNarrow: Bool {
-        range.isNarrow
-    }
 }
 
-extension DirectionalRange: CustomStringConvertible {
+extension DirectionalRange: CustomDebugStringConvertible {
     
-    var description: String {
-        "\(direction.description), 范围: \(range.description)"
-    }
-}
-
-extension DirectionalRange where Bound: AdditiveArithmetic {
-    
-    /// 返回ClosedRange的宽度(上限-下限)
-    var width: Bound {
-        range.width
+    var debugDescription: String {
+        "\(direction.debugDescription), 范围: \(range.description)"
     }
 }
 

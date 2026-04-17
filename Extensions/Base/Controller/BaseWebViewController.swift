@@ -22,6 +22,8 @@ class BaseWebViewController: BaseViewController, WKUIDelegate, WKNavigationDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        /// 这里需要手动更新一次webview.frame否则初始frame为.zero在控制器初始化时直接调用load方法会有无法载入网页的情况
+        webview.frame = view.bounds
         view.addSubviews(webview, progressView)
         
         /// 观察网页标题

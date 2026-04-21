@@ -38,9 +38,9 @@ extension Double {
             /// 步长小于1时必须经过下面的处理过程否则会有精度丢失的问题
             if increment < 1.0, fractionLength > 0 {
                 /// 将参数分成整数和小数两个部分
-                let modf = modf
+                let modf = modf(self)
                 /// 整数部分转成Int
-                let integerPart = "\(Int(modf.0))"
+                let integerPart = modf.0.int.string
                 /// 小数部分根剧increment取整
                 let fractionPart = (modf.1 / increment).rounded(.towardZero) * increment
                 /// 格式化后的小数部分(小数部分取绝对值,解决参数为负数时返回-0.xxx而导致的,替换整数部分后字符串错误的问题)

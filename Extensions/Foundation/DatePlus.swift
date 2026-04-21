@@ -54,11 +54,11 @@ extension Date {
     /// 转换为GCD使用的绝对时间
 	var dispatchWallTime: DispatchWallTime {
         /// 将小数切成整数,小数两个部分
-		let modf = timeIntervalSince1970.modf
+		let modf = modf(timeIntervalSince1970)
 		/// 转换秒数
-        let second = modf.integerPart.int
+        let second = modf.0.int
 		/// 转换纳秒数
-        let nanoSecond = Int(modf.fractionalPart * NSEC_PER_SEC.double)
+        let nanoSecond = Int(modf.1 * NSEC_PER_SEC.double)
 		/// 创建timespec结构体
 		let timespec = timespec(tv_sec: second, tv_nsec: nanoSecond)
 		/// 返回绝对时间

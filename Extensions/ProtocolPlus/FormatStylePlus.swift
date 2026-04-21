@@ -39,12 +39,15 @@ extension FormatStyle where Self == FloatingPointFormatStyle<Double> {
 }
 
 extension FormatStyle where Self == FloatingPointFormatStyle<Double>.Percent {
-    /// 无小数位的百分比, 如, 0.9982 -> 99%
-    /// rounded(rule: .down): 解决有多个小数位的情况, 如0.9988, 0.9989都会转换成99%, 如果不加则会转换成100%
+    /// 无小数位的百分比
+    /// 注: 进位规则使用四舍五入toNearestOrAwayFromZero
+    /// 0.9932(99.32的小数部分小于0.5舍掉) -> 99%
+    /// 0.9950(99.50的小数部分等于0.5进位) -> 100%
+    /// 0.9982(99.82的小数部分大于0.5进位) -> 100%
     static var percentage: Self {
         percent.grouping(.never)
+            .rounded(rule: .toNearestOrAwayFromZero)
             .precision(.fractionLength(0))
-            .rounded(rule: .down)
     }
 }
 

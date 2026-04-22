@@ -200,10 +200,6 @@ extension String {
         }
     }
     
-    var decimal: Decimal {
-        Decimal(stringLiteral: self)
-    }
-    
     var characterSet: CharacterSet {
         CharacterSet(charactersIn: self)
     }

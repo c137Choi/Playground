@@ -56,13 +56,13 @@ extension Double {
         let fractionLength = max(0, fractionLength)
         /// 精度
         let precision = NumberFormatStyleConfiguration.Precision.fractionLength(fractionLength)
-        /// 格式化样式
-        let style = FloatingPointFormatStyle<Double>.number
+        /// 格式化
+        return FloatingPointFormatStyle<Double>.number
             .grouping(.never)
             .sign(strategy: .automatic)
             .precision(precision)
             .rounded(rule: rule)
-        return formatted(style)
+            .format(self)
     }
     
     /// Double根剧步长和小数位长度进行格式化

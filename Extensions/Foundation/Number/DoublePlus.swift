@@ -26,14 +26,12 @@ extension Double {
     func rounded(increment: Decimal? = nil) -> Double {
         /// 确保步长非空
         guard let increment else { return self }
-        /// 底数
-        let significand = increment.significand.intValue
-        /// 指数
-        let exponent = increment.exponent
         /// 步长小于1
-        if exponent < 0 {
+        if increment < 1 {
+            /// 底数
+            let significand = increment.significand.intValue
             /// 放大系数
-            let scale = Double.pow(10.0, abs(exponent))
+            let scale = Double.pow(10.0, abs(increment.exponent))
             /// 步长个数
             let incrementCount = Int(self * scale) / significand
             /// 最终小数

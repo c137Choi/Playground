@@ -20,12 +20,57 @@ extension Double {
     /// 0...1.0 | 这里储存一份静态属性,避免重复创建Range
     static let percentRange = Double.hotPercentRange
     
+    /// 按步长取整
+    /// - Parameter increment: 步长
+    /// - Returns: 取整后的浮点数
+    func rounded(increment: Decimal? = nil) -> Double {
+        /// 确保步长非空
+        guard let increment else { return self }
+        /// 底数
+        let significand = increment.significand.intValue
+        /// 指数
+        let exponent = increment.exponent
+        /// 步长小于1
+        if exponent < 0 {
+            /// 放大系数
+            let scale = Double.pow(10.0, abs(exponent))
+            /// 步长个数
+            let incrementCount = Int(self * scale) / significand
+            /// 最终小数
+            return Double(incrementCount * significand) / scale
+        }
+        /// 步长大于1
+        else {
+            let doubleIncrement = increment.doubleValue
+            return Int(self / doubleIncrement).double * doubleIncrement
+        }
+    }
+    
+    /// 格式化成字符串
+    /// - Parameters:
+    ///   - fractionLength: 小数位长度
+    ///   - rule: 进位规则
+    /// - Returns: 格式化后的字符串
+    func formatted(fractionLength: Int, rule: FloatingPointFormatStyle<Double>.Configuration.RoundingRule) -> String {
+        /// 小数位长度(不可为负值所以这里用max方法约束一下)
+        let fractionLength = max(0, fractionLength)
+        /// 精度
+        let precision = NumberFormatStyleConfiguration.Precision.fractionLength(fractionLength)
+        /// 格式化样式
+        let style = FloatingPointFormatStyle<Double>.number
+            .grouping(.never)
+            .sign(strategy: .automatic)
+            .precision(precision)
+            .rounded(rule: rule)
+        return formatted(style)
+    }
+    
     /// Double根剧步长和小数位长度进行格式化
     /// - Parameters:
     ///   - increment: 步长
     ///   - fractionLength: 小数位长度
     /// - Returns: 格式化后的字符串
-    func formatted(increment: Double? = nil, fractionLength: Int) -> String {
+    private func xxFormatted(increment: Double? = nil, fractionLength: Int) -> String {
         /// 小数位长度(不可为负值所以这里用max方法约束一下)
         let fractionLength = max(0, fractionLength)
         /// 基础格式化样式

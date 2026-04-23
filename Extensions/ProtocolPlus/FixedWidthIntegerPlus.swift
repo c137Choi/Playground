@@ -19,6 +19,11 @@ extension FixedWidthInteger {
         range.intRange
     }
     
+    /// Double类型的范围
+    static var doubleRange: ClosedDoubleRange {
+        range.doubleRange
+    }
+    
     /// 支持的范围
     static var range: ClosedRange<Self> {
         min...max

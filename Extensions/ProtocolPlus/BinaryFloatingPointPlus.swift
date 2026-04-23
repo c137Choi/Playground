@@ -25,15 +25,16 @@ extension BinaryFloatingPoint {
     }
     
     var int: Int {
-        let doubleValue = double
-        if doubleValue < Int.min.double {
-            return Int.min
-        }
-        else if doubleValue > Int.max.double {
-            return Int.max
-        }
-        else {
-            return Int(self)
+        do {
+            let constrained = try Int.doubleRange.constrainedResult(double).get()
+            return Int(constrained)
+        } catch {
+            switch error {
+            case .tooLow:
+                return Int.min
+            case .tooHigh:
+                return Int.max
+            }
         }
     }
     

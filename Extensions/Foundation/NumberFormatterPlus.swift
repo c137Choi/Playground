@@ -20,14 +20,6 @@ extension NumberFormatter {
         instance.reset
 	}
 	
-	public static var spellout: NumberFormatter {
-		shared.setup {
-			$0.numberStyle = .spellOut
-			$0.zeroSymbol = "零"
-			$0.locale = .chineseSimplified
-		}
-	}
-	
 	/// 重置NumberFormatter
     fileprivate var reset: NumberFormatter {
         /// 格式化样式

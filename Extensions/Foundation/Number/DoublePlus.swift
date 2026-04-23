@@ -8,17 +8,7 @@
 
 import UIKit
 
-extension Numeric {
-    var spellout: String? {
-        NumberFormatter.spellout.string(for: self)
-    }
-}
-
-// MARK: - __________ Common __________
-
 extension Double {
-    /// 0...1.0 | 这里储存一份静态属性,避免重复创建Range
-    static let percentRange = Double.hotPercentRange
     
     /// 按步长取整
     /// - Parameter increment: 步长
@@ -125,12 +115,8 @@ extension Double {
     
     /// 返回毫秒数
     var milliseconds: Int {
-        Int(self * 1000)
+        (self * 1000).int
     }
-}
-
-// MARK: - __________ Date __________
-extension Double {
     
     /// 计算指定日期元素内的秒数
     /// - Parameter component: 日期元素 | 可处理的枚举: .day, .hour, .minute, .second, .nanosecond
@@ -144,4 +130,7 @@ extension Double {
         }
         return Calendar.gregorian.dateInterval(of: component, for: now).map(\.duration) ?? 0.0
     }
+    
+    /// 0...1.0 | 这里储存一份静态属性,避免重复创建Range
+    static let percentRange = Double.hotPercentRange
 }

@@ -9,18 +9,18 @@ import Foundation
 
 extension FormatStyle where Self == FloatingPointFormatStyle<Double> {
     
-    /// 0-2个小数位, 整数位不分组, 进位规则.down
+    /// 0-2个小数位, 整数位不分组, 进位规则.towardZero
     static var f2: Self {
         number.grouping(.never)
             .precision(.fractionLength(0...2))
-            .rounded(rule: .down)
+            .rounded(rule: .towardZero)
     }
     
-    /// 0-4个小数位, 整数位不分组, 进位规则.down
+    /// 0-4个小数位, 整数位不分组, 进位规则.towardZero
     static var f4: Self {
         number.grouping(.never)
             .precision(.fractionLength(0...4))
-            .rounded(rule: .down)
+            .rounded(rule: .towardZero)
     }
     
     /// 转换为色相: 0...1.0之间的值 × 360, 无小数位
@@ -34,7 +34,7 @@ extension FormatStyle where Self == FloatingPointFormatStyle<Double> {
     static var cct: Self {
         number.grouping(.never)
             .precision(.fractionLength(0))
-            .rounded(rule: .down, increment: 100)
+            .rounded(rule: .towardZero, increment: 100)
     }
 }
 

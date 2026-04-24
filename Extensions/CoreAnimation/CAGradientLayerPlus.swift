@@ -58,6 +58,20 @@ extension CAGradientLayer {
         setColors(colors)
     }
     
+    var direction: CGVector {
+        get {
+            CGVector(start: startPoint, end: endPoint)
+        }
+        set {
+            setDirection(newValue)
+        }
+    }
+    
+    var gradientColors: GradientColors? {
+        get { nil }
+        set { setColors(newValue) }
+    }
+    
     /// 设置渐变方向
     /// - Parameter vector: 方向
     func setDirection(_ vector: CGVector) {
@@ -68,8 +82,8 @@ extension CAGradientLayer {
     
     /// 设置渐变色
     /// - Parameter gradientColors: 渐变色数组
-    func setColors(_ gradientColors: GradientColors) {
-        
+    func setColors(_ gradientColors: GradientColors?) {
+        guard let gradientColors else { return }
         if gradientColors.count == 1 {
             colors = [gradientColors.first, gradientColors.last].unwrapped.map(\.color.cgColor)
         } else {

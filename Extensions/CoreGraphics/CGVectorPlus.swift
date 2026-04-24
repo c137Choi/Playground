@@ -43,37 +43,25 @@ extension CGVector {
 }
 
 extension CGVector {
-    static var up: CGVector {
-        CGVector(dx: 0, dy: -1)
-    }
-    static var down: CGVector {
-        CGVector(dx: 0, dy: 1)
-    }
-    static var left: CGVector {
-        CGVector(dx: -1, dy: 0)
-    }
-    static var right: CGVector {
-        CGVector(dx: 1, dy: 0)
-    }
-    static var topRight: CGVector {
-        up + right
-    }
-    static var bottomRight: CGVector {
-        down + right
-    }
-    static var topLeft: CGVector {
-        up + left
-    }
-    static var bottomLeft: CGVector {
-        down + left
-    }
+    static let up = CGVector(dx: 0, dy: -1)
+    static let down = CGVector(dx: 0, dy: 1)
+    static let left = CGVector(dx: -1, dy: 0)
+    static let right = CGVector(dx: 1, dy: 0)
+    static let topRight = up + right
+    static let bottomRight = down + right
+    static let topLeft = up + left
+    static let bottomLeft = down + left
 }
 
 extension CGVector {
     
+    init(start: CGPoint, end: CGPoint) {
+        self.init(dx: end.x - start.x, dy: end.y - start.y)
+    }
+    
     var positivePoints: (start: CGPoint, end: CGPoint) {
         var start = CGPoint.zero
-        var end = cgPoint
+        var end = CGPoint(x: dx, y: dy)
         if dx < 0 {
             start.x += dx.magnitude
             end.x += dx.magnitude
@@ -83,9 +71,5 @@ extension CGVector {
             end.y += dy.magnitude
         }
         return (start, end)
-    }
-    
-    var cgPoint: CGPoint {
-        CGPoint(x: dx, y: dy)
     }
 }

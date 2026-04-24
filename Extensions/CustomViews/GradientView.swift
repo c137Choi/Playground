@@ -9,48 +9,34 @@ import UIKit
 // MARK: - 渐变View
 class GradientView: UIView {
     
-    typealias GradientLayer = CAGradientLayer
-    
-    override class var layerClass: AnyClass { GradientLayer.self }
-    
-    var gradientColors: GradientColors = [] {
-        willSet {
-            gradientLayer.setColors(newValue)
-        }
+    override class var layerClass: AnyClass {
+        CAGradientLayer.self
     }
     
-    init(direction: CGVector = .right, gradientColors: GradientColors = []) {
-        super.init(frame: .zero)
+    convenience init(direction: CGVector, @ArrayBuilder<ColorStop> _ gradientBuilder: GradientColorsBuilder) {
+        self.init(direction: direction, gradientColors: gradientBuilder())
+    }
+    
+    convenience init(direction: CGVector, gradientColors: GradientColors = []) {
+        self.init(frame: .zero)
         /// 设置渐变色
-        self.gradientColors = gradientColors
-        /// 上面属性的observer方法不会执行,这里手动执行一次
         self.gradientLayer.setColors(gradientColors)
         /// 设置方向
-        setDirection(direction)
+        self.gradientLayer.setDirection(direction)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    var gradientColors: GradientColors? {
+        get { gradientLayer.gradientColors }
+        set { gradientLayer.gradientColors = newValue }
     }
     
-    func refill(@ArrayBuilder<ColorStop> _ gradientBuilder: GradientColorsBuilder) {
-        gradientColors = gradientBuilder()
-    }
-
-    func setDirection(_ vector: CGVector) {
-        gradientLayer.setDirection(vector)
-    }
-}
-
-extension GradientView {
-    
-    convenience init(direction: CGVector = .right, @ArrayBuilder<ColorStop> _ gradientBuilder: GradientColorsBuilder) {
-        let gradientColors = gradientBuilder()
-        self.init(direction: direction, gradientColors: gradientColors)
+    var direction: CGVector {
+        get { gradientLayer.direction }
+        set { gradientLayer.direction = newValue }
     }
     
     /// 渐变图层
-    var gradientLayer: GradientLayer {
-        layer as! GradientLayer
+    var gradientLayer: CAGradientLayer {
+        layer as! CAGradientLayer
     }
 }

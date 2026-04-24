@@ -8,6 +8,8 @@
 
 import UIKit
 import SwiftUI
+import RxSwift
+import RxCocoa
 
 extension UIView {
     /// 背景View
@@ -469,6 +471,48 @@ extension UIView {
     }
     
     
+    func liveUpdating(
+        cornerRadius: CGFloat = 0,
+        corners: UIRectCorner = .allCorners,
+        shadowColor: UIColor? = nil,
+        shadowOffset: CGPoint = .zero,
+        shadowRadius: CGFloat = 0,
+        shadowOpacity: Float = 0,
+        shadowExpansion: CGFloat = 0)
+    {
+        let key = "updating.cornerRadius.and.shadowPath"
+        if cornerRadius == 0 && shadowColor.isVoid {
+            references[key] = nil
+        } else {
+            /// 目标圆角值
+            let targetCornerRadius = cornerRadius < 0 ? min(bounds.width, bounds.height).half : cornerRadius
+            references[key] = DisposeBag {
+                rx.observe(\.bounds, options: .live).removeDuplicates.bind(with: self) { view, bounds in
+                    view.layer.cornerRadius = targetCornerRadius
+                    view.layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: targetCornerRadius).cgPath
+                }
+            }
+        }
+    }
+    
+    func modernSetCorner(_ radius: CGFloat, shadowColor: UIColor) {
+        layer.masksToBounds = false
+        layer.shadowColor = shadowColor.cgColor
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowRadius = 5
+        layer.shadowOpacity = 1.0
+        
+        references["updating.corneradius"] = DisposeBag {
+            rx.observe(\.bounds, options: .live)
+                .removeDuplicates
+                .debug("观察bounds")
+                .bind(with: self) { view, bounds in
+                    let targetRadius = radius < 0 ? min(bounds.width, bounds.height).half : radius
+                    view.layer.cornerRadius = targetRadius
+                    view.layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: targetRadius).cgPath
+                }
+        }
+    }
     
     
     /// 为视图添加圆角和阴影 | 只在frame确定的时候才能调用此方法

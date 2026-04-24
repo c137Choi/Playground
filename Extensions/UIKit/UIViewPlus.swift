@@ -470,60 +470,6 @@ extension UIView {
         return UIImage(cgImage: scaledCGImage)
     }
     
-    
-    func liveUpdating(
-        cornerRadius: CGFloat = 0,
-        corners: UIRectCorner = .allCorners,
-        shadowColor: UIColor? = nil,
-        shadowOffset: CGPoint = .zero,
-        shadowRadius: CGFloat = 0,
-        shadowOpacity: Float = 0,
-        shadowExpansion: CGFloat = 0)
-    {
-        let key = "updating.cornerRadius.and.shadowPath"
-        if cornerRadius == 0 && shadowColor.isVoid {
-            references[key] = nil
-        } else {
-            /// 目标圆角值
-            let targetCornerRadius = cornerRadius < 0 ? min(bounds.width, bounds.height).half : cornerRadius
-            references[key] = DisposeBag {
-                rx.observe(\.bounds, options: .live).removeDuplicates.bind(with: self) { view, bounds in
-                    view.layer.cornerRadius = targetCornerRadius
-                    view.layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: targetCornerRadius).cgPath
-                }
-            }
-        }
-    }
-    
-    func modernSetCorner(_ radius: CGFloat, shadowColor: UIColor) {
-        layer.masksToBounds = false
-        layer.shadowColor = shadowColor.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowRadius = 5
-        layer.shadowOpacity = 1.0
-        
-        references["updating.corneradius"] = DisposeBag {
-            rx.observe(\.bounds, options: .live)
-                .removeDuplicates
-                .debug("观察bounds")
-                .bind(with: self) { view, bounds in
-                    let targetRadius = radius < 0 ? min(bounds.width, bounds.height).half : radius
-                    view.layer.cornerRadius = targetRadius
-                    view.layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: targetRadius).cgPath
-                }
-        }
-    }
-    
-    
-    /// 为视图添加圆角和阴影 | 只在frame确定的时候才能调用此方法
-    /// - Parameters:
-    ///   - cornerRadius: 圆角大小
-    ///   - corners: 圆角效果施加的角
-    ///   - shadowColor: 阴影颜色: 不为空才添加阴影
-    ///   - shadowOffset: 阴影偏移
-    ///   - shadowRadius: 阴影大小
-    ///   - shadowOpacity: 阴影透明度
-    ///   - shadowExpansion: 阴影扩大值: 大于零扩大, 小于零收缩
     func addCornerRadius(_ cornerRadius: CGFloat = 0,
                          corners: UIRectCorner = .allCorners,
                          shadowColor: UIColor? = nil,
@@ -877,6 +823,64 @@ extension UIView {
         }
         set {
             setContentCompressionResistancePriority(newValue, for: .vertical)
+        }
+    }
+}
+
+extension Configurable where Self: UIView {
+    
+    /// 调用此方法实时更新圆角和阴影路径
+    /// - Parameters:
+    ///   - cornerRadius: 圆角值(传值-1会将较小边的一半作为圆角值)
+    ///   - corners: 加圆角的角
+    ///   - shadowColor: 阴影颜色(不为空才添加阴影)
+    ///   - shadowOffset: 阴影偏移
+    ///   - shadowRadius: 阴影半径(模糊)
+    ///   - shadowOpacity: 阴影透明度
+    ///   - shadowExpansion: 阴影缩放(大于零扩大, 小于零收缩)
+    func setCornerRadius(
+        _ cornerRadius: CGFloat,
+        corners: UIRectCorner = .allCorners,
+        shadowColor: UIColor? = nil,
+        shadowOffset: CGPoint = .zero,
+        shadowRadius: CGFloat = 0,
+        shadowOpacity: Float = 0,
+        shadowExpansion: CGFloat = 0,
+        boundsUpdateCallback: ((Self, CGRect) -> Void)? = nil)
+    {
+        /// DisposeBag Key
+        let key = "updating.cornerRadius.and.shadowPath"
+        /// 先清空原来的监听
+        references[key] = nil
+        /// 直接设置圆角并清空阴影颜色
+        if cornerRadius >= 0 && shadowColor.isVoid {
+            layer.masksToBounds = false
+            layer.cornerRadius = cornerRadius
+            layer.maskedCorners = corners.caCornerMask
+            layer.shadowColor = nil
+            layer.shadowPath = nil
+        }
+        /// 圆角小于0 或 阴影颜色非空
+        else {
+            references[key] = DisposeBag {
+                rx.observe(\.bounds, options: .live).removeDuplicates.bind(with: self) { view, bounds in
+                    /// 方法回调
+                    boundsUpdateCallback?(view, bounds)
+                    let cornerRadius = cornerRadius < 0 ? min(bounds.width, bounds.height).half : cornerRadius
+                    view.layer.masksToBounds = false
+                    view.layer.cornerRadius = cornerRadius
+                    view.layer.maskedCorners = corners.caCornerMask
+                    if let shadowColor {
+                        let cornerRadiiSize = CGSize(width: cornerRadius, height: cornerRadius)
+                        let roundedBounds = bounds.with(new: \.origin, .zero).insetBy(dx: shadowExpansion.negative, dy: shadowExpansion.negative)
+                        view.layer.shadowColor = shadowColor.cgColor
+                        view.layer.shadowOffset = CGSize(width: shadowOffset.x, height: shadowOffset.y)
+                        view.layer.shadowRadius = shadowRadius
+                        view.layer.shadowOpacity = shadowOpacity
+                        view.layer.shadowPath = UIBezierPath(roundedRect: roundedBounds, byRoundingCorners: corners, cornerRadii: cornerRadiiSize).cgPath
+                    }
+                }
+            }
         }
     }
 }

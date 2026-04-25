@@ -103,16 +103,16 @@ extension ClosedRange {
     }
     
     /// 根据传入值计算进度
-    /// - Parameter value: 传入值
+    /// - Parameter bound: 传入值
     /// - Returns: 进度百分比<0~1.0>
-    public func progress(_ value: Bound) -> Double where Bound: BinaryInteger {
-        doubleRange.progress(value.double)
+    public func percentage(_ bound: Bound) -> Double where Bound: BinaryInteger {
+        doubleRange.percentage(bound.double)
     }
     
     /// 根据传入值计算进度
     /// - Parameter value: 传入值
     /// - Returns: 进度百分比<0~1.0>
-    public func progress(_ value: Bound) -> Bound where Bound: BinaryFloatingPoint {
+    public func percentage(_ value: Bound) -> Bound where Bound: BinaryFloatingPoint {
         do throws(ClosedRangeBoundError) {
             /// Range宽度
             let rangeWidth = width
@@ -318,7 +318,7 @@ extension ClosedRange where Bound == Double {
             if self.contains(baseRange) {
                 return .percentRange
             } else {
-                return baseRange.progress(lowerBound)...baseRange.progress(upperBound)
+                return baseRange.percentage(lowerBound)...baseRange.percentage(upperBound)
             }
         }
     }

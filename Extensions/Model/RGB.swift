@@ -65,9 +65,9 @@ extension RGB {
         let red = range << (percentKelvin <= 66 ? 255 : (329.698727446 * pow(percentKelvin - 60, -0.1332047592)))
         let green = range << (percentKelvin <= 66 ? (99.4708025861 * log(percentKelvin) - 161.1195681661) : 288.1221695283 * pow(percentKelvin - 60, -0.0755148492))
         let blue = range << (percentKelvin >= 66 ? 255 : (percentKelvin <= 19 ? 0 : 138.5177312231 * log(percentKelvin - 10) - 305.0447927307))
-        let normalizedRed = range.progress(red)
-        let normalizedGreen = range.progress(green)
-        let normalizedBlue = range.progress(blue)
+        let normalizedRed = range.percentage(red)
+        let normalizedGreen = range.percentage(green)
+        let normalizedBlue = range.percentage(blue)
         self.red = normalizedRed
         self.green = normalizedGreen
         self.blue = normalizedBlue

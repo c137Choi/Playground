@@ -97,8 +97,8 @@ extension BinaryFloatingPoint {
     /// 计算在指定范围内的百分比
     /// - Parameter range: 指定范围
     /// - Returns: 百分比
-    func progress(in range: ClosedRange<Self>) -> Self {
-        range.progress(self)
+    func percentage(in range: ClosedRange<Self>) -> Self {
+        range.percentage(self)
     }
 }
 

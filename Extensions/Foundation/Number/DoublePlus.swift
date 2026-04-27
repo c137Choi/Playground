@@ -19,13 +19,17 @@ extension Double {
         /// 步长小于1
         if increment < 1 {
             /// 底数
-            let significand = increment.significand.intValue
+            let significand = increment.significand.doubleValue
             /// 放大系数
             let scale = Double.pow(10.0, abs(increment.exponent))
-            /// 步长个数
-            let incrementCount = Int(self * scale) / significand
+            /// 放大后的数
+            let scaled = (self * scale).rounded(.toNearestOrAwayFromZero)
+            /// 底数的个数
+            let significandCount = Int(scaled / significand).double
             /// 最终小数
-            return Double(incrementCount * significand) / scale
+            let rounded = significandCount * significand / scale
+            /// 返回结果
+            return rounded
         }
         /// 步长大于1
         else {

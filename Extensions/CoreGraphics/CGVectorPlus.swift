@@ -51,6 +51,14 @@ extension CGVector {
     static let bottomRight = down + right
     static let topLeft = up + left
     static let bottomLeft = down + left
+    
+    var isHorizontal: Bool {
+        self == .left || self == .right
+    }
+    
+    var isVertical: Bool {
+        self == .up || self == .down
+    }
 }
 
 extension CGVector {

@@ -61,10 +61,6 @@ extension UIControl.Event {
     public static let touchUp: UIControl.Event = [.touchUpInside, .touchUpOutside]
     /// 按下 + 内(外)拖动
     public static let touchDownDrag: UIControl.Event = [.touchDown, .touchDragInside, .touchDragOutside]
-    /// 事件 + 用户交互
-    public var interactive: UIControl.Event {
-        union(.userInteraction)
-    }
 }
 
 extension UIControl.State {

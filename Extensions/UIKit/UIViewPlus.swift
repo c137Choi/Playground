@@ -852,9 +852,9 @@ extension Configurable where Self: UIView {
         let key = "updating.cornerRadius.and.shadowPath"
         /// 先清空原来的监听
         references[key] = nil
+        clipsToBounds = false
         /// 直接设置圆角并清空阴影颜色
         if cornerRadius >= 0 && shadowColor.isVoid {
-            layer.masksToBounds = false
             layer.cornerRadius = cornerRadius
             layer.maskedCorners = corners.caCornerMask
             layer.shadowColor = nil
@@ -867,7 +867,6 @@ extension Configurable where Self: UIView {
                     /// 方法回调
                     boundsUpdateCallback?(view, bounds)
                     let cornerRadius = cornerRadius < 0 ? min(bounds.width, bounds.height).half : cornerRadius
-                    view.layer.masksToBounds = false
                     view.layer.cornerRadius = cornerRadius
                     view.layer.maskedCorners = corners.caCornerMask
                     if let shadowColor {

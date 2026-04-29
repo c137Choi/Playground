@@ -10,16 +10,16 @@ import CoreGraphics
 
 struct RGB {
     /// 0...1.0
-    var red: Double
+    @Clampped(range: Double.percentRange) var red: Double = 0.0
     /// 0...1.0
-    var green: Double
+    @Clampped(range: Double.percentRange) var green: Double = 0.0
     /// 0...1.0
-    var blue: Double
-    
-    init(red: Double, green: Double, blue: Double) {
-        self.red = max(0.0, min(1.0, red))
-        self.green = max(0.0, min(1.0, green))
-        self.blue = max(0.0, min(1.0, blue))
+    @Clampped(range: Double.percentRange) var blue: Double = 0.0
+}
+
+extension RGB: CustomDebugStringConvertible {
+    var debugDescription: String {
+        "R:\(red.percentage) G:\(green.percentage) B:\(blue.percentage)"
     }
 }
 
@@ -111,6 +111,21 @@ extension RGB {
     
     init(x: Double, y: Double) {
         self = ColorSpace.adobeRGB.rgb(x: x, y: y)
+    }
+    
+    mutating func set(red: Double?) {
+        guard let red else { return }
+        self.red = red
+    }
+    
+    mutating func set(green: Double?) {
+        guard let green else { return }
+        self.green = green
+    }
+    
+    mutating func set(blue: Double?) {
+        guard let blue else { return }
+        self.blue = blue
     }
     
     mutating func blend(_ another: RGB) {

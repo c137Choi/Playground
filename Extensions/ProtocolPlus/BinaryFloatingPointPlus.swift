@@ -10,6 +10,8 @@ import Foundation
 extension Optional where Wrapped: BinaryFloatingPoint {
     
     var orZero: Wrapped { self ?? 0.0 }
+    
+    var orNan: Wrapped { self ?? Wrapped.nan }
 }
 
 extension BinaryFloatingPoint {

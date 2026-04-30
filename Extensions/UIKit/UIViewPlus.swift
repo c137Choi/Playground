@@ -838,6 +838,7 @@ extension Configurable where Self: UIView {
     ///   - shadowRadius: 阴影半径(模糊)
     ///   - shadowOpacity: 阴影透明度
     ///   - shadowExpansion: 阴影缩放(大于零扩大, 小于零收缩)
+    ///   - boundsUpdated: bounds更新时的回调
     func tweaking(
         cornerRadius: CGFloat = 0.0,
         corners: UIRectCorner = .allCorners,

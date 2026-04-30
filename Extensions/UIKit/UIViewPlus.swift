@@ -831,26 +831,24 @@ extension Configurable where Self: UIView {
     
     /// 调用此方法实时更新圆角和阴影路径
     /// - Parameters:
-    ///   - cornerRadius: 圆角值(传值-1会将较小边的一半作为圆角值)
+    ///   - cornerRadius: 圆角值(传入负值会将min(width, height).half作为圆角值)
     ///   - corners: 加圆角的角
     ///   - shadowColor: 阴影颜色(不为空才添加阴影)
     ///   - shadowOffset: 阴影偏移
     ///   - shadowRadius: 阴影半径(模糊)
     ///   - shadowOpacity: 阴影透明度
     ///   - shadowExpansion: 阴影缩放(大于零扩大, 小于零收缩)
-    func setCornerRadius(
-        _ cornerRadius: CGFloat,
+    func tweaking(
+        cornerRadius: CGFloat = 0.0,
         corners: UIRectCorner = .allCorners,
         shadowColor: UIColor? = nil,
         shadowOffset: CGPoint = .zero,
         shadowRadius: CGFloat = 0,
         shadowOpacity: Float = 0,
         shadowExpansion: CGFloat = 0,
-        boundsUpdateCallback: ((Self, CGRect) -> Void)? = nil)
+        boundsUpdated: ((Self, CGRect) -> Void)? = nil)
     {
-        /// DisposeBag Key
         let key = "updating.cornerRadius.and.shadowPath"
-        /// 先清空原来的监听
         references[key] = nil
         clipsToBounds = false
         /// 直接设置圆角并清空阴影颜色
@@ -860,23 +858,25 @@ extension Configurable where Self: UIView {
             layer.shadowColor = nil
             layer.shadowPath = nil
         }
-        /// 圆角小于0 或 阴影颜色非空
+        /// 圆角小于0(胶囊效果)或显示阴影
         else {
             references[key] = DisposeBag {
                 rx.observe(\.bounds, options: .live).removeDuplicates.bind(with: self) { view, bounds in
-                    /// 方法回调
-                    boundsUpdateCallback?(view, bounds)
+                    /// 回调Closure
+                    boundsUpdated?(view, bounds)
+                    /// 设置圆角
                     let cornerRadius = cornerRadius < 0 ? min(bounds.width, bounds.height).half : cornerRadius
                     view.layer.cornerRadius = cornerRadius
                     view.layer.maskedCorners = corners.caCornerMask
+                    /// 设置阴影
                     if let shadowColor {
                         let cornerRadiiSize = CGSize(width: cornerRadius, height: cornerRadius)
-                        let roundedBounds = bounds.with(new: \.origin, .zero).insetBy(dx: shadowExpansion.negative, dy: shadowExpansion.negative)
+                        let shadowRect = bounds.with(new: \.origin, .zero).insetBy(dx: shadowExpansion.negative, dy: shadowExpansion.negative)
                         view.layer.shadowColor = shadowColor.cgColor
                         view.layer.shadowOffset = CGSize(width: shadowOffset.x, height: shadowOffset.y)
                         view.layer.shadowRadius = shadowRadius
                         view.layer.shadowOpacity = shadowOpacity
-                        view.layer.shadowPath = UIBezierPath(roundedRect: roundedBounds, byRoundingCorners: corners, cornerRadii: cornerRadiiSize).cgPath
+                        view.layer.shadowPath = UIBezierPath(roundedRect: shadowRect, byRoundingCorners: corners, cornerRadii: cornerRadiiSize).cgPath
                     }
                 }
             }

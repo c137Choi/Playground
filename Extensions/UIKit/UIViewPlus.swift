@@ -470,38 +470,43 @@ extension UIView {
         return UIImage(cgImage: scaledCGImage)
     }
     
-    func addCornerRadius(_ cornerRadius: CGFloat = 0,
-                         corners: UIRectCorner = .allCorners,
-                         shadowColor: UIColor? = nil,
-                         shadowOffset: CGPoint = .zero,
-                         shadowRadius: CGFloat = 0,
-                         shadowOpacity: Float = 0,
-                         shadowExpansion: CGFloat = 0) {
+    func addCornerRadius(
+        _ cornerRadius: CGFloat = 0,
+        corners: UIRectCorner = .allCorners,
+        shadowColor: UIColor? = nil,
+        shadowOffset: CGPoint = .zero,
+        shadowRadius: CGFloat = 0,
+        shadowOpacity: Float = 0,
+        shadowExpansion: CGFloat = 0)
+    {
         /// 圆角
-        lazy var cornerRadiiSize = CGSize(width: cornerRadius, height: cornerRadius)
+        let cornerRadiiSize = CGSize(width: cornerRadius, height: cornerRadius)
         /// Bounds带圆角的路径
-        lazy var boundsRoundRectBezier = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: cornerRadiiSize)
-        /// 设置圆角
+        let boundsRoundRectBezier = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: cornerRadiiSize)
+        /// 有圆角
         if cornerRadius > 0 {
-            /// 未设置阴影的时候, 直接设置圆角
-            if shadowColor.isVoid {
+            /// 有阴影
+            if shadowColor.isValid {
+                layer.mask = CAShapeLayer(bezierPath: boundsRoundRectBezier)
+            }
+            /// 无阴影
+            else {
                 layer.masksToBounds = true
                 layer.cornerRadius = cornerRadius
                 layer.maskedCorners = corners.caCornerMask
-            } else {
-                let shape = CAShapeLayer()
-                shape.path = boundsRoundRectBezier.cgPath
-                layer.mask = shape
             }
         }
-        /// 圆角小于等于0
+        /// 无圆角(圆角值小于等于0)
         else {
-            if shadowColor.isVoid {
+            /// 有阴影
+            if shadowColor.isValid {
+                layer.mask = nil
+            }
+            /// 无阴影
+            else {
                 layer.masksToBounds = false
                 layer.cornerRadius = cornerRadius
                 layer.maskedCorners = corners.caCornerMask
-            } else {
-                layer.mask = nil
             }
         }
         
@@ -866,18 +871,19 @@ extension Configurable where Self: UIView {
                     /// 回调Closure
                     boundsUpdated?(view, bounds)
                     /// 设置圆角
-                    let cornerRadius = cornerRadius < 0 ? min(bounds.width, bounds.height).half : cornerRadius
-                    view.layer.cornerRadius = cornerRadius
+                    let targetRadius = cornerRadius < 0 ? min(bounds.width, bounds.height).half : cornerRadius
+                    view.layer.cornerRadius = targetRadius
                     view.layer.maskedCorners = corners.caCornerMask
                     /// 设置阴影
                     if let shadowColor {
-                        let cornerRadiiSize = CGSize(width: cornerRadius, height: cornerRadius)
                         let shadowRect = bounds.with(new: \.origin, .zero).insetBy(dx: shadowExpansion.negative, dy: shadowExpansion.negative)
+                        let cornerRadii = CGSize(width: targetRadius, height: targetRadius)
+                        let shadowBezierPath = UIBezierPath(roundedRect: shadowRect, byRoundingCorners: corners, cornerRadii: cornerRadii)
                         view.layer.shadowColor = shadowColor.cgColor
                         view.layer.shadowOffset = CGSize(width: shadowOffset.x, height: shadowOffset.y)
                         view.layer.shadowRadius = shadowRadius
                         view.layer.shadowOpacity = shadowOpacity
-                        view.layer.shadowPath = UIBezierPath(roundedRect: shadowRect, byRoundingCorners: corners, cornerRadii: cornerRadiiSize).cgPath
+                        view.layer.shadowPath = shadowBezierPath.cgPath
                     }
                 }
             }

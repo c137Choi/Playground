@@ -55,8 +55,6 @@ extension UIControl {
 extension UIControl.Event {
     /// 强制触发事件
     static let forceTrigger = UIControl.Event(rawValue: 1 << 24)
-    /// 用户交互事件
-    static let userInteraction = UIControl.Event(rawValue: 1 << 25)
     /// 按下抬起
     public static let touchUp: UIControl.Event = [.touchUpInside, .touchUpOutside]
     /// 按下 + 内(外)拖动

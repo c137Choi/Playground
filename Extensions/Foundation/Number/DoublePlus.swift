@@ -22,8 +22,10 @@ extension Double {
             let significand = increment.significand.doubleValue
             /// 放大系数
             let scale = Double.pow(10.0, abs(increment.exponent))
-            /// 放大后的数
-            let scaled = (self * scale).rounded(.toNearestOrAwayFromZero)
+            /// 放大后的数Modf
+            let modf = modf(self * scale)
+            /// 放大后的数校正版(小数部分的magnitude>=0.9则进位否则舍掉小数部分)
+            let scaled = modf.1.magnitude >= 0.9 ? modf.0 + Double(signOf: modf.0, magnitudeOf: 1.0) : modf.0
             /// 底数的个数
             let significandCount = Int(scaled / significand).double
             /// 最终小数

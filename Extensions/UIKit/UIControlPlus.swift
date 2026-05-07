@@ -93,7 +93,33 @@ extension UIControl.State {
 }
 
 extension UIControl.Event {
-    /// 可用范围比特位为: UIControl.Event.applicationReserved
+    /*
+    UIControl.Event.touchDown              1 << 0  = 1 = 1
+    UIControl.Event.touchDownRepeat        1 << 1  = 10 = 2
+    UIControl.Event.touchDragInside        1 << 2  = 100 = 4
+    UIControl.Event.touchDragOutside       1 << 3  = 1000 = 8
+    UIControl.Event.touchDragEnter         1 << 4  = 10000 = 16
+    UIControl.Event.touchDragExit          1 << 5  = 100000 = 32
+    UIControl.Event.touchUpInside          1 << 6  = 1000000 = 64
+    UIControl.Event.touchUpOutside         1 << 7  = 10000000 = 128
+    UIControl.Event.touchCancel            1 << 8  = 100000000 = 256
+    /// 以上为touch事件
+    UIControl.Event.valueChanged           1 << 12 = 1000000000000 = 4096
+    UIControl.Event.primaryActionTriggered 1 << 13 = 10000000000000 = 8192
+    UIControl.Event.menuActionTriggered    1 << 14 = 100000000000000 = 16384
+    /// 以下为editing事件
+    UIControl.Event.editingDidBegin        1 << 16 = 10000000000000000 = 65536
+    UIControl.Event.editingChanged         1 << 17 = 100000000000000000 = 131072
+    UIControl.Event.editingDidEnd          1 << 18 = 1000000000000000000 = 262144
+    UIControl.Event.editingDidEndOnExit    1 << 19 = 10000000000000000000 = 524288
+    /// 其他标志位
+    UIControl.Event.allTouchEvents         111111111111 = 4095
+    UIControl.Event.allEditingEvents       11110000000000000000 = 983040
+    UIControl.Event.applicationReserved    1111000000000000000000000000 = 251658240
+    UIControl.Event.systemReserved         11110000000000000000000000000000 = 4026531840
+    UIControl.Event.allEvents              11111111111111111111111111111111 = 4294967295
+     */
+    /// 自定义事件的可用范围比特位为: UIControl.Event.applicationReserved
     /// 即: 0b0000_1111_0000_0000_0000_0000_0000_0000, 向左移位24-27为合法范围
     private static let event24 = UIControl.Event(rawValue: 1 << 24)
     private static let event25 = UIControl.Event(rawValue: 1 << 25)

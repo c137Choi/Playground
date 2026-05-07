@@ -11,11 +11,11 @@ import CoreGraphics
 struct HSI: Hashable {
     
     /// 范围0-1
-    var hue: Double
+    @Clampped(range: Double.percentRange) var hue = Double.zero
     /// 范围0-1
-    var saturation: Double
+    @Clampped(range: Double.percentRange) var saturation = Double.zero
     /// 范围0-1
-    var brightness: Double
+    @Clampped(range: Double.percentRange) var brightness = Double.zero
     
     var rgb: RGB {
         RGB(hue: hue, saturation: saturation, brightness: brightness)
@@ -24,5 +24,39 @@ struct HSI: Hashable {
     /// 将色相转换成RGB
     var hueToRGB: RGB {
         RGB(hue: hue, saturation: 1.0, brightness: 1.0)
+    }
+}
+
+extension HSI {
+    
+    init(_ rgb: RGB) {
+        let red = rgb.red
+        let green = rgb.green
+        let blue = rgb.blue
+        let maxVal = max(red, green, blue)
+        let minVal = min(red, green, blue)
+        let delta = maxVal - minVal
+        
+        self.brightness = maxVal
+
+        if maxVal == 0 {
+            self.saturation = 0
+            self.hue = 0
+        } else {
+            self.saturation = delta / maxVal
+            if delta == 0 {
+                self.hue = 0
+            } else if maxVal == red {
+                self.hue = ((green - blue) / delta).truncatingRemainder(dividingBy: 6.0)
+                if hue < 0 {
+                    self.hue += 6.0
+                }
+            } else if maxVal == green {
+                self.hue = (blue - red) / delta + 2.0
+            } else {
+                self.hue = (red - green) / delta + 4.0
+            }
+            self.hue /= 6.0
+        }
     }
 }

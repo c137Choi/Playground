@@ -40,10 +40,10 @@ extension UIColor {
     
     /// 颜色 -> 色温
     var temperature: CGFloat {
-        guard let rgba else { return 0 }
-        let red = rgba.red
-        let green = rgba.green
-        let blue = rgba.blue
+        guard let maybeRGBA else { return 0 }
+        let red = maybeRGBA.red
+        let green = maybeRGBA.green
+        let blue = maybeRGBA.blue
         
         /// RGB -> XYZ color space
         let x = red * 0.4124 + green * 0.3576 + blue * 0.1805
@@ -62,7 +62,7 @@ extension UIColor {
     
     /// 返回argb颜色
     var rgbInt: Int? {
-        rgba.map(\.rgbValue)
+        maybeRGBA.map(\.rgbValue)
     }
     
     var hue: CGFloat {
@@ -80,29 +80,41 @@ extension UIColor {
     
     /// 计算色温
     var kelvin: CGFloat? {
-        guard let rgba else { return nil }
-        let red = rgba.red
-        let green = rgba.green
-        let blue = rgba.blue
+        guard let maybeRGBA else { return nil }
+        let red = maybeRGBA.red
+        let green = maybeRGBA.green
+        let blue = maybeRGBA.blue
         let temp = (0.23881 * red + 0.25499 * green - 0.58291 * blue) / (0.11109 * red - 0.85406 * green + 0.52289 * blue)
         let colorTemperature = 449 * pow(temp, 3) + 3525 * pow(temp, 2) + 6823.3 * temp + 5520.33
         return colorTemperature
     }
     
-    var rgba: RGBA? {
+    var rgb: RGB {
+        maybeRGB.or(.black)
+    }
+    
+    var rgba: RGBA {
+        maybeRGBA.or(.zero)
+    }
+    
+    var maybeRGB: RGB? {
+        RGB(self)
+    }
+    
+    var maybeRGBA: RGBA? {
         RGBA(self)
     }
     
     var xy: XY {
-        rgba.flatMap(fallback: .zero, ColorSpace.adobeRGB.xyFromColor)
+        maybeRGBA.flatMap(fallback: .zero, ColorSpace.adobeRGB.xyFromColor)
     }
     
     /// 转换成xy色域坐标
     fileprivate var xyLegacy: XY {
         /// 取出颜色元素
-        guard let rgba else { return .zero }
+        guard let maybeRGBA else { return .zero }
         /// 求出XYZ = 向量 * 矩阵
-        let XYZ = rgba.rgbArray * ColorGamut.bt2020.M
+        let XYZ = maybeRGBA.rgbArray * ColorGamut.bt2020.M
         /// XYZ求和
         let XYZSum = vDSP.sum(XYZ)
         /// 确保值正常否则返回0
@@ -284,7 +296,7 @@ extension UIColor {
         var blue: CGFloat = 0
         var alpha: CGFloat = 0
         components.forEach { component in
-            if let rgba = component.color.rgba {
+            if let rgba = component.color.maybeRGBA {
                 red += rgba.red * component.weight
                 green += rgba.green * component.weight
                 blue += rgba.blue * component.weight
@@ -334,13 +346,13 @@ extension UIColor {
     ///   - gm: 红绿补偿 | 范围 -100...100 -> 偏红...偏绿
     /// - Returns: 调整后生成新颜色
     func whiteBalance(_ temperature: CGFloat? = nil, gm: CGFloat? = nil) -> UIColor {
-        guard let rgba else { return self }
+        guard let maybeRGBA else { return self }
         /// 创建色温滤镜
         guard let filter = CIFilter(name: "CITemperatureAndTint") else {
             dprint("过滤器创建失败")
             return self
         }
-        let ciColor = CIColor(red: rgba.red, green: rgba.green, blue: rgba.blue)
+        let ciColor = CIColor(red: maybeRGBA.red, green: maybeRGBA.green, blue: maybeRGBA.blue)
         let inputCIImage = CIImage(color: ciColor)
         /// 色温
         let x = temperature.or(6500.0)

@@ -6,10 +6,45 @@
 //
 
 struct RGBA {
-    var red: Double
-    var green: Double
-    var blue: Double
-    var alpha: Double = 1.0
+    @Clampped(range: Double.percentRange) var red = Double.zero
+    @Clampped(range: Double.percentRange) var green = Double.zero
+    @Clampped(range: Double.percentRange) var blue = Double.zero
+    @Clampped(range: Double.percentRange) var alpha = Double.zero
+}
+
+extension RGBA {
+    /// 纯白
+    static let white = RGBA(red: 1, green: 1, blue: 1, alpha: 1)
+    /// 全0
+    static let zero = RGBA(red: 0, green: 0, blue: 0, alpha: 0)
+    
+    init?(_ uiColor: UIColor) {
+        var red = CGFloat.zero
+        var green = CGFloat.zero
+        var blue = CGFloat.zero
+        var alpha = CGFloat.zero
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else { return nil }
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.alpha = alpha
+    }
+    
+    init(_ rgb: RGB, alpha: Double = 1.0) {
+        self.init(red: rgb.red, green: rgb.green, blue: rgb.blue, alpha: alpha)
+    }
+    
+    var rgb: RGB {
+        RGB(self)
+    }
+    
+    var rgbValue: Int {
+        rawValue & 0x00_FF_FF_FF
+    }
+    
+    var rgbArray: [Double] {
+        [red, green, blue]
+    }
 }
 
 extension RGBA: RawRepresentable {
@@ -62,31 +97,5 @@ extension RGBA: Comparable {
         else {
             return false
         }
-    }
-}
-
-extension RGBA {
-    static let white = RGBA(red: 1, green: 1, blue: 1)
-    static let black = RGBA(red: 0, green: 0, blue: 0)
-    
-    init?(_ uiColor: UIColor) {
-        var red = CGFloat.zero, green = CGFloat.zero, blue = CGFloat.zero, alpha = CGFloat.zero
-        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else { return nil }
-        self.red = red; self.green = green; self.blue = blue; self.alpha = alpha
-    }
-    
-    var clamped: RGBA {
-        RGBA(red: Double.percentRange << red,
-             green: Double.percentRange << green,
-             blue: Double.percentRange << blue,
-             alpha: Double.percentRange << alpha)
-    }
-    
-    var rgbValue: Int {
-        rawValue & 0x00_FF_FF_FF
-    }
-    
-    var rgbArray: [Double] {
-        [red, green, blue]
     }
 }

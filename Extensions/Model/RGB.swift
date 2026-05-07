@@ -10,11 +10,11 @@ import CoreGraphics
 
 struct RGB {
     /// 0...1.0
-    @Clampped(range: Double.percentRange) var red: Double = 0.0
+    @Clampped(range: Double.percentRange) var red = Double.zero
     /// 0...1.0
-    @Clampped(range: Double.percentRange) var green: Double = 0.0
+    @Clampped(range: Double.percentRange) var green = Double.zero
     /// 0...1.0
-    @Clampped(range: Double.percentRange) var blue: Double = 0.0
+    @Clampped(range: Double.percentRange) var blue = Double.zero
 }
 
 extension RGB: CustomDebugStringConvertible {
@@ -51,6 +51,15 @@ extension RGB {
     
     init(bitRed: UInt8, bitGreen: UInt8, bitBlue: UInt8) {
         self.init(red: bitRed.double / 255.0, green: bitGreen.double / 255.0, blue: bitBlue.double / 255.0)
+    }
+    
+    init?(_ uiColor: UIColor) {
+        guard let rgba = RGBA(uiColor) else { return nil }
+        self.init(red: rgba.red, green: rgba.green, blue: rgba.blue)
+    }
+    
+    init(_ rgba: RGBA) {
+        self.init(red: rgba.red, green: rgba.green, blue: rgba.blue)
     }
     
     init(cct: CCT) {
@@ -145,6 +154,10 @@ extension RGB {
     mutating func setGmShift(_ gmShift: Double?) {
         guard let gmShift else { return }
         GMCorrectionMatrix(gmShift: gmShift).apply(to: &self)
+    }
+    
+    var hsi: HSI {
+        HSI(self)
     }
     
     /// 最大亮度

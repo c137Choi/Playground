@@ -89,12 +89,20 @@ extension UIColor {
         return colorTemperature
     }
     
+    var hsi: HSI {
+        maybeHSI.or(.zero)
+    }
+    
     var rgb: RGB {
         maybeRGB.or(.black)
     }
     
     var rgba: RGBA {
         maybeRGBA.or(.zero)
+    }
+    
+    var maybeHSI: HSI? {
+        HSI(self)
     }
     
     var maybeRGB: RGB? {

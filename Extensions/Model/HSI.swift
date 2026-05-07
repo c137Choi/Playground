@@ -6,28 +6,33 @@
 //  Copyright © 2017 Silver Fox. All rights reserved.
 //
 
-import CoreGraphics
+import UIKit
 
 struct HSI: Hashable {
-    
     /// 范围0-1
     @Clampped(range: Double.percentRange) var hue = Double.zero
     /// 范围0-1
     @Clampped(range: Double.percentRange) var saturation = Double.zero
     /// 范围0-1
     @Clampped(range: Double.percentRange) var brightness = Double.zero
-    
-    var rgb: RGB {
-        RGB(hue: hue, saturation: saturation, brightness: brightness)
-    }
-    
-    /// 将色相转换成RGB
-    var hueToRGB: RGB {
-        RGB(hue: hue, saturation: 1.0, brightness: 1.0)
-    }
 }
 
 extension HSI {
+    
+    static let zero = HSI(hue: 0, saturation: 0, brightness: 0)
+    
+    init?(_ uiColor: UIColor) {
+        var hue = CGFloat.zero
+        var saturation = CGFloat.zero
+        var brightness = CGFloat.zero
+        if uiColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: nil) {
+            self.hue = hue
+            self.saturation = saturation
+            self.brightness = brightness
+        } else {
+            return nil
+        }
+    }
     
     init(_ rgb: RGB) {
         let red = rgb.red
@@ -58,5 +63,14 @@ extension HSI {
             }
             self.hue /= 6.0
         }
+    }
+    
+    var rgb: RGB {
+        RGB(hue: hue, saturation: saturation, brightness: brightness)
+    }
+    
+    /// 将色相转换成RGB
+    var hueToRGB: RGB {
+        RGB(hue: hue, saturation: 1.0, brightness: 1.0)
     }
 }

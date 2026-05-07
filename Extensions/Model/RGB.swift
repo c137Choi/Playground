@@ -54,12 +54,16 @@ extension RGB {
     }
     
     init?(_ uiColor: UIColor) {
-        guard let rgba = RGBA(uiColor) else { return nil }
-        self.init(red: rgba.red, green: rgba.green, blue: rgba.blue)
-    }
-    
-    init(_ rgba: RGBA) {
-        self.init(red: rgba.red, green: rgba.green, blue: rgba.blue)
+        var red = CGFloat.zero
+        var green = CGFloat.zero
+        var blue = CGFloat.zero
+        if uiColor.getRed(&red, green: &green, blue: &blue, alpha: nil) {
+            self.red = red
+            self.green = green
+            self.blue = blue
+        } else {
+            return nil
+        }
     }
     
     init(cct: CCT) {

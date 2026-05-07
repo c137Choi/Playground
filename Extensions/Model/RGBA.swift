@@ -23,19 +23,18 @@ extension RGBA {
         var green = CGFloat.zero
         var blue = CGFloat.zero
         var alpha = CGFloat.zero
-        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else { return nil }
-        self.red = red
-        self.green = green
-        self.blue = blue
-        self.alpha = alpha
+        if uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
+            self.red = red
+            self.green = green
+            self.blue = blue
+            self.alpha = alpha
+        } else {
+            return nil
+        }
     }
     
     init(_ rgb: RGB, alpha: Double = 1.0) {
         self.init(red: rgb.red, green: rgb.green, blue: rgb.blue, alpha: alpha)
-    }
-    
-    var rgb: RGB {
-        RGB(self)
     }
     
     var rgbValue: Int {

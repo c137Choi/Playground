@@ -107,12 +107,8 @@ extension BinaryInteger {
     ///   - radix: 进制: 取值范围: 2...36
     ///   - uppercase: 字母是否大写
     /// - Returns: 转换成功后的字符串
-    func stringOfRadix(_ radix: Int, uppercase: Bool = true) -> String {
-        guard (2...36) ~= radix else {
-            assertionFailure("NO SUCH RADIX 🤯")
-            return ""
-        }
-        return String(self, radix: radix, uppercase: uppercase)
+    func stringOfRadix(_ radix: Int, uppercase: Bool = false) -> String {
+        String(self, radix: (2...36).constrainedBound(radix), uppercase: uppercase)
     }
     
     /// 非零为真

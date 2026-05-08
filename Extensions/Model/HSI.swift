@@ -17,6 +17,7 @@ struct HSI: Hashable {
     @Clampped(range: Double.percentRange) var brightness = Double.zero
 }
 
+extension HSI: Configurable {}
 extension HSI {
     
     static let zero = HSI(hue: 0, saturation: 0, brightness: 0)
@@ -63,6 +64,10 @@ extension HSI {
             }
             self.hue /= 6.0
         }
+    }
+    
+    var uiColor: UIColor {
+        UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
     }
     
     var rgb: RGB {

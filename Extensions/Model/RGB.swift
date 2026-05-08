@@ -17,6 +17,7 @@ struct RGB {
     @Clampped(range: Double.percentRange) var blue = Double.zero
 }
 
+extension RGB: Configurable {}
 extension RGB: CustomDebugStringConvertible {
     var debugDescription: String {
         "R:\(red.percentage) G:\(green.percentage) B:\(blue.percentage)"

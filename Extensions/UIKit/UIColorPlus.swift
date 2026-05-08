@@ -66,16 +66,7 @@ extension UIColor {
     }
     
     var hue: CGFloat {
-        hsba.map(fallback: 0, \.hue)
-    }
-    
-    var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat)? {
-        var h: CGFloat = 0.0
-        var s: CGFloat = 0.0
-        var b: CGFloat = 0.0
-        var a: CGFloat = 0.0
-        guard getHue(&h, saturation: &s, brightness: &b, alpha: &a) else { return nil }
-        return (h, s, b, a)
+        maybeHSI.map(fallback: 0, \.hue)
     }
     
     /// 计算色温
@@ -311,8 +302,9 @@ extension UIColor {
                 alpha += rgba.alpha * component.weight
             }
         }
-        if let brightness, let hsba = UIColor(red: red, green: green, blue: blue, alpha: alpha).hsba {
-            return UIColor(hue: hsba.hue, saturation: hsba.saturation, brightness: brightness, alpha: 1.0)
+        
+        if let brightness {
+            return RGB(red: red, green: green, blue: blue).hsi.with(new: \.brightness, brightness).uiColor
         } else {
             return UIColor(red: red, green: green, blue: blue, alpha: alpha)
         }

@@ -78,4 +78,9 @@ extension HSI {
     var hueToRGB: RGB {
         RGB(hue: hue, saturation: 1.0, brightness: 1.0)
     }
+    
+    /// 亮度设置成最大后转换成RGB
+    var maxBrightnessRGB: RGB {
+        RGB(hue: hue, saturation: saturation, brightness: 1.0)
+    }
 }

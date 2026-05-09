@@ -161,6 +161,10 @@ extension RGB {
         GMCorrectionMatrix(gmShift: gmShift).apply(to: &self)
     }
     
+    var maybeXY: XY? {
+        ColorSpace.adobeRGB.xyFromRGB(self)
+    }
+    
     var hsi: HSI {
         HSI(self)
     }

@@ -182,8 +182,8 @@ enum ColorSpace {
         }
     }
     
-    func xyFromColor(_ color: RGBA) -> XY? {
-        let xyY = xyYFromColor(color)
+    func xyFromRGB(_ rgb: RGB) -> XY? {
+        let xyY = xyYFromRGB(rgb)
         return XY(uncheckedX: xyY.x, uncheckedY: xyY.y)
     }
     
@@ -196,7 +196,7 @@ enum ColorSpace {
         return colorFromXYY(x, y, maxY)
     }
     
-    private func xyYFromColor(_ color: RGBA) -> (x: Double, y: Double, Y: Double) {
+    private func xyYFromRGB(_ color: RGB) -> (x: Double, y: Double, Y: Double) {
         if color.red < 1e-12 && color.green < 1e-12 && color.blue < 1e-12 {
             let xyz = xyzFromColor(.white)
             let sum = xyz.x + xyz.y + xyz.z
@@ -207,7 +207,7 @@ enum ColorSpace {
         return (xyz.x / sum, xyz.y / sum, xyz.y)
     }
     
-    private func xyzFromColor(_ color: RGBA) -> (x: Double, y: Double, z: Double) {
+    private func xyzFromColor(_ color: RGB) -> (x: Double, y: Double, z: Double) {
         @ArrayBuilder<Double> var rgb: [Double] {
             gammaCorrection.invTransform(color.red)
             gammaCorrection.invTransform(color.green)

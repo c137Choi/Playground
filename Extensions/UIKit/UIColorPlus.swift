@@ -105,7 +105,7 @@ extension UIColor {
     }
     
     var xy: XY {
-        maybeRGBA.flatMap(fallback: .zero, ColorSpace.adobeRGB.xyFromColor)
+        maybeRGB.flatMap(fallback: .zero, ColorSpace.adobeRGB.xyFromRGB)
     }
     
     /// 转换成xy色域坐标

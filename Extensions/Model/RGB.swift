@@ -123,6 +123,10 @@ extension RGB {
         }
     }
     
+    init(xy: XY) {
+        self.init(x: xy.x, y: xy.y)
+    }
+    
     init(x: Double, y: Double) {
         self = ColorSpace.adobeRGB.rgb(x: x, y: y)
     }

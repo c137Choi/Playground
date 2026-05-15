@@ -8,6 +8,14 @@ import Foundation
 
 extension Array {
     
+    init(_ elements: Element?...) {
+        self.init(elements)
+    }
+    
+    init<S>(_ elements: S) where S: Sequence, S.Element: OptionalConvertible, Element == S.Element.Wrapped {
+        self.init(elements.unwrapped)
+    }
+    
     init(@ArrayBuilder<Element> _ itemsBuilder: () -> Self) {
         self.init(itemsBuilder())
     }

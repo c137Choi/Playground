@@ -48,6 +48,14 @@ extension ObservableType {
         }
     }
     
+    public func bind(disposeBag: DisposeBag, onNext: @escaping (Element) -> Void) {
+        bind(onNext: onNext).disposed(by: disposeBag)
+    }
+    
+    public func bind<Object: AnyObject>(with object: Object, disposeBag: DisposeBag, onNext: @escaping (Object, Element) -> Void) {
+        bind(with: object, onNext: onNext).disposed(by: disposeBag)
+    }
+    
     public func bindTo<Observer: ObserverType>(@ArrayBuilder<Observer> observersBuilder: () -> Array<Observer>) -> Disposable where Observer.Element == Element {
         let observers = observersBuilder()
         return bind(to: observers)

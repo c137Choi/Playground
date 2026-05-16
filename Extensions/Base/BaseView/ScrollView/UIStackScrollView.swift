@@ -69,7 +69,7 @@ extension UIStackScrollView {
         set { stackView.spacing = newValue }
     }
     
-    var contentInsets: UIEdgeInsets? {
+    var margins: UIEdgeInsets? {
         get { stackView.margins }
         set { stackView.margins = newValue }
     }

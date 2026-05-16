@@ -8,6 +8,12 @@ import Foundation
 
 extension Optional {
     
+    var consumed: Wrapped? {
+        mutating get {
+            return take()
+        }
+    }
+    
     var isVoid: Bool {
         !isValid
     }

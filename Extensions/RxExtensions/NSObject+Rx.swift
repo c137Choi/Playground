@@ -99,11 +99,6 @@ public extension Reactive where Base: AnyObject {
             }
         }
     }
-    
-    /// disposeBag置空 | 清空之前所有的订阅
-    func clearDisposeBag() {
-        disposeBag = DisposeBag()
-    }
 }
 
 // MARK: - Protocols

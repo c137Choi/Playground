@@ -67,6 +67,10 @@ extension RGB {
         }
     }
     
+    init(cmy: CMY) {
+        self.init(red: 1.0 - cmy.cyan, green: 1.0 - cmy.magenta, blue: 1.0 - cmy.yellow)
+    }
+    
     init(cct: CCT) {
         self.init(temperature: cct.temperature, normalizedGM: cct.normalizedGM)
     }
@@ -167,6 +171,10 @@ extension RGB {
     
     var maybeXY: XY? {
         ColorSpace.adobeRGB.xyFromRGB(self)
+    }
+    
+    var cmy: CMY {
+        CMY(rgb: self)
     }
     
     var hsi: HSI {

@@ -35,6 +35,16 @@ extension HSI {
         }
     }
     
+    init(red: Double, green: Double, blue: Double) {
+        let rgb = RGB(red: red, green: green, blue: blue)
+        self.init(rgb)
+    }
+    
+    init(cyan: Double, magenta: Double, yellow: Double) {
+        let cmy = CMY(cyan: cyan, magenta: magenta, yellow: yellow)
+        self.init(cmy.rgb)
+    }
+    
     init(_ rgb: RGB) {
         let red = rgb.red
         let green = rgb.green

@@ -8,24 +8,16 @@
 import UIKit
 
 struct XY: Equatable {
-    var x: Double
-    var y: Double
+    @Clampped(range: 0...0.9) var x: Double = 0
+    @Clampped(range: 0...0.9) var y: Double = 0
+    
+    init(x: Double, y: Double) {
+        self.x = x.isNaN ? 0 : x
+        self.y = y.isNaN ? 0 : y
+    }
 }
 
 extension XY {
-    
-    init(x: CGFloat, y: CGFloat) {
-        self.x = x
-        self.y = y
-    }
-    
-    init?(uncheckedX: Double, uncheckedY: Double) {
-        let range = Double.percentRange
-        if uncheckedX.isNaN || uncheckedY.isNaN { return nil }
-        guard range ~= uncheckedX, range ~= uncheckedY else { return nil }
-        self.x = uncheckedX
-        self.y = uncheckedY
-    }
     
     var uiColor: UIColor {
         UIColor(xy: self)
@@ -39,6 +31,39 @@ extension XY {
         } else {
             return self
         }
+    }
+    
+    /// 如果当前xy在CIE1931马蹄图内则返回自身, 否则返回马蹄图边界上最近的点
+    fileprivate var constrainedToHorseShoe: XY {
+        if isInsideHorseShoe { return self }
+        let min = XY.horseShoeEdgeXYs.min {
+            squaredDistance(to: $0) < squaredDistance(to: $1)
+        }
+        return min ?? .zero
+    }
+    
+    /// 射线法判断当前xy是否在马蹄图封闭多边形内(首尾相连即紫线)
+    fileprivate var isInsideHorseShoe: Bool {
+        let polygon = Self.horseShoeEdgeXYs
+        let n = polygon.count
+        guard n >= 3 else { return false }
+        var inside = false
+        var j = n - 1
+        for i in 0..<n {
+            let xi = polygon[i].x, yi = polygon[i].y
+            let xj = polygon[j].x, yj = polygon[j].y
+            if ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi) {
+                inside = !inside
+            }
+            j = i
+        }
+        return inside
+    }
+    
+    fileprivate func squaredDistance(to other: XY) -> Double {
+        let dx = x - other.x
+        let dy = y - other.y
+        return dx * dx + dy * dy
     }
     
     /// 指定CGSize, 返回对应的坐标点, size比例必须为1:1

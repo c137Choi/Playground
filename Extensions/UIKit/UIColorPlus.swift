@@ -105,7 +105,7 @@ extension UIColor {
     }
     
     var xy: XY {
-        maybeRGB.flatMap(fallback: .zero, ColorSpace.adobeRGB.xyFromRGB)
+        maybeRGB.map(fallback: .zero, ColorSpace.adobeRGB.xyFromRGB)
     }
     
     /// 转换成xy色域坐标
@@ -125,7 +125,7 @@ extension UIColor {
         guard resultXYZ.count >= 2 else { return .zero }
         let x = resultXYZ[0]
         let y = resultXYZ[1]
-        return XY(uncheckedX: x, uncheckedY: y).or(.zero)
+        return XY(x: x, y: y)
     }
     
     /// 从色温创建颜色

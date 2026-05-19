@@ -169,7 +169,7 @@ extension RGB {
         GMCorrectionMatrix(gmShift: gmShift).apply(to: &self)
     }
     
-    var maybeXY: XY? {
+    var xy: XY {
         ColorSpace.adobeRGB.xyFromRGB(self)
     }
     

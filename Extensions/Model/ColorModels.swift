@@ -182,9 +182,9 @@ enum ColorSpace {
         }
     }
     
-    func xyFromRGB(_ rgb: RGB) -> XY? {
+    func xyFromRGB(_ rgb: RGB) -> XY {
         let xyY = xyYFromRGB(rgb)
-        return XY(uncheckedX: xyY.x, uncheckedY: xyY.y)
+        return XY(x: xyY.x, y: xyY.y)
     }
     
     func rgb(x: Double, y: Double) -> RGB {

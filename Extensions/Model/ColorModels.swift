@@ -188,6 +188,9 @@ enum ColorSpace {
     }
     
     func rgb(x: Double, y: Double) -> RGB {
+        if x.isNaN || y.isNaN {
+            return .black
+        }
         /// XY都是0的时候返回黑色, 否则解析出来的rgb都变成NaN
         if x == 0, y == 0 {
             return .black

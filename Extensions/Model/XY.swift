@@ -23,16 +23,6 @@ extension XY {
         UIColor(xy: self)
     }
     
-    /// 约束XY
-    func constrained(in xyRanges: XYRanges) -> XY {
-        let newXY = XY(x: xyRanges.xRange << x, y: xyRanges.yRange << y)
-        if newXY != self {
-            return newXY
-        } else {
-            return self
-        }
-    }
-    
     /// 如果当前xy在CIE1931马蹄图内则返回自身, 否则返回马蹄图边界上最近的点
     fileprivate var constrainedToHorseShoe: XY {
         if isInsideHorseShoe { return self }

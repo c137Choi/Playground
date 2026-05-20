@@ -132,7 +132,12 @@ extension RGB {
     }
     
     init(x: Double, y: Double) {
-        self = ColorSpace.adobeRGB.rgb(x: x, y: y)
+        let rgb = ColorSpace.adobeRGB.rgb(x: x, y: y)
+        if rgb.red.isNaN || rgb.green.isNaN || rgb.blue.isNaN {
+            self = .black
+        } else {
+            self = rgb
+        }
     }
     
     mutating func set(red: Double?) {

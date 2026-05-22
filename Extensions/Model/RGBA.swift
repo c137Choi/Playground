@@ -37,6 +37,10 @@ extension RGBA {
         self.init(red: rgb.red, green: rgb.green, blue: rgb.blue, alpha: alpha)
     }
     
+    var rgb: RGB {
+        RGB(red: red, green: green, blue: blue)
+    }
+    
     var rgbValue: Int {
         rawValue & 0x00_FF_FF_FF
     }

@@ -50,6 +50,16 @@ extension RGB {
     /// 浅青柠色
     static let lightLime = RGB(bitRed: 0xBF, bitGreen: 0xFF, bitBlue: 0)
     
+    init?(_ hexString: String) {
+        guard let rawValue = Int(hexString: hexString) else { return nil }
+        self.init(rawValue: rawValue)
+    }
+    
+    init?(rawValue: Int) {
+        guard let rgba = RGBA(rawValue: rawValue) else { return nil }
+        self = rgba.rgb
+    }
+    
     init(bitRed: UInt8, bitGreen: UInt8, bitBlue: UInt8) {
         self.init(red: bitRed.double / 255.0, green: bitGreen.double / 255.0, blue: bitBlue.double / 255.0)
     }

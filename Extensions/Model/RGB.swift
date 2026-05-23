@@ -18,6 +18,7 @@ struct RGB {
 }
 
 extension RGB: Configurable {}
+extension RGB: Equatable {}
 extension RGB: CustomDebugStringConvertible {
     var debugDescription: String {
         "R:\(red.percentage) G:\(green.percentage) B:\(blue.percentage)"
@@ -58,6 +59,14 @@ extension RGB {
     init?(rawValue: Int) {
         guard let rgba = RGBA(rawValue: rawValue) else { return nil }
         self = rgba.rgb
+    }
+    
+    var rawValue: Int {
+        rgba.rgbValue
+    }
+    
+    init(intHue: Int) {
+        self.init(hue: Int.hueRange.percentage(intHue), saturation: 1, brightness: 1)
     }
     
     init(bitRed: UInt8, bitGreen: UInt8, bitBlue: UInt8) {
@@ -182,6 +191,10 @@ extension RGB {
     mutating func setGmShift(_ gmShift: Double?) {
         guard let gmShift else { return }
         GMCorrectionMatrix(gmShift: gmShift).apply(to: &self)
+    }
+    
+    var rgba: RGBA {
+        RGBA(self, alpha: 1)
     }
     
     var xy: XY {

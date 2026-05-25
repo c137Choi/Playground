@@ -16,6 +16,12 @@ struct CCT {
 }
 extension CCT: Hashable {}
 extension CCT: Configurable {}
+extension CCT: ExpressibleByFloatLiteral {
+    typealias FloatLiteralType = Double
+    init(floatLiteral value: Double) {
+        self.init(temperature: value)
+    }
+}
 extension CCT {
     
     var rgb: RGB {

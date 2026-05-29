@@ -62,14 +62,14 @@ extension Locale {
 extension Locale {
     
     /// 简体中文
-    static let chineseSimplified = if #available(iOS 16, *) {
+    nonisolated static let chineseSimplified = if #available(iOS 16, *) {
         Locale(languageCode: .chinese, script: .hanSimplified)
     } else {
         Locale(identifier: "zh-Hans")
     }
     
     /// 英语
-    static let english = if #available(iOS 16, *) {
+    nonisolated static let english = if #available(iOS 16, *) {
         Locale(languageCode: .english)
     } else {
         Locale(identifier: "en")

@@ -37,25 +37,25 @@ extension CharacterSet {
     }
     
     /// 可打印的ASCII字符集
-    static let printableASCII = CharacterSet(charactersIn: 32..<127)
+    nonisolated static let printableASCII = CharacterSet(charactersIn: 32..<127)
     
     /// 十六进制字符集
-    static let hexadecimal = CharacterSet(charactersIn: "0123456789abcdefABCDEF")
+    nonisolated static let hexadecimal = CharacterSet(charactersIn: "0123456789abcdefABCDEF")
     
 	/// 阿拉伯数字 | 0-9
-	static let arabicNumbers = CharacterSet(charactersIn: "0123456789")
+    nonisolated static let arabicNumbers = CharacterSet(charactersIn: "0123456789")
     
     /// 点 | 小数点 | 英文句号
-    static let dot = CharacterSet(charactersIn: ".")
+    nonisolated static let dot = CharacterSet(charactersIn: ".")
     
     /// 整数(正整数\0\负整数) | 阿拉伯数字 + 负号("-")
-    static let integer = arabicNumbers.union("-")
+    nonisolated static let integer = arabicNumbers.union("-")
     
     /// 非负实数(0\正整数\正小数) | 阿拉伯数字 + 小数点
-    static let nonNegativeRealNumber = arabicNumbers.union(.dot)
+    nonisolated static let nonNegativeRealNumber = arabicNumbers.union(.dot)
     
     /// 实数 | 阿拉伯数字 + 小数点 + 负号("-")
-    static let realNumber = nonNegativeRealNumber.union("-")
+    nonisolated static let realNumber = nonNegativeRealNumber.union("-")
 	
 	#if DEBUG
 	

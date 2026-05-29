@@ -7,7 +7,7 @@
 
 extension ExpressibleByDictionaryLiteral {
     
-    static var empty: Self {
+    nonisolated static var empty: Self {
         [:]
     }
 }

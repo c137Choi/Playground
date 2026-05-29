@@ -10,9 +10,9 @@ import Foundation
 extension JSONDecoder {
     
     /// 通用JSONDecoder | 不要修改属性, 只用于简单编解码. 其他情况需要使用单独的实例
-    static let instance = JSONDecoder()
+    nonisolated static let instance = JSONDecoder()
     
-    static func decode<T>(_ type: T.Type, from data: Data) throws -> T where T: Decodable {
+    nonisolated static func decode<T>(_ type: T.Type, from data: Data) throws -> T where T: Decodable {
         try instance.decode(type, from: data)
     }
 }

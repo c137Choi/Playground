@@ -15,11 +15,21 @@ struct ImpactColor {
         self.init(rgb: cct.rgb)
     }
     
+    init(red: Double, green: Double, blue: Double) {
+        let rgb = RGB(red: red, green: green, blue: blue)
+        self.init(rgb: rgb)
+    }
+    
     init(rgb: RGB) {
         _rgb = rgb
         _cmy = rgb.cmy
         _hsi = rgb.hsi
         _xy = rgb.xy
+    }
+    
+    init(cyan: Double, magenta: Double, yellow: Double) {
+        let cmy = CMY(cyan: cyan, magenta: magenta, yellow: yellow)
+        self.init(cmy: cmy)
     }
     
     init(cmy: CMY) {
@@ -30,12 +40,30 @@ struct ImpactColor {
         _xy = rgb.xy
     }
     
+    init(hue: Double, saturation: Double) {
+        let hsi = HSI(hue: hue, saturation: saturation, brightness: 1.0)
+        self.init(hsi: hsi)
+    }
+    
     init(hsi: HSI) {
         let rgb = hsi.rgb
         _rgb = rgb
         _cmy = rgb.cmy
         _hsi = hsi
         _xy = rgb.xy
+    }
+    
+    init(x: Double, y: Double) {
+        let xy = XY(x: x, y: y)
+        self.init(xy: xy)
+    }
+    
+    init(xy: XY) {
+        let rgb = RGB(xy: xy)
+        _rgb = rgb
+        _cmy = rgb.cmy
+        _hsi = rgb.hsi
+        _xy = xy
     }
 }
 

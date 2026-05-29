@@ -8,13 +8,13 @@
 
 import UIKit
 
-func lprint(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+nonisolated func lprint(_ items: Any..., separator: String = " ", terminator: String = "\n") {
 #if DEBUG
     print(items, separator: separator, terminator: terminator)
 #endif
 }
 
-func dprint(_ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #fileID, function: String = #function, line: Int = #line) {
+nonisolated func dprint(_ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #fileID, function: String = #function, line: Int = #line) {
 #if DEBUG
     let now = Date.now
     var fileName = (file as NSString).lastPathComponent
@@ -23,8 +23,7 @@ func dprint(_ items: Any..., separator: String = " ", terminator: String = "\n",
         fileName.removeLast(swiftExtension.count)
     }
     let threadWarning = Thread.isMainThread ? "" : " | NOT-MAIN-THREAD"
-    let queueWarning = isMainQueue ? "" : " | NOT-MAIN-QUEUE"
-    print("🍌 @Time \(now.debugFormatted) \(fileName).\(function) @Line:\(line)\(threadWarning)\(queueWarning)")
+    print("🍌 @Time \(now.debugFormatted) \(fileName).\(function) @Line:\(line)\(threadWarning)")
     print(items, separator: separator, terminator: terminator)
 #endif
 }

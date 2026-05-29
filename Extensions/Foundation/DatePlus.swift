@@ -42,7 +42,7 @@ extension Date {
         self.init(timeIntervalSince1970: millisecondsSince1970 / 1000.0)
     }
     
-    var debugFormatted: String {
+    nonisolated var debugFormatted: String {
         Date.FormatStyle(locale: .chineseSimplified, calendar: .gregorian, timeZone: .beijing)
             .hour(.twoDigits(amPM: .omitted))
             .minute(.twoDigits)
@@ -308,7 +308,7 @@ extension DateComponents {
 // MARK: - __________ Calendar __________
 extension Calendar {
 	// 公历
-	static let gregorian = Calendar(identifier: .gregorian)
+    nonisolated static let gregorian = Calendar(identifier: .gregorian)
 	// 农历
-	static let chinese = Calendar(identifier: .chinese)
+    nonisolated static let chinese = Calendar(identifier: .chinese)
 }

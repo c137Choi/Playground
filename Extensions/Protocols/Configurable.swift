@@ -31,7 +31,7 @@ extension Configurable {
     ///   - keyPath: KeyPath
     ///   - value: 新值
     /// - Returns: 值类型返回拷贝对象. 引用类型返回其自身
-    func with<T>(new keyPath: WritableKeyPath<Self, T>, _ value: T) -> Self {
+    nonisolated func with<T>(new keyPath: WritableKeyPath<Self, T>, _ value: T) -> Self {
         with { make in
             make[keyPath: keyPath] = value
         }
@@ -40,7 +40,7 @@ extension Configurable {
     /// 配置
     /// - Parameter setup: 配置闭包
     /// - Returns: 值类型返回拷贝对象. 引用类型返回自身
-    func with(setup: (inout Self) throws -> Void) rethrows -> Self {
+    nonisolated func with(setup: (inout Self) throws -> Void) rethrows -> Self {
         var copy = self
         try setup(&copy)
         return copy
@@ -57,7 +57,7 @@ extension Configurable {
 extension Configurable where Self: AnyObject {
     
     @discardableResult
-    func setup(_ setup: (Self) throws -> Void) rethrows -> Self {
+    nonisolated func setup(_ setup: (Self) throws -> Void) rethrows -> Self {
         try setup(self)
         return self
     }

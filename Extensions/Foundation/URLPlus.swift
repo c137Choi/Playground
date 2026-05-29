@@ -12,14 +12,14 @@ extension URL {
         FileManager.default.url(forUbiquityContainerIdentifier: identifier)
     }
     
-    static var libraryDirectory: URL {
+    nonisolated static var libraryDirectory: URL {
         guard let url = url(for: .libraryDirectory) else {
             fatalError("NOT OK")
         }
         return url
     }
     
-    static var documentDirectory: URL {
+    nonisolated static var documentDirectory: URL {
         if #available(iOS 16.0, *) {
             return URL.documentsDirectory
         } else {
@@ -30,12 +30,12 @@ extension URL {
         }
     }
     
-    static func url(for path: FileManager.SearchPathDirectory) -> URL? {
+    nonisolated static func url(for path: FileManager.SearchPathDirectory) -> URL? {
         FileManager.default.urls(for: path, in: .userDomainMask).first
     }
     
     /// scheme为https或http的URL
-    var httpURL: URL? {
+    nonisolated var httpURL: URL? {
         switch scheme?.lowercased() {
         case "https", "http":
             return self

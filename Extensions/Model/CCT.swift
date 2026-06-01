@@ -14,6 +14,7 @@ struct CCT {
     /// 红绿补偿(范围: 0...1)
     var normalizedGM: Double?
 }
+extension CCT: Sendable {}
 extension CCT: Hashable {}
 extension CCT: Configurable {}
 extension CCT: ExpressibleByFloatLiteral {

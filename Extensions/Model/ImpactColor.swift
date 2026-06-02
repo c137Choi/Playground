@@ -69,6 +69,7 @@ struct ImpactColor {
     }
 }
 
+extension ImpactColor: Configurable {}
 extension ImpactColor: CustomDebugStringConvertible {
     var debugDescription: String {
         rgb.debugDescription
@@ -76,6 +77,10 @@ extension ImpactColor: CustomDebugStringConvertible {
 }
 
 extension ImpactColor {
+    
+    var maxBrightness: ImpactColor {
+        with(new: \.brightness, 1.0)
+    }
     
     var uiColor: UIColor {
         UIColor(rgb: rgb)

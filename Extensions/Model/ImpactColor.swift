@@ -5,6 +5,8 @@
 //  Created by Choi on 2026/5/25.
 //
 
+import UIKit
+
 struct ImpactColor {
     private var _rgb: RGB
     private var _cmy: CMY
@@ -68,6 +70,10 @@ struct ImpactColor {
 }
 
 extension ImpactColor {
+    
+    var uiColor: UIColor {
+        UIColor(rgb: rgb)
+    }
     
     var red: Double {
         get { rgb.red }

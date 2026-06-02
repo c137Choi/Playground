@@ -17,6 +17,11 @@ struct CCT {
 extension CCT: Sendable {}
 extension CCT: Hashable {}
 extension CCT: Configurable {}
+extension CCT: CustomDebugStringConvertible {
+    var debugDescription: String {
+        "\(temperature.f2)K,GM:\(normalizedGM?.f2, default: "无")"
+    }
+}
 extension CCT: ExpressibleByFloatLiteral {
     typealias FloatLiteralType = Double
     init(floatLiteral value: Double) {

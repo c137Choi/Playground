@@ -69,6 +69,12 @@ struct ImpactColor {
     }
 }
 
+extension ImpactColor: CustomDebugStringConvertible {
+    var debugDescription: String {
+        rgb.debugDescription
+    }
+}
+
 extension ImpactColor {
     
     var uiColor: UIColor {

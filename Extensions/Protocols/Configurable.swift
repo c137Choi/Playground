@@ -78,6 +78,8 @@ extension Configurable where Self: SimpleInitializer & AnyObject {
 extension NSObject: SimpleInitializer {}
 
 extension NSObject: Configurable {}
+extension ClosedRange: Configurable {}
+extension Range: Configurable {}
 extension URLRequest: Configurable {}
 extension Int: Configurable {}
 extension Double: Configurable {}

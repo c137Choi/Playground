@@ -13,7 +13,7 @@ struct CMY {
     /// 0...1.0
     @Clampped(range: Double.percentRange) var yellow = Double.zero
 }
-
+extension CMY: Codable {}
 extension CMY {
     
     init(rgb: RGB) {

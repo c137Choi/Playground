@@ -17,6 +17,7 @@ struct XY: Equatable {
     }
 }
 
+extension XY: Codable {}
 extension XY {
     
     var uiColor: UIColor {

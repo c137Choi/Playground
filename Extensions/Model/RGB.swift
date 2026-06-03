@@ -18,6 +18,7 @@ struct RGB {
 }
 
 extension RGB: Configurable {}
+extension RGB: Codable {}
 extension RGB: Equatable {}
 extension RGB: CustomDebugStringConvertible {
     var debugDescription: String {

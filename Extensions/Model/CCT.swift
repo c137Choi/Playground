@@ -16,6 +16,7 @@ struct CCT {
 }
 extension CCT: Sendable {}
 extension CCT: Hashable {}
+extension CCT: Codable {}
 extension CCT: Configurable {}
 extension CCT: CustomDebugStringConvertible {
     var debugDescription: String {

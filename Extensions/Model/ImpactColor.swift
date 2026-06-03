@@ -42,8 +42,8 @@ struct ImpactColor {
         _xy = rgb.xy
     }
     
-    init(hue: Double, saturation: Double) {
-        let hsi = HSI(hue: hue, saturation: saturation, brightness: 1.0)
+    init(hue: Double, saturation: Double, brightness: Double = 1.0) {
+        let hsi = HSI(hue: hue, saturation: saturation, brightness: brightness)
         self.init(hsi: hsi)
     }
     
@@ -73,6 +73,29 @@ extension ImpactColor: Configurable {}
 extension ImpactColor: CustomDebugStringConvertible {
     var debugDescription: String {
         rgb.debugDescription
+    }
+}
+extension ImpactColor: Codable {
+    
+    enum HSICodingKeys: CodingKey {
+        case hue
+        case saturation
+        case brightness
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: HSICodingKeys.self)
+        let hue = try container.decode(Double.self, forKey: .hue)
+        let saturation = try container.decode(Double.self, forKey: .saturation)
+        let brightness = try container.decode(Double.self, forKey: .brightness)
+        self.init(hue: hue, saturation: saturation, brightness: brightness)
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: HSICodingKeys.self)
+        try container.encode(hue, forKey: .hue)
+        try container.encode(saturation, forKey: .saturation)
+        try container.encode(brightness, forKey: .brightness)
     }
 }
 

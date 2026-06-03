@@ -17,6 +17,7 @@ struct HSI: Hashable {
     @Clampped(range: Double.percentRange) var brightness = Double.zero
 }
 
+extension HSI: Codable {}
 extension HSI: Configurable {}
 extension HSI {
     

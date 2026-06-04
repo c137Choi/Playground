@@ -101,7 +101,11 @@ extension ImpactColor: Codable {
 
 extension ImpactColor {
     
-    var maxBrightness: ImpactColor {
+    var black: ImpactColor {
+        with(new: \.brightness, 0.0)
+    }
+    
+    var flash: ImpactColor {
         with(new: \.brightness, 1.0)
     }
     

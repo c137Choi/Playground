@@ -8,6 +8,13 @@ import Foundation
 
 extension Dictionary {
     
+    init(keys: some Sequence<Key>, value: Value) {
+        self.init()
+        for key in keys {
+            self[key] = value
+        }
+    }
+    
     func valueForKey(_ key: Key) -> Value? {
         self[key]
     }

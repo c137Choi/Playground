@@ -13,6 +13,8 @@ public typealias RxEvent = RxSwift.Event
 public typealias RxError = RxSwift.RxError
 public typealias RxObservable = RxSwift.RxObservable
 
+extension SerialDispatchQueueScheduler: Configurable {}
+
 /// RxEvent类型的简化版
 @frozen public enum RxEventLite {
     case next

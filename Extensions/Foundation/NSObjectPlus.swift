@@ -13,7 +13,6 @@ extension NSObject {
     enum Associated {
         @UniqueAddress static var references
         @UniqueAddress static var weakReferences
-        @UniqueAddress static var isPrepared
     }
     
     var className: String {
@@ -53,26 +52,6 @@ extension NSObject {
         }
         set {
             setAssociatedObject(self, Associated.weakReferences, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-    
-    /// 是否准备好标记: 默认为true
-    var isPrepared: Bool {
-        get {
-            synchronized(lock: self) {
-                guard let prepared = associated(Bool.self, self, Associated.isPrepared) else {
-                    /// 默认初始值
-                    let initialValue = true
-                    setAssociatedObject(self, Associated.isPrepared, initialValue, .OBJC_ASSOCIATION_ASSIGN)
-                    return initialValue
-                }
-                return prepared
-            }
-        }
-        set(prepared) {
-            synchronized(lock: self) {
-                setAssociatedObject(self, Associated.isPrepared, prepared, .OBJC_ASSOCIATION_ASSIGN)
-            }
         }
     }
 	

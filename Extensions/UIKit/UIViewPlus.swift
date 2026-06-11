@@ -85,10 +85,6 @@ extension UIView {
         return closestView
     }
     
-    var isVisibleAndPrepared: Bool {
-        isVisible && isPrepared
-    }
-    
     /// 是否可见
     /// 注: 只简单判断几个条件: 未隐藏\window属性有效\透明度超过阈值. 更复杂的层级结构需要根据情况具体判断
     var isVisible: Bool {

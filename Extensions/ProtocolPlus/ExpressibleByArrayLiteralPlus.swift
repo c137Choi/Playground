@@ -7,14 +7,14 @@
 
 extension ExpressibleByArrayLiteral {
     
-    static var empty: Self {
+    nonisolated static var empty: Self {
         []
     }
 }
 
 extension Optional where Wrapped: ExpressibleByArrayLiteral {
     
-    var orEmpty: Wrapped {
+    nonisolated var orEmpty: Wrapped {
         self ?? Wrapped.empty
     }
 }

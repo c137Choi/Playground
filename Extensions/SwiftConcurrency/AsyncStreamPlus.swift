@@ -13,10 +13,10 @@ extension AsyncStream where Element: FixedWidthInteger {
     
     /// AsyncStream定时器
     /// - Parameters:
-    ///   - period: 定时器间隔. 如果为空则只发送一个元素
     ///   - dueTime: 执行前等待时间
+    ///   - period: 定时器间隔
     /// - Returns: AsyncStream<Element>
-    static func timer(period: RxTimeInterval? = nil, dueTime: RxTimeInterval = 0) -> AsyncStream<Element> {
+    nonisolated static func timer(dueTime: RxTimeInterval = 0, period: RxTimeInterval?) -> AsyncStream<Element> {
         SerialDispatchQueueScheduler(qos: .userInitiated).transform { scheduler in
             Observable<Element>.timer(dueTime, period: period, scheduler: scheduler)
                 .asInfallible(onErrorJustReturn: 0)

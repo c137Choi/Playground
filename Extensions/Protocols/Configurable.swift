@@ -10,7 +10,7 @@ import UIKit
 public protocol Configurable {}
 
 public protocol SimpleInitializer {
-    init()
+    nonisolated init()
 }
 
 extension Configurable {
@@ -18,11 +18,11 @@ extension Configurable {
     /// 转换
     /// - Parameter transformer: 转换闭包
     /// - Returns: 转换后的类型
-    func transform<T>(_ transformer: (Self) throws -> T) rethrows -> T {
+    nonisolated func transform<T>(_ transformer: (Self) throws -> T) rethrows -> T {
         try transformer(self)
     }
     
-    func transform<T>(fallback: T, _ transformer: (Self) throws -> T?) rethrows -> T {
+    nonisolated func transform<T>(fallback: T, _ transformer: (Self) throws -> T?) rethrows -> T {
         try transformer(self) ?? fallback
     }
     
@@ -47,7 +47,7 @@ extension Configurable {
     }
     
     @discardableResult
-    mutating func setup(_ setup: (inout Self) throws -> Void) rethrows -> Self {
+    nonisolated mutating func setup(_ setup: (inout Self) throws -> Void) rethrows -> Self {
         try setup(&self)
         return self
     }
@@ -68,7 +68,7 @@ extension Configurable where Self: SimpleInitializer & AnyObject {
     /// 创建并初始化实例
     /// - Parameter setup: 初始化配置
     /// - Returns: 返回实例
-    static func make(_ setup: (Self) throws -> Void) rethrows -> Self {
+    nonisolated static func make(_ setup: (Self) throws -> Void) rethrows -> Self {
         let instance = self.init()
         try setup(instance)
         return instance

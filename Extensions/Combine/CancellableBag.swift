@@ -9,17 +9,19 @@ import Combine
 
 public final class CancellableBag {
     
-    fileprivate(set) var cancellables: Set<AnyCancellable>
+    fileprivate(set) var cancellables = Set<AnyCancellable>.empty
     
-    public init() {
-        cancellables = []
+    public func cancelAll() {
+        defer {
+            cancellables = []
+        }
+        for element in cancellables {
+            element.cancel()
+        }
     }
     
-    public func cancel() {
-        cancellables.forEach { cancellable in
-            cancellable.cancel()
-        }
-        cancellables = []
+    deinit {
+        cancelAll()
     }
 }
 

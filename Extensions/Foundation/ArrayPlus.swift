@@ -6,7 +6,7 @@
 
 import Foundation
 
-extension Array {
+nonisolated extension Array {
     
     init(_ elements: Element?...) {
         self.init(elements)
@@ -111,7 +111,7 @@ extension Array {
     }
 }
 
-extension Array {
+nonisolated extension Array {
     
     public static func * (lhs: Double, rhs: Self) -> Element? { rhs * lhs }
     public static func * (lhs: Self, rhs: Double) -> Element? {
@@ -126,7 +126,7 @@ extension Array {
 }
 
 // MARK: - Equatable Array
-extension Array where Element: Equatable {
+nonisolated extension Array where Element: Equatable {
     
     @discardableResult
     /// 替换指定元素
@@ -163,7 +163,7 @@ extension Array where Element: Equatable {
 }
 
 // MARK: - Hashable Array
-extension Array where Element : Hashable {
+nonisolated extension Array where Element : Hashable {
     
     mutating func appendUnique<S>(contentsOf newElements: S) where Element == S.Element, S : Sequence {
         newElements.forEach { element in
@@ -202,7 +202,7 @@ extension Array where Element : Hashable {
     }
 }
 
-extension Array where Element: Numeric {
+nonisolated extension Array where Element: Numeric {
     
     /// 向量 * 矩阵
     static func * (vector: [Element], matrix: [[Element]]) -> [Element] {
@@ -236,7 +236,7 @@ extension Array where Element: Numeric {
 }
 
 // MARK: - 数据交换
-extension Array {
+nonisolated extension Array {
     /// 交换数组中两个元素的位置
     /// - Parameters:
     ///   - index1: 第一个元素的索引

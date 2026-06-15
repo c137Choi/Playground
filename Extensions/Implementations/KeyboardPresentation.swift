@@ -12,6 +12,7 @@ struct KeyboardPresentation {
     let toRect: CGRect
     let animationDuration: TimeInterval
     let animationCurve: UIView.AnimationCurve
+    
     init?(_ notification: Notification) {
         /// 判断键盘状态
         if notification.name == UIResponder.keyboardWillShowNotification {

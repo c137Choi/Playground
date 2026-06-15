@@ -8,21 +8,21 @@
 
 import UIKit
 
-extension Int {
+nonisolated extension Int {
     /// 千分率范围
     static let permilleRange = 0...1_000
     /// 百分率范围
     static let percentRange = 0...100
-	// 获取一个整形数字个十百千...位上的数字. 例如:
-	// 746381295[0] == 5 个位数字
-	// 746381295[1] == 9 十位数字...
-	subscript(digitIndex: Int) -> Int {
-		var decimalBase = 1
-		for _ in 0 ..< digitIndex {
-			decimalBase *= 10
-		}
-		return (self / decimalBase) % 10
-	}
+    // 获取一个整形数字个十百千...位上的数字. 例如:
+    // 746381295[0] == 5 个位数字
+    // 746381295[1] == 9 十位数字...
+    subscript(digitIndex: Int) -> Int {
+        var decimalBase = 1
+        for _ in 0 ..< digitIndex {
+            decimalBase *= 10
+        }
+        return (self / decimalBase) % 10
+    }
     
     /// 秒数 -> 时长的描述(1:05:07)
     var durationDescription: String {
@@ -33,18 +33,6 @@ extension Int {
             return String(format: "%i:%02i:%02i", hours, minutes, seconds)
         } else {
             return String(format: "%02i:%02i", minutes, seconds)
-        }
-    }
-    
-    /// 例: 1 -> 01; 10 -> 10
-    var twoDigits: String? {
-        digits(2)
-    }
-    
-    func digits(_ minimumIntegerDigits: Int = 1) -> String? {
-        NumberFormatter.shared.transform { formatter in
-            formatter.minimumIntegerDigits = minimumIntegerDigits
-            return formatter.string(from: self.nsNumber)
         }
     }
     
@@ -71,7 +59,7 @@ extension Int {
         guard self >= 1 else { return 0 }
         return self - 1
     }
-	
+    
     var bool: Bool {
         self > 0 ? true : false
     }
@@ -106,13 +94,13 @@ extension Int {
         }
     }
     
-    nonisolated static func hexString(_ hexString: String?) -> Int? {
+    static func hexString(_ hexString: String?) -> Int? {
         Int(hexString: hexString)
     }
     
     /// 从十六进制字符串创建Int值
     /// - Parameter hexString: 十六进制字符串. 如: #FF00AA
-    nonisolated init?(hexString: String?) {
+    init?(hexString: String?) {
         let intValue = hexString.flatMap {
             Scanner(string: $0)
                 .with(new: \.charactersToBeSkipped, .hexadecimal.inverted)
@@ -124,32 +112,32 @@ extension Int {
 }
 
 // MARK: - Int + Calendar
-extension Int {
-	
-	static func * (lhs: Int, component: Calendar.Component) -> DateComponents {
-		var components = DateComponents(calendar: .gregorian)
-		components.setValue(lhs, for: component)
-		return components
-	}
-	
-	/// 计算指定日期元素的秒数
-	/// - Parameter component: 日期元素 | 可处理的枚举: .day, .hour, .minute, .second, .nanosecond
-	/// - Returns: 秒数
-	static func seconds(in component: Calendar.Component) -> Int {
-		Int(timeInterval(in: component))
-	}
-	
-	/// 计算指定日期元素的纳秒数
-	/// - Parameter component: 日期元素 | 可处理的枚举: .day, .hour, .minute, .second, .nanosecond
-	/// - Returns: 纳秒数
-	static func nanoseconds(in component: Calendar.Component) -> Int {
-		Int(timeInterval(in: component) * 1e9)
-	}
-	
-	/// 计算指定日期元素的时间间隔
-	/// - Parameter component: 日期元素 | 可处理的枚举: .day, .hour, .minute, .second, .nanosecond
-	/// - Returns: 时间间隔
-	fileprivate static func timeInterval(in component: Calendar.Component) -> TimeInterval {
-		Double.timeInterval(in: component)
-	}
+nonisolated extension Int {
+    
+    static func * (lhs: Int, component: Calendar.Component) -> DateComponents {
+        var components = DateComponents(calendar: .gregorian)
+        components.setValue(lhs, for: component)
+        return components
+    }
+    
+    /// 计算指定日期元素的秒数
+    /// - Parameter component: 日期元素 | 可处理的枚举: .day, .hour, .minute, .second, .nanosecond
+    /// - Returns: 秒数
+    static func seconds(in component: Calendar.Component) -> Int {
+        Int(timeInterval(in: component))
+    }
+    
+    /// 计算指定日期元素的纳秒数
+    /// - Parameter component: 日期元素 | 可处理的枚举: .day, .hour, .minute, .second, .nanosecond
+    /// - Returns: 纳秒数
+    static func nanoseconds(in component: Calendar.Component) -> Int {
+        Int(timeInterval(in: component) * 1e9)
+    }
+    
+    /// 计算指定日期元素的时间间隔
+    /// - Parameter component: 日期元素 | 可处理的枚举: .day, .hour, .minute, .second, .nanosecond
+    /// - Returns: 时间间隔
+    fileprivate static func timeInterval(in component: Calendar.Component) -> TimeInterval {
+        Double.timeInterval(in: component)
+    }
 }

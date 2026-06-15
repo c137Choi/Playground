@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension FixedWidthInteger {
+nonisolated extension FixedWidthInteger {
     
     /// 生成随机数
     static var random: Self {

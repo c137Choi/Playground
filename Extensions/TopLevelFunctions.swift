@@ -77,9 +77,9 @@ func synchronized<T>(lock: AnyObject, _ closure: () throws -> T) rethrows -> T {
 }
 
 /// 使用左边的参数 | 常见于Dictionary.merge方法
-func <--<T>(_ lhs: T, rhs: T) -> T { lhs }
+nonisolated func <--<T>(_ lhs: T, rhs: T) -> T { lhs }
 /// 使用右边的参数 | 常见于Dictionary.merge方法
-func --><T>(_ lhs: T, rhs: T) -> T { rhs }
+nonisolated func --><T>(_ lhs: T, rhs: T) -> T { rhs }
 /// 是否为连续的两个数字
 func contiguousNumbers(_ last: Int, _ latest: Int) -> Bool {
     latest == last + 1

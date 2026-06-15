@@ -6,13 +6,13 @@
 
 import Foundation
 
-enum RangeBoundError: Error {
+nonisolated enum RangeBoundError: Error {
     case emptyRange
     case tooLow
     case tooHigh
 }
 
-extension Range {
+nonisolated extension Range {
     
     /// 传入Bound, 返回存在于Range中的Bound. 如: 2 -> (0..<2) -> 1
     func constrainedBound(_ bound: Bound) -> Bound? where Bound: Strideable, Bound.Stride: SignedInteger {
@@ -44,7 +44,7 @@ extension Range {
     }
 }
 
-extension Range where Bound: Strideable, Bound.Stride: SignedInteger {
+nonisolated extension Range where Bound: Strideable, Bound.Stride: SignedInteger {
     
     /// 返回最后一个index | Range非空时有效(如果isEmpty还调用index(before:)方法程序会崩溃)
     var maybeLastIndex: Index? {
@@ -52,7 +52,7 @@ extension Range where Bound: Strideable, Bound.Stride: SignedInteger {
     }
 }
 
-extension Range where Bound: BinaryInteger, Bound.Stride: SignedInteger {
+nonisolated extension Range where Bound: BinaryInteger, Bound.Stride: SignedInteger {
     
     public static func * (lhs: Self, rhs: Double) -> Bound? {
         lhs[multiply: rhs]
@@ -115,7 +115,7 @@ extension Range where Bound: BinaryInteger, Bound.Stride: SignedInteger {
     }
 }
 
-extension Range where Bound == Int {
+nonisolated extension Range where Bound == Int {
     
     /// 循环Index | 对输入的Index求余使得用余数配合上下限返回有效的索引值
     /// 如: (0..<3)[modIndex: 4] == 1
@@ -141,7 +141,7 @@ extension Range where Bound == Int {
     }
 }
 
-extension Range where Bound == Double {
+nonisolated extension Range where Bound == Double {
     
     /// 计算范围 × 进度的结果.
     /// 如: 0..<100.0 * 0.99 -> 99

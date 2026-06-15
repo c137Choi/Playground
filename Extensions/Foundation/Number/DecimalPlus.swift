@@ -6,7 +6,7 @@
 
 import Foundation
 
-extension Decimal {
+nonisolated extension Decimal {
     
     static let percentRange: ClosedRange<Decimal> = 0...1
     

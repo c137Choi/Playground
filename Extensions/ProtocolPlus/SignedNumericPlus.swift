@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SignedNumeric {
+nonisolated extension SignedNumeric {
     
     /// 正数变负数, 负数变正数
     /// 注: 使用时需要注意数字类型的范围

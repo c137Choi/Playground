@@ -138,15 +138,11 @@ extension Date {
 }
 
 // Date + DateComponents
-func + (_ lhs: Date, _ rhs: DateComponents) -> Date {
+nonisolated func + (_ lhs: Date, _ rhs: DateComponents) -> Date {
 	Calendar.gregorian.date(byAdding: rhs, to: lhs)!
 }
 
-// DateComponents + Dates
-func + (_ lhs: DateComponents, _ rhs: Date) -> Date { rhs + lhs }
-
-// Date - DateComponents
-func - (_ lhs: Date, _ rhs: DateComponents) -> Date { lhs + (-rhs) }
+nonisolated func - (_ lhs: Date, _ rhs: DateComponents) -> Date { lhs + (-rhs) }
 
 // MARK: - __________ DateComponents __________
 extension DateComponents {
@@ -292,7 +288,7 @@ extension DateComponents {
 		return result
 	}
 	
-	static prefix func - (components: DateComponents) -> DateComponents {
+	nonisolated static prefix func - (components: DateComponents) -> DateComponents {
 		var result = DateComponents()
 		if let nanosecond = components.nanosecond { result.nanosecond = -nanosecond }
 		if let second     = components.second { result.second = -second }

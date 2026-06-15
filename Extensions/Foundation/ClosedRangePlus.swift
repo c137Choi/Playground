@@ -7,14 +7,14 @@
 
 import Foundation
 
-extension ClosedRange: @retroactive ExpressibleByIntegerLiteral where Bound == Int {
+nonisolated extension ClosedRange: @retroactive ExpressibleByIntegerLiteral where Bound == Int {
     public typealias IntegerLiteralType = Bound
     public init(integerLiteral value: IntegerLiteralType) {
         self.init(uncheckedBounds: (lower: value, upper: value))
     }
 }
 
-extension ClosedRange where Bound: Codable {
+nonisolated extension ClosedRange where Bound: Codable {
     
     /// 转换为JSON二进制
     var jsonData: Data {
@@ -24,15 +24,15 @@ extension ClosedRange where Bound: Codable {
     }
 }
 
-extension ClosedRange where Bound == CGFloat {
+nonisolated extension ClosedRange where Bound == CGFloat {
     static let percentRange = CGFloat.percentRange
 }
 
-extension ClosedRange where Bound == Double {
+nonisolated extension ClosedRange where Bound == Double {
     static let percentRange = Double.percentRange
 }
 
-extension ClosedRange where Bound == Int {
+nonisolated extension ClosedRange where Bound == Int {
     
     /// 计算一个Range在另一个Range中的索引范围
     /// - Parameter another: 要计算的Range
@@ -67,7 +67,7 @@ extension ClosedRange where Bound == Int {
     }
 }
 
-extension ClosedRange {
+nonisolated extension ClosedRange {
     
     public init(lowerBound: Bound, upperBound: Bound) throws {
         guard upperBound >= lowerBound else {
@@ -174,7 +174,7 @@ extension ClosedRange {
     }
 }
 
-extension ClosedRange where Bound: BinaryInteger {
+nonisolated extension ClosedRange where Bound: BinaryInteger {
     
     /// 用于页面显示的范围如: 1-3
     var uiDescription: String {
@@ -215,7 +215,7 @@ extension ClosedRange where Bound: BinaryInteger {
     }
 }
 
-extension ClosedRange where Bound: BinaryFloatingPoint {
+nonisolated extension ClosedRange where Bound: BinaryFloatingPoint {
     
     var uiDescription: String {
         uiDescription(separator: "-")
@@ -269,14 +269,14 @@ extension ClosedRange where Bound: BinaryFloatingPoint {
     }
 }
 
-extension ClosedRange where Bound == Decimal {
+nonisolated extension ClosedRange where Bound == Decimal {
     public static func * (lhs: Bound, rhs: Self) -> Bound { rhs * lhs }
     public static func * (lhs: Self, percentage: Bound) -> Bound {
         lhs.lowerBound + lhs.width * (Bound.percentRange << percentage)
     }
 }
 
-extension ClosedRange where Bound: Numeric {
+nonisolated extension ClosedRange where Bound: Numeric {
     
     /// 上下边界分别偏移一定的距离
     /// - Parameter distance: 偏移距离
@@ -303,7 +303,7 @@ extension ClosedRange where Bound: Numeric {
     }
 }
 
-extension ClosedRange where Bound == Double {
+nonisolated extension ClosedRange where Bound == Double {
     
     /// 计算自身在baseRange中的progress范围
     /// - Parameter baseRange: 锚定范围,通常比自身要大
@@ -347,7 +347,7 @@ extension ClosedRange where Bound == Double {
     }
 }
 
-extension ClosedRange where Bound: Equatable {
+nonisolated extension ClosedRange where Bound: Equatable {
     
     /// 例如像1...1这样的闭合范围
     var isNarrow: Bool {
@@ -355,7 +355,7 @@ extension ClosedRange where Bound: Equatable {
     }
 }
 
-extension ClosedRange where Bound: AdditiveArithmetic {
+nonisolated extension ClosedRange where Bound: AdditiveArithmetic {
     
     /// 返回ClosedRange的宽度(上限-下限)
     var width: Bound {
@@ -363,13 +363,13 @@ extension ClosedRange where Bound: AdditiveArithmetic {
     }
 }
 
-extension ClosedRange: @retroactive Comparable where Bound: Comparable {
+nonisolated extension ClosedRange: @retroactive Comparable where Bound: Comparable {
     public static func < (lhs: ClosedRange<Bound>, rhs: ClosedRange<Bound>) -> Bool {
         lhs.upperBound < rhs.lowerBound
     }
 }
 
-extension ClosedRange where Bound: Strideable, Bound.Stride: SignedInteger {
+nonisolated extension ClosedRange where Bound: Strideable, Bound.Stride: SignedInteger {
     
     /// Bound类型的最后一个Index
     /// 例: ClosedIntRange(0..<10).lastBoundIndex == Int(9)
@@ -390,7 +390,7 @@ extension ClosedRange where Bound: Strideable, Bound.Stride: SignedInteger {
     }
 }
 
-extension ClosedRange {
+nonisolated extension ClosedRange {
     
     /// 取两个范围的交集
     static func ^ (lhs: Self, rhs: Self) -> Self? {
@@ -399,7 +399,7 @@ extension ClosedRange {
 }
 
 /// 同ClosedRange.SubSequence类型
-extension Slice where Base == ClosedIntRange {
+nonisolated extension Slice where Base == ClosedIntRange {
     
     /// 方便将Algorithms模块中
     /// chunks(ofCount count: Int) -> ChunksOfCountCollection<Self>

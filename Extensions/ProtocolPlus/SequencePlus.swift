@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Sequence {
+nonisolated extension Sequence {
     
     var array: Array<Element> {
         Array(self)
@@ -120,7 +120,7 @@ extension Sequence where Element: Hashable {
     }
 }
 
-extension Sequence where Element: OptionalConvertible {
+nonisolated extension Sequence where Element: OptionalConvertible {
     var unwrapped: [Element.Wrapped] {
         compactMap(\.optionalValue)
     }

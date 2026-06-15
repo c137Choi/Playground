@@ -7,7 +7,7 @@
 
 import RxSwift
 
-extension Task: @retroactive Disposable {
+nonisolated extension Task: @retroactive Disposable {
     public func dispose() {
         cancel()
     }

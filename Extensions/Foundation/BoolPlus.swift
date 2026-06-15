@@ -6,7 +6,7 @@
 
 import Foundation
 
-extension Bool {
+nonisolated extension Bool {
     
     /// 返回Int值 | true ? 1 : 0
     var int: Int {
@@ -30,7 +30,7 @@ extension Bool {
     }
 }
 
-extension Optional where Wrapped == Bool {
+nonisolated extension Optional where Wrapped == Bool {
     
     var isTrue: Bool {
         self == true

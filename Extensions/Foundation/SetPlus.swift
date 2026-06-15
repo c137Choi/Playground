@@ -6,7 +6,7 @@
 
 import Foundation
 
-extension Set {
+nonisolated extension Set {
     
     init(@ArrayBuilder<Element> _ builder: () -> [Element]) {
         let elements = builder()
@@ -45,7 +45,7 @@ extension Set {
 }
 
 
-extension Set {
+nonisolated extension Set {
     
     /// 交集
     static func ^ <S>(lhs: Set<Element>, rhs: S) -> Set<Element> where Element == S.Element, S: Sequence {

@@ -7,7 +7,7 @@
 
 import RxSwift
 
-extension DisposeBag {
+nonisolated extension DisposeBag {
     
     static var empty: DisposeBag {
         DisposeBag()

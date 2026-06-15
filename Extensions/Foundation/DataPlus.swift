@@ -88,7 +88,7 @@ extension Data {
     }
 }
 
-extension Data {
+nonisolated extension Data {
     enum DataError: Error {
         case overFlow
     }
@@ -98,7 +98,7 @@ extension Data {
     }
 }
 
-extension Data {
+nonisolated extension Data {
     
     /// 字节直接创建Data
     /// - Parameter bytes: 字节序列

@@ -250,7 +250,7 @@ extension UIColor {
     }
     
     /// 添加透明色
-    static func *(lhs: UIColor, rhs: CGFloat) -> UIColor {
+    nonisolated static func *(lhs: UIColor, rhs: CGFloat) -> UIColor {
         lhs.withAlphaComponent(rhs)
     }
     

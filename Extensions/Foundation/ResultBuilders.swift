@@ -8,7 +8,8 @@
 
 import UIKit
 
-@resultBuilder enum ArrayBuilder<E> {
+@resultBuilder
+nonisolated enum ArrayBuilder<E> {
 	
 	static func buildEither(first component: [E]) -> [E] {
 		component
@@ -51,7 +52,7 @@ import UIKit
 	}
 }
 
-extension ArrayBuilder where E: Hashable {
+nonisolated extension ArrayBuilder where E: Hashable {
 	
 	static func buildExpression(_ expression: Set<E>) -> [E] {
 		expression.array
@@ -59,7 +60,7 @@ extension ArrayBuilder where E: Hashable {
 }
 
 @resultBuilder
-enum SingleValueBuilder<E> {
+nonisolated enum SingleValueBuilder<E> {
     static func buildBlock(_ components: E) -> E {
         components
     }

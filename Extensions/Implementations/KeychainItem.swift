@@ -24,7 +24,7 @@ enum KeychainError: Error {
     case unhandledError
 }
 
-struct KeychainItem<T: Codable> {
+nonisolated struct KeychainItem<T: Codable> {
     
     // MARK: Properties
     

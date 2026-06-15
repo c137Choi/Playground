@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Collection {
+nonisolated extension Collection {
     
     /// 下标方式获取指定位置的元素
     subscript (elementAt index: Index) -> Element? {
@@ -57,7 +57,7 @@ extension Collection {
     }
 }
 
-extension Collection where Index == Int {
+nonisolated extension Collection where Index == Int {
     
     /// 从index处根剧自身count生成新范围
     /// - Parameter index: 索引处

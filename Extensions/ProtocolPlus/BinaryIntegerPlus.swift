@@ -7,12 +7,12 @@
 
 import Foundation
 
-extension Optional where Wrapped: BinaryInteger {
+nonisolated extension Optional where Wrapped: BinaryInteger {
     
     var orZero: Wrapped { self ?? 0 }
 }
 
-extension BinaryInteger {
+nonisolated extension BinaryInteger {
     
     /// 带正负号的字符串
     var signedString: String {
@@ -117,7 +117,7 @@ extension BinaryInteger {
     var isFalse: Bool { !isTrue }
 }
 
-extension BinaryInteger {
+nonisolated extension BinaryInteger {
     
     @discardableResult static postfix func ++(input: inout Self) -> Self {
         defer {

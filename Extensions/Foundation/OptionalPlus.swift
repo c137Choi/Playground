@@ -6,7 +6,7 @@
 
 import Foundation
 
-extension Optional {
+nonisolated extension Optional {
     
     var consumed: Wrapped? {
         mutating get {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension FormatStyle where Self == FloatingPointFormatStyle<Double> {
+nonisolated extension FormatStyle where Self == FloatingPointFormatStyle<Double> {
     
     /// 0-2个小数位, 整数位不分组, 进位规则.towardZero
     static var f2: Self {
@@ -38,7 +38,7 @@ extension FormatStyle where Self == FloatingPointFormatStyle<Double> {
     }
 }
 
-extension FormatStyle where Self == FloatingPointFormatStyle<Double>.Percent {
+nonisolated extension FormatStyle where Self == FloatingPointFormatStyle<Double>.Percent {
     /// 无小数位的百分比
     /// 注: 进位规则使用四舍五入toNearestOrAwayFromZero
     /// 0.9932(99.32的小数部分小于0.5舍掉) -> 99%
@@ -52,7 +52,7 @@ extension FormatStyle where Self == FloatingPointFormatStyle<Double>.Percent {
 }
 
 // MARK: - Date
-extension Date.FormatString {
+nonisolated extension Date.FormatString {
     
     /// 常用的日期格式: 使用多行文本创建方便阅读. 每一行以'\'结尾可忽略换行效果, 即最终日期格式不会有换行效果
     /// yyyy-MM-dd HH:mm:ss
@@ -68,7 +68,7 @@ extension Date.FormatString {
     """
 }
 
-extension FormatStyle where Self == Date.VerbatimFormatStyle {
+nonisolated extension FormatStyle where Self == Date.VerbatimFormatStyle {
     
     static var yyyyMMddHHmmss: Date.VerbatimFormatStyle {
         verbatim(.yyyyMMddHHmmss)

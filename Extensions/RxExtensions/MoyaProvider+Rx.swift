@@ -8,7 +8,7 @@ import Moya
 import RxSwift
 import RxCocoa
 
-public extension Reactive where Base: MoyaProviderType {
+nonisolated extension Reactive where Base: MoyaProviderType {
 
     /// Designated request-making method.
     ///

@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension Double {
+nonisolated extension Double {
     
     /// 按步长取整
     /// - Parameter increment: 步长

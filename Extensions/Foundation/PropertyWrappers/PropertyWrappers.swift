@@ -35,7 +35,8 @@ import UIKit
     }
 }
 
-@propertyWrapper struct Clampped<T: Comparable> {
+@propertyWrapper
+struct Clampped<T: Comparable> {
     
     let range: ClosedRange<T>
     
@@ -51,6 +52,7 @@ import UIKit
         set { innerValue = range << newValue }
     }
 }
+extension Clampped: Sendable where T: Sendable {}
 extension Clampped: Equatable where T: Equatable {}
 extension Clampped: Hashable where T: Hashable {}
 extension Clampped: Codable where T: Codable {}

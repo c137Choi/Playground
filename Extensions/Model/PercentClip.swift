@@ -12,7 +12,7 @@ import Foundation
 /// 往左, 左侧百分比增大, 右侧百分比为空
 /// 往右, 右侧百分比增大, 左侧百分比为空
 /// 居中时(0.5), 两侧百分比都为空
-struct PercentClip {
+nonisolated struct PercentClip {
     /// 偏左百分比: 越往左越大, 范围0-1
     let lower: Double?
     /// 偏右百分比: 越往右越大, 范围0-1
@@ -24,7 +24,7 @@ struct PercentClip {
     }
 }
 
-extension PercentClip {
+nonisolated extension PercentClip {
     
     /// 初始化
     /// - Parameter percent: 百分比(范围: 0-1)

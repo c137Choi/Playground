@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension UUID {
+nonisolated extension UUID {
     
     /// 生成一个新的UUID
     static var new: UUID {

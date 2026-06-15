@@ -7,14 +7,14 @@
 
 import Foundation
 
-extension Optional where Wrapped: BinaryFloatingPoint {
+nonisolated extension Optional where Wrapped: BinaryFloatingPoint {
     
     var orZero: Wrapped { self ?? 0.0 }
     
     var orNan: Wrapped { self ?? Wrapped.nan }
 }
 
-extension BinaryFloatingPoint {
+nonisolated extension BinaryFloatingPoint {
     
     /// 小数部分>=0.999的情况直接进一位
     var rectifiedInt: Int {
@@ -104,7 +104,7 @@ extension BinaryFloatingPoint {
     }
 }
 
-extension BinaryFloatingPoint {
+nonisolated extension BinaryFloatingPoint {
     
     // 默认设置
     fileprivate var decimalFormatter: NumberFormatter {

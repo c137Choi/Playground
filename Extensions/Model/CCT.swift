@@ -8,7 +8,7 @@
 import UIKit
 
 /// 色温+红绿
-struct CCT {
+nonisolated struct CCT {
     /// 色温
     var temperature: Double
     /// 红绿补偿(范围: 0...1)
@@ -23,13 +23,13 @@ extension CCT: CustomDebugStringConvertible {
         "\(temperature.f2)K,GM:\(normalizedGM?.f2, default: "无")"
     }
 }
-extension CCT: ExpressibleByFloatLiteral {
+nonisolated extension CCT: ExpressibleByFloatLiteral {
     typealias FloatLiteralType = Double
     init(floatLiteral value: Double) {
         self.init(temperature: value)
     }
 }
-extension CCT {
+nonisolated extension CCT {
     
     var rgb: RGB {
         RGB(cct: self)

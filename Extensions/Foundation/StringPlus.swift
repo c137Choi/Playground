@@ -28,14 +28,14 @@ extension String {
 }
 
 // MARK: - __________ String: LocalizedError __________
-extension String: @retroactive LocalizedError {
+nonisolated extension String: @retroactive LocalizedError {
 	public var errorDescription: String? {
 		self
 	}
 }
 
 // MARK: - __________ String? __________
-extension Optional where Wrapped == String {
+nonisolated extension Optional where Wrapped == String {
 	
     var orEmpty: String {
         self ?? ""
@@ -79,7 +79,7 @@ extension Optional where Wrapped == String {
 }
 
 // MARK: - __________ StringProtocol __________
-extension StringProtocol {
+nonisolated extension StringProtocol {
     
     /// 计算文字尺寸
     func boundingRect(in containerSize: CGSize, fontSize: CGFloat? = nil, fontWeight: UIFont.Weight = .regular) -> CGRect {
@@ -134,14 +134,14 @@ extension StringProtocol {
 }
 
 // MARK: - __________ Range<String.Index> __________
-extension RangeExpression where Bound == String.Index  {
+nonisolated extension RangeExpression where Bound == String.Index  {
 	func nsRange<S: StringProtocol>(in string: S) -> NSRange {
 		NSRange(self, in: string)
 	}
 }
 
 // MARK: - __________ String __________
-extension String {
+nonisolated extension String {
 	
 	/// 使用右侧的字符串
 	/// - Parameters:
@@ -157,7 +157,8 @@ extension String {
 	///   - rhs: 右操作对象
 	static func << (lhs: String, rhs: String) -> String { lhs }
 }
-extension String {
+
+nonisolated extension String {
     
     fileprivate static var _deviceIdentifier: String?
     
@@ -267,7 +268,7 @@ extension String {
 }
 // MARK: - __________ Verification __________
 
-enum StringType {
+nonisolated enum StringType {
     /// 中国手机号
     case cellphoneNumber
     /// 邮箱地址
@@ -303,7 +304,7 @@ enum StringType {
     }
 }
 
-extension String {
+nonisolated extension String {
     
     /// 用于唯一标记设备(❌,不插卡的手机获取的值为空),是否能上架App Store还有待测试
     static var markMACAddress: String {
@@ -509,7 +510,7 @@ extension String {
 }
 
 // MARK: - 转换
-extension String {
+nonisolated extension String {
     
     /// SwifterSwift: Check if string contains one or more emojis.
     ///

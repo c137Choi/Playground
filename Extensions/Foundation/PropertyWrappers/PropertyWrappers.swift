@@ -57,48 +57,6 @@ extension Clampped: Equatable where T: Equatable {}
 extension Clampped: Hashable where T: Hashable {}
 extension Clampped: Codable where T: Codable {}
 
-/// 源源不断的将新赋的有效值储存在内部的数组内, 自身返回最新值.
-/// 用$语法取projectedValue使用
-/// 配合Configurator的keyPath dynamicMemberLookup赋值效果更加
-@propertyWrapper struct ValueStorage<T> {
-    
-    var projectedValue: [T] = []
-    
-    var wrappedValue: T {
-        get { _wrappedValue }
-        set { _wrappedValue = newValue
-            projectedValue.append(newValue)
-        }
-    }
-    
-    private var _wrappedValue: T
-    
-    init(wrappedValue: T) {
-        _wrappedValue = wrappedValue
-        projectedValue.append(wrappedValue)
-    }
-}
-
-/// ValueStorage的Optional版本
-@propertyWrapper struct OptionalValueStorage<T> {
-    
-    var projectedValue: [T] = []
-    
-    var wrappedValue: T? {
-        get { _wrappedValue }
-        set { _wrappedValue = newValue
-            guard let newValue else { return }
-            projectedValue.append(newValue)
-        }
-    }
-    
-    private var _wrappedValue: T?
-    
-    init(wrappedValue: T?) {
-        self.wrappedValue = wrappedValue
-    }
-}
-
 /// 让值在某个范围内循环
 @propertyWrapper class CycledValue<T: Comparable> {
 

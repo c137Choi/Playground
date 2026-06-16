@@ -6,7 +6,7 @@
 
 import Foundation
 
-extension Dictionary {
+nonisolated extension Dictionary {
     
     init(keys: some Sequence<Key>, value: Value) {
         self.init()

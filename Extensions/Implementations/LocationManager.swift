@@ -33,7 +33,7 @@ extension LocationManager {
     }
     
     /// 请求位置权限
-    static func requestAuthorizationIfNeeded() {
+    @MainActor static func requestAuthorizationIfNeeded() {
         guard let infoDictionary = Bundle.main.infoDictionary else { return }
         lazy var infoKeys = infoDictionary.keys
         let core = LocationManager.shared.core

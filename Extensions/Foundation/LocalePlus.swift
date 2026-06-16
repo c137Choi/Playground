@@ -6,7 +6,7 @@
 
 import Foundation
 
-extension Locale {
+nonisolated extension Locale {
     
     /// 系统列表中列出的语言选项
     static var compatiblePreferredLocales: [Locale] {

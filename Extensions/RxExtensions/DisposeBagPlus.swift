@@ -13,6 +13,18 @@ nonisolated extension DisposeBag {
         DisposeBag()
     }
     
+    static func task(name: String? = nil, priority: TaskPriority? = nil, operation: sending @escaping @isolated(any) () async -> Void) -> DisposeBag {
+        DisposeBag {
+            Task(name: name, priority: priority, operation: operation)
+        }
+    }
+    
+    static func task(name: String? = nil, priority: TaskPriority? = nil, operation: sending @escaping @isolated(any) () async throws -> Void) -> DisposeBag {
+        DisposeBag {
+            Task(name: name, priority: priority, operation: operation)
+        }
+    }
+    
     func insert(@ArrayBuilder<Disposable> builder: () -> [Disposable]) {
         let disposables = builder()
         insert(disposables)

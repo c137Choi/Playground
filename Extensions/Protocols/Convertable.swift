@@ -11,16 +11,16 @@ public protocol Convertable {
     func `as`<T>(_ type: T.Type) -> T?
 }
 
-extension Convertable {
+nonisolated extension Convertable {
     public func `as`<T>(_ type: T.Type) -> T? {
         self as? T
     }
 }
 
-extension NSObject: Convertable {}
-extension Optional: Convertable {}
+nonisolated extension NSObject: Convertable {}
+nonisolated extension Optional: Convertable {}
 
-extension Error {
+nonisolated extension Error {
     public func `as`<T>(_ type: T.Type) -> T? {
         self as? T
     }

@@ -11,7 +11,7 @@ extension JSONEncoder: Configurable {}
 
 extension Configurable where Self == JSONEncoder {
     
-    static func make(_ configuration: (JSONEncoder) -> Void) -> JSONEncoder {
+    nonisolated static func make(_ configuration: (JSONEncoder) -> Void) -> JSONEncoder {
         JSONEncoder().setup(configuration)
     }
 }
@@ -26,7 +26,7 @@ extension JSONEncoder {
     }
     
     /// 时间以毫秒解析的Encoder
-    static let millisecondsDateEncoder = JSONEncoder.make { make in
+    nonisolated static let millisecondsDateEncoder = JSONEncoder.make { make in
         make.dateEncodingStrategy = .millisecondsSince1970
     }
 }

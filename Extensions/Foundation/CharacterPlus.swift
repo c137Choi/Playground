@@ -6,7 +6,7 @@
 
 import Foundation
 
-extension Character {
+nonisolated extension Character {
     
     /// 转换为字符串
     var string: String {

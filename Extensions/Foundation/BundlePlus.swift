@@ -6,7 +6,7 @@
 
 import UIKit
 
-extension Bundle {
+nonisolated extension Bundle {
     
     /// 应用图标Image对象
     var appIcon: UIImage? {

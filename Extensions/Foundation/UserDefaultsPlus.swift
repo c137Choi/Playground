@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension UserDefaults {
+nonisolated extension UserDefaults {
     
     /// 尝试将object转换, 转换失败则返回空
     static func maybeInt(forKey key: String) -> Int? {

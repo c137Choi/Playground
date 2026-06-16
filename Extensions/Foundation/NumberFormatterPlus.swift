@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension NumberFormatter {
+nonisolated extension NumberFormatter {
 	
     /// 用于重置sharedFormatter
     fileprivate static let frozenFormatter = NumberFormatter()
@@ -16,7 +16,7 @@ extension NumberFormatter {
     /// 复用的Formatter | 每次使用前需要先进行重置
     fileprivate static var instance = NumberFormatter()
 	
-	public static var shared: NumberFormatter {
+	public static var xxShared: NumberFormatter {
         instance.reset
 	}
 	

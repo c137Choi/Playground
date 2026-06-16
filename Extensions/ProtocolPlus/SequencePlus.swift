@@ -96,7 +96,7 @@ nonisolated extension Sequence {
     }
 }
 
-extension Sequence where Element: Sequence {
+nonisolated extension Sequence where Element: Sequence {
     
     /// 展开:数组的数组
     var flattened: [Element.Element] {
@@ -104,7 +104,7 @@ extension Sequence where Element: Sequence {
     }
 }
 
-extension Sequence where Element: Hashable {
+nonisolated extension Sequence where Element: Hashable {
     
     /// 移除重复项(保持原有的元素顺序) | Element必须遵循Hashable
     var duplicatesRemoved: [Element] {

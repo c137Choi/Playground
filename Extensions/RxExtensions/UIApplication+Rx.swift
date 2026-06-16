@@ -8,7 +8,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-extension Reactive where Base: UIApplication {
+@MainActor extension Reactive where Base: UIApplication {
     
     var latestResponderViewAndKeyboardPresentation: RxObservable<(UIView, KeyboardPresentation)> {
         RxObservable.combineLatest(firstResponderView, latestKeyboardPresentation)

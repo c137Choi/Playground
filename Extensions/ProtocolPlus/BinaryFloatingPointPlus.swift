@@ -123,7 +123,7 @@ nonisolated extension BinaryFloatingPoint {
     
     /// 格式化0...1.0到百分比
     private func xxPercentString(fractions: Int = 0) -> String? {
-        NumberFormatter.shared.transform { formatter in
+        NumberFormatter.xxShared.transform { formatter in
             formatter.numberStyle = .percent
             /// 因为shared属性内对复用的Formatter所有属性都作了重置(numberStyle被重置为了.none)
             /// 可能还在同一个runloop中,设置了numberStyle = .percent之后相关属性还未生效

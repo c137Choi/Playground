@@ -45,7 +45,7 @@ nonisolated extension Double {
     ///   - fractionLength: 小数位长度
     ///   - rule: 进位规则
     /// - Returns: 格式化后的字符串
-    func formatted(fractionLength: Int, rule: FloatingPointFormatStyle<Double>.Configuration.RoundingRule) -> String {
+    func formatted(fractionLength: Int, roundingRule: FloatingPointFormatStyle<Double>.Configuration.RoundingRule = .towardZero, increment: Double? = nil) -> String {
         /// 小数位长度(不可为负值所以这里用max方法约束一下)
         let fractionLength = max(0, fractionLength)
         /// 精度
@@ -55,7 +55,7 @@ nonisolated extension Double {
             .grouping(.never)
             .sign(strategy: .automatic)
             .precision(precision)
-            .rounded(rule: rule)
+            .rounded(rule: roundingRule, increment: increment)
             .format(self)
     }
     

@@ -120,14 +120,14 @@ func dismissKeyboard() {
     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 }
 
-func associated<T>(_ type: T.Type, _ object: Any, _ key: UnsafeRawPointer) -> T? {
+nonisolated func associated<T>(_ type: T.Type, _ object: Any, _ key: UnsafeRawPointer) -> T? {
     getAssociatedObject(object, key) as? T
 }
 
-func getAssociatedObject(_ object: Any, _ key: UnsafeRawPointer) -> Any? {
+nonisolated func getAssociatedObject(_ object: Any, _ key: UnsafeRawPointer) -> Any? {
     objc_getAssociatedObject(object, key)
 }
 
-func setAssociatedObject(_ object: Any, _ key: UnsafeRawPointer, _ value: Any?, _ policy: objc_AssociationPolicy) {
+nonisolated func setAssociatedObject(_ object: Any, _ key: UnsafeRawPointer, _ value: Any?, _ policy: objc_AssociationPolicy) {
     objc_setAssociatedObject(object, key, value, policy)
 }

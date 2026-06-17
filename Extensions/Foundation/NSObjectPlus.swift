@@ -13,6 +13,7 @@ extension NSObject {
     enum Associated {
         @UniqueAddress static var references
         @UniqueAddress static var weakReferences
+        @UniqueAddress static var deallocationSentinel
     }
     
     var className: String {

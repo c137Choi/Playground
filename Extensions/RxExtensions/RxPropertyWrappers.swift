@@ -220,32 +220,3 @@ final class CycledVariable<T>: Variable<T> where T: Comparable {
         rangeBoundErrorSubject.observable
     }
 }
-
-@propertyWrapper
-struct WeakVariable<Wrapped: AnyObject>: ObservableType {
-    /// ObservableConvertibleType序列元素
-    typealias Element = Wrapped?
-    /// 弱引用
-    private weak var weakReference: Wrapped?
-    /// 发布者
-    private let subject = PublishSubject<Wrapped?>()
-    
-    var wrappedValue: Wrapped? {
-        get { weakReference }
-        set { weakReference = newValue
-            subject.onNext(newValue)
-        }
-    }
-    
-    init(wrappedValue: Wrapped?) {
-        self.weakReference = wrappedValue
-    }
-    
-    func asObservable() -> RxObservable<Wrapped?> {
-        subject.startWith(weakReference)
-    }
-    
-    func subscribe<Observer>(_ observer: Observer) -> any Disposable where Observer : ObserverType, Observer.Element == Wrapped? {
-        asObservable().subscribe(observer)
-    }
-}

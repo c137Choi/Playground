@@ -7,9 +7,9 @@
 
 import UIKit
 
-struct XY: Equatable {
-    @Clampped(range: 0...0.9) var x: Double = 0
-    @Clampped(range: 0...0.9) var y: Double = 0
+nonisolated struct XY: Equatable {
+    var x: Double = 0
+    var y: Double = 0
     
     init(x: Double, y: Double) {
         self.x = x.isNaN ? 0 : x

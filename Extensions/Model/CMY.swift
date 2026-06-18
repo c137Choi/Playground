@@ -7,11 +7,11 @@
 
 struct CMY {
     /// 0...1.0
-    @Clampped(range: Double.percentRange) var cyan = Double.zero
+    var cyan = Double.zero
     /// 0...1.0
-    @Clampped(range: Double.percentRange) var magenta = Double.zero
+    var magenta = Double.zero
     /// 0...1.0
-    @Clampped(range: Double.percentRange) var yellow = Double.zero
+    var yellow = Double.zero
 }
 extension CMY: Codable {}
 extension CMY {

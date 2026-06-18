@@ -440,7 +440,9 @@ extension Int {
 	}
 	
 	var uiColor: UIColor {
-        rgba.map(fallback: .clear, UIColor.init)
+        rgba.map(fallback: .clear) {
+            UIColor(rgba: $0)
+        }
 	}
     
     /// 整型 -> RGBA

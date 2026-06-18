@@ -8,13 +8,13 @@
 
 import UIKit
 
-struct HSI: Hashable {
+nonisolated struct HSI: Hashable {
     /// 范围0-1
-    @Clampped(range: Double.percentRange) var hue = Double.zero
+    var hue = Double.zero
     /// 范围0-1
-    @Clampped(range: Double.percentRange) var saturation = Double.zero
+    var saturation = Double.zero
     /// 范围0-1
-    @Clampped(range: Double.percentRange) var brightness = Double.zero
+    var brightness = Double.zero
 }
 
 extension HSI: Codable {}

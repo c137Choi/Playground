@@ -5,11 +5,11 @@
 //  Created by Choi on 2026/3/27.
 //
 
-struct RGBA {
-    @Clampped(range: Double.percentRange) var red = Double.zero
-    @Clampped(range: Double.percentRange) var green = Double.zero
-    @Clampped(range: Double.percentRange) var blue = Double.zero
-    @Clampped(range: Double.percentRange) var alpha = Double.zero
+nonisolated struct RGBA {
+    var red = Double.zero
+    var green = Double.zero
+    var blue = Double.zero
+    var alpha = Double.zero
 }
 
 extension RGBA {

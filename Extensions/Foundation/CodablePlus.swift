@@ -7,7 +7,7 @@
 import Foundation
 
 /// UnkeyedDecodingContainer跳过解码失败条目会用到
-public struct VoidCodable: Codable {
+nonisolated public struct VoidCodable: Codable {
     public func encode(to encoder: Encoder) throws {}
     public init(from decoder: Decoder) throws {
         _ = try decoder.singleValueContainer()

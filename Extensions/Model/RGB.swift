@@ -8,13 +8,13 @@
 
 import CoreGraphics
 
-struct RGB {
+nonisolated struct RGB {
     /// 0...1.0
-    @Clampped(range: Double.percentRange) var red = Double.zero
+    var red = Double.zero
     /// 0...1.0
-    @Clampped(range: Double.percentRange) var green = Double.zero
+    var green = Double.zero
     /// 0...1.0
-    @Clampped(range: Double.percentRange) var blue = Double.zero
+    var blue = Double.zero
 }
 
 extension RGB: Configurable {}
@@ -26,7 +26,7 @@ extension RGB: CustomDebugStringConvertible {
     }
 }
 
-extension RGB {
+nonisolated extension RGB {
     /// 黑
     static let black = RGB(red: 0, green: 0, blue: 0)
     /// 白
@@ -52,39 +52,12 @@ extension RGB {
     /// 浅青柠色
     static let lightLime = RGB(bitRed: 0xBF, bitGreen: 0xFF, bitBlue: 0)
     
-    init?(_ hexString: String) {
-        guard let rawValue = Int(hexString: hexString) else { return nil }
-        self.init(rawValue: rawValue)
-    }
-    
-    init?(rawValue: Int) {
-        guard let rgba = RGBA(rawValue: rawValue) else { return nil }
-        self = rgba.rgb
-    }
-    
-    var rawValue: Int {
-        rgba.rgbValue
-    }
-    
     init(intHue: Int) {
         self.init(hue: Int.hueRange.percentage(intHue), saturation: 1, brightness: 1)
     }
     
     init(bitRed: UInt8, bitGreen: UInt8, bitBlue: UInt8) {
         self.init(red: bitRed.double / 255.0, green: bitGreen.double / 255.0, blue: bitBlue.double / 255.0)
-    }
-    
-    init?(_ uiColor: UIColor) {
-        var red = CGFloat.zero
-        var green = CGFloat.zero
-        var blue = CGFloat.zero
-        if uiColor.getRed(&red, green: &green, blue: &blue, alpha: nil) {
-            self.red = red
-            self.green = green
-            self.blue = blue
-        } else {
-            return nil
-        }
     }
     
     init(cmy: CMY) {
@@ -224,6 +197,40 @@ extension RGB {
     var averageBrightness: Double {
         (red + green + blue) / 3.0
     }
+}
+
+extension RGB {
+    
+    init?(_ hexString: String) {
+        guard let rawValue = Int(hexString: hexString) else { return nil }
+        self.init(rawValue: rawValue)
+    }
+    
+    init?(rawValue: Int) {
+        guard let rgba = RGBA(rawValue: rawValue) else { return nil }
+        self = rgba.rgb
+    }
+    
+    var rawValue: Int {
+        rgba.rgbValue
+    }
+    
+    
+    
+    init?(_ uiColor: UIColor) {
+        var red = CGFloat.zero
+        var green = CGFloat.zero
+        var blue = CGFloat.zero
+        if uiColor.getRed(&red, green: &green, blue: &blue, alpha: nil) {
+            self.red = red
+            self.green = green
+            self.blue = blue
+        } else {
+            return nil
+        }
+    }
+    
+    
     
     var uiColor: UIColor {
         UIColor(red: red, green: green, blue: blue, alpha: 1.0)

@@ -10,7 +10,7 @@ import Foundation
 extension UnkeyedDecodingContainer {
     
     /// 封装「解码+跳过无效条目」逻辑
-    mutating func compactDecode<T: Decodable>(_ type: T.Type) -> [T] {
+    nonisolated mutating func compactDecode<T: Decodable>(_ type: T.Type) -> [T] {
         var elements: [T] = []
         while !isAtEnd {
             do {

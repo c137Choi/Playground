@@ -8,17 +8,17 @@
 import UIKit
 
 // MARK: - GammaCorrection
-protocol GammaCorrection {
+nonisolated protocol GammaCorrection {
     func transform(_ value: Double) -> Double
     func invTransform(_ value: Double) -> Double
 }
 
-struct NoGammaCorrection: GammaCorrection {
+nonisolated struct NoGammaCorrection: GammaCorrection {
     func transform(_ value: Double) -> Double { value }
     func invTransform(_ value: Double) -> Double { value }
 }
 
-struct StandardGammaCorrection: GammaCorrection {
+nonisolated struct StandardGammaCorrection: GammaCorrection {
     let gamma: Double
     let transition: Double
     let slope: Double
@@ -37,7 +37,7 @@ struct StandardGammaCorrection: GammaCorrection {
         self.transitionInv = transform(transition)
     }
     
-    func transform(_ value: Double) -> Double {
+    nonisolated func transform(_ value: Double) -> Double {
         value <= transition ? slope * value : (1 + offset) * pow(value, gamma) - offset
     }
     
@@ -46,7 +46,7 @@ struct StandardGammaCorrection: GammaCorrection {
     }
 }
 
-struct Matrix3 {
+nonisolated struct Matrix3 {
     
     static let identity = Matrix3(1, 0, 0, 0, 1, 0, 0, 0, 1)
     
@@ -132,7 +132,7 @@ struct Matrix3 {
     }
 }
 
-enum ColorSpace {
+nonisolated enum ColorSpace {
     case sRGB
     case adobeRGB
     case wide

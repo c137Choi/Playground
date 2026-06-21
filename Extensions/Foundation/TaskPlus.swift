@@ -9,15 +9,11 @@ import Foundation
 
 extension Task where Success == Never, Failure == Never {
     
-    static func sleep(seconds: TimeInterval) async throws {
-        guard seconds >= .leastNormalMagnitude else {
-            throw "WRONG PARAMETER: \(seconds), CHECK YOUR SOURCE."
-        }
-        let nanoseconds = UInt64(seconds * NSEC_PER_SEC.double)
+    static func sleep(_ interval: DispatchTimeInterval) async throws {
         if #available(iOS 16.0, *) {
-            try await Task.sleep(for: .nanoseconds(nanoseconds), tolerance: .milliseconds(200))
+            try await Task.sleep(for: interval.continuousClockDuration)
         } else {
-            try await Task.sleep(nanoseconds: nanoseconds)
+            try await Task.sleep(nanoseconds: interval.nanoseconds.uInt64)
         }
     }
 }

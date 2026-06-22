@@ -12,7 +12,7 @@ nonisolated struct RGBA {
     var alpha = Double.zero
 }
 
-extension RGBA {
+nonisolated extension RGBA {
     /// 纯白
     static let white = RGBA(red: 1, green: 1, blue: 1, alpha: 1)
     /// 全0
@@ -50,7 +50,7 @@ extension RGBA {
     }
 }
 
-extension RGBA: RawRepresentable {
+nonisolated extension RGBA: RawRepresentable {
     
     var rawValue: Int {
         let intAlpha = Int(alpha * 0xFF) << 24
@@ -82,7 +82,7 @@ extension RGBA: RawRepresentable {
     }
 }
 
-extension RGBA: Comparable {
+nonisolated extension RGBA: Comparable {
     
     /// 比较两个颜色
     static func < (lhs: RGBA, rhs: RGBA) -> Bool {

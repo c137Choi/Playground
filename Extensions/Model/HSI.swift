@@ -8,7 +8,7 @@
 
 import UIKit
 
-nonisolated struct HSI: Hashable {
+nonisolated struct HSI: Codable {
     /// 范围0-1
     var hue = Double.zero
     /// 范围0-1
@@ -17,9 +17,9 @@ nonisolated struct HSI: Hashable {
     var brightness = Double.zero
 }
 
-extension HSI: Codable {}
-extension HSI: Configurable {}
-extension HSI {
+nonisolated extension HSI: Hashable {}
+nonisolated extension HSI: Configurable {}
+nonisolated extension HSI {
     
     static let zero = HSI(hue: 0, saturation: 0, brightness: 0)
     

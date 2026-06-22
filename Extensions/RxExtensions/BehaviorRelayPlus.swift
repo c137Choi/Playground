@@ -8,7 +8,7 @@
 import RxSwift
 import RxCocoa
 
-extension BehaviorRelay {
+nonisolated extension BehaviorRelay {
 
     /// 修改内部value
     /// - Parameter configure: 回调闭包

@@ -139,7 +139,7 @@ extension ObservableConvertibleType {
             }
     }
     
-    var observable: RxObservable<Element> {
+    nonisolated var observable: RxObservable<Element> {
         asObservable()
     }
     

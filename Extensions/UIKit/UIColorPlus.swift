@@ -80,7 +80,7 @@ extension UIColor {
         return colorTemperature
     }
     
-    var hsi: HSI {
+    nonisolated var hsi: HSI {
         maybeHSI.or(.zero)
     }
     
@@ -92,7 +92,7 @@ extension UIColor {
         maybeRGBA.or(.zero)
     }
     
-    var maybeHSI: HSI? {
+    nonisolated var maybeHSI: HSI? {
         HSI(self)
     }
     

@@ -232,7 +232,7 @@ extension RGB {
     
     
     
-    var uiColor: UIColor {
+    nonisolated var uiColor: UIColor {
         UIColor(red: red, green: green, blue: blue, alpha: 1.0)
     }
 }
@@ -249,7 +249,7 @@ extension RGB {
     }
 }
 
-struct GMCorrectionMatrix {
+nonisolated struct GMCorrectionMatrix {
     let m11: Double  // Red → Red
     let m12: Double  // Green → Red
     let m13: Double  // Blue → Red

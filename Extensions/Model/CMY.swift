@@ -5,7 +5,7 @@
 //  Created by Choi on 2026/5/18.
 //
 
-struct CMY {
+nonisolated struct CMY: Codable {
     /// 0...1.0
     var cyan = Double.zero
     /// 0...1.0
@@ -13,8 +13,8 @@ struct CMY {
     /// 0...1.0
     var yellow = Double.zero
 }
-extension CMY: Codable {}
-extension CMY {
+
+nonisolated extension CMY {
     
     init(rgb: RGB) {
         self.init(cyan: 1.0 - rgb.red, magenta: 1.0 - rgb.green, yellow: 1.0 - rgb.blue)

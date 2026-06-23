@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AsyncAlgorithms
 
 nonisolated extension AsyncSequence {
     
@@ -14,6 +15,12 @@ nonisolated extension AsyncSequence {
     func collect() async rethrows -> [Element] {
         try await reduce(into: [Element].empty) { array, element in
             array.append(element)
+        }
+    }
+    
+    func removeDuplicate(_ keySelector: @Sendable @escaping (Element) -> some Equatable) -> AsyncRemoveDuplicatesSequence<Self> {
+        removeDuplicates { lhs, rhs in
+            keySelector(lhs) == keySelector(rhs)
         }
     }
 }

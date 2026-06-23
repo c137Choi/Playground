@@ -103,8 +103,7 @@ final class ClamppedVariable<T>: Variable<T> where T: Comparable {
     
     init(wrappedValue: T, range: ClosedRange<T>) {
         self.range = range
-        let initialValue = range << wrappedValue
-        super.init(wrappedValue: initialValue)
+        super.init(wrappedValue: range << wrappedValue)
     }
     
     /// 这里重写此属性是必须的,否则无法使用$property语法.relay

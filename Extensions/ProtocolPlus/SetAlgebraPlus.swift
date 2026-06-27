@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SetAlgebra {
+nonisolated extension SetAlgebra {
     
     /// 是否和另一个集合相交
     public func intersects(with other: Self) -> Bool {

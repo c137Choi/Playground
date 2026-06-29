@@ -98,10 +98,9 @@ nonisolated extension Optional {
     /// - Returns: 更新后的值
     @discardableResult
     mutating func mutating(update: (inout Wrapped) throws -> Void) rethrows -> Wrapped? {
-        guard var pending = self else { return nil }
-        try update(&pending)
-        self = pending
-        return pending
+        guard self.isValid else { return nil }
+        try update(&self!)
+        return self
     }
     
     /// 如果不为空则以解包后的值作为入参执行闭包

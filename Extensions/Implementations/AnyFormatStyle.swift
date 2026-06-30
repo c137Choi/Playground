@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AnyFormatStyle<Input, Output>: Sendable {
+nonisolated struct AnyFormatStyle<Input, Output>: Sendable {
     
     private let format: @Sendable (Input) -> Output
     
@@ -15,7 +15,7 @@ struct AnyFormatStyle<Input, Output>: Sendable {
         self.format = format
     }
     
-    init<F>(_ style: F) where F: FormatStyle, Input == F.FormatInput, Output == F.FormatOutput {
+    init<F: Sendable>(_ style: F) where F: FormatStyle, Input == F.FormatInput, Output == F.FormatOutput {
         format = {
             style.format($0)
         }

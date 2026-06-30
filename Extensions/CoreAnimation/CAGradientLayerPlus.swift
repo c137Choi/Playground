@@ -7,7 +7,7 @@
 import UIKit
 
 // MARK: - 渐变色封装
-struct ColorStop {
+nonisolated struct ColorStop {
     let color: UIColor
     let stop: Double
     init(color: UIColor, stop: Double = -1) {
@@ -18,7 +18,7 @@ struct ColorStop {
     /// 从HUE创建对象
     /// - Parameters:
     ///   - hue: 色相 (范围: 0 - 1)
-    @MainActor static func fromHue(_ hue: Double) -> ColorStop {
+    static func fromHue(_ hue: Double) -> ColorStop {
         let color = UIColor(hue: hue)
         return self.init(color: color)
     }

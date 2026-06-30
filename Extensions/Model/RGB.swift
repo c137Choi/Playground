@@ -199,7 +199,7 @@ nonisolated extension RGB {
     }
 }
 
-extension RGB {
+nonisolated extension RGB {
     
     init?(_ hexString: String) {
         guard let rawValue = Int(hexString: hexString) else { return nil }
@@ -237,7 +237,7 @@ extension RGB {
     }
 }
 
-extension RGB {
+nonisolated extension RGB {
     
     static func + (lhs: RGB, rhs: RGB) -> RGB {
         lhs.blending(rhs)

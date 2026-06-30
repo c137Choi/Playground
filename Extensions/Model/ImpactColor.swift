@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct ImpactColor {
+nonisolated struct ImpactColor {
     private var _rgb: RGB
     private var _cmy: CMY
     private var _hsi: HSI
@@ -99,7 +99,7 @@ extension ImpactColor: Codable {
     }
 }
 
-extension ImpactColor {
+nonisolated extension ImpactColor {
     
     var black: ImpactColor {
         with(new: \.brightness, 0.0)

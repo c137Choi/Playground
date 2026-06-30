@@ -137,25 +137,25 @@ extension UIColor {
     
     /// 从色温创建颜色
     /// - Parameter temperature: 色温
-    convenience init(temperature: CGFloat) {
+    nonisolated convenience init(temperature: CGFloat) {
         let rgb = RGB(temperature: temperature)
         self.init(rgb: rgb)
     }
     
-    convenience init(rgb: RGB) {
+    nonisolated convenience init(rgb: RGB) {
         self.init(red: rgb.red, green: rgb.green, blue: rgb.blue, alpha: 1.0)
     }
     
-    convenience init(rgba: RGBA) {
+    nonisolated convenience init(rgba: RGBA) {
         self.init(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha)
     }
     
-    convenience init(xy: XY) {
+    nonisolated convenience init(xy: XY) {
         self.init(x: xy.x, y: xy.y)
     }
     
     /// XY坐标创建颜色
-    convenience init(x: Double, y: Double) {
+    nonisolated convenience init(x: Double, y: Double) {
         let rgb = ColorSpace.adobeRGB.rgb(x: x, y: y)
         self.init(rgb: rgb)
     }
@@ -228,7 +228,7 @@ extension UIColor {
     static func hue(_ hue: Double) -> UIColor {
         UIColor(hue: hue)
     }
-    convenience init(hue: Double) {
+    nonisolated convenience init(hue: Double) {
         self.init(hue: hue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
     }
     
@@ -431,7 +431,7 @@ extension UIColor {
     }
 }
 
-extension Int {
+nonisolated extension Int {
 	
     @available(iOS 13.0, *)
     var cgColor: CGColor {

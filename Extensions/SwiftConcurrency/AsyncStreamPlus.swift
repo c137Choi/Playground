@@ -9,6 +9,15 @@ import Foundation
 import Combine
 import RxSwift
 
+extension AsyncStream {
+    
+    static var empty: AsyncStream<Element> {
+        AsyncStream<Element> { continuation in
+            continuation.finish()
+        }
+    }
+}
+
 extension AsyncStream where Element: FixedWidthInteger {
     
     nonisolated static func timer(milliseconds: Int) -> AsyncStream<Element> {

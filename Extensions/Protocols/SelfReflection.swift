@@ -11,10 +11,10 @@ protocol SelfReflection {
     var itself: Self { get }
 }
 
-extension SelfReflection {
+nonisolated extension SelfReflection {
     var itself: Self { self }
 }
 
-extension Bool: SelfReflection {}
-extension Optional: SelfReflection {}
-extension Array: SelfReflection {}
+nonisolated extension Bool: SelfReflection {}
+nonisolated extension Optional: SelfReflection {}
+nonisolated extension Array: SelfReflection {}

@@ -16,7 +16,7 @@ extension DateInterval {
 	}
 }
 
-extension Date {
+nonisolated extension Date {
     
     /// ISO8601日期格式: "yyyy-MM-dd'T'HH:mm:ss"
     fileprivate static let iso8601Formatter = ISO8601DateFormatter.make {
@@ -80,7 +80,7 @@ extension Date {
             .format(self)
     }
     
-	func string(dateFormat: String) -> String {
+	@MainActor func string(dateFormat: String) -> String {
         DateFormatter.shared.with(new: \.dateFormat, dateFormat).transform {
             $0.string(from: self)
         }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension URLComponents {
+nonisolated extension URLComponents {
     
     init(scheme: String?, host: String?) {
         self.init()

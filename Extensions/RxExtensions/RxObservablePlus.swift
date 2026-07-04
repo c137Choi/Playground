@@ -7,6 +7,8 @@
 
 import RxSwift
 
+extension RxObservable: @retroactive @unchecked Sendable {}
+
 extension RxObservable {
     
     /// 合并Bool序列值 | 任意一个为true时发送true

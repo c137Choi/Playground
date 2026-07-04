@@ -6,9 +6,14 @@
 //
 
 import Foundation
+import RxSwift
 import AsyncAlgorithms
 
 nonisolated extension AsyncSequence {
+    
+    var observable: RxObservable<Element> {
+        self.asObservable()
+    }
     
     /// 来源: https://www.hackingwithswift.com/quick-start/concurrency/how-to-convert-an-asyncsequence-into-a-sequence
     /// Tip: Because we’ve made collect() use rethrows, you only need to call it using try if the call to reduce() would normally throw, so if you have an async sequence that doesn’t throw errors you can skip try entirely.

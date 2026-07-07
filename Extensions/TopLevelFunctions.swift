@@ -28,7 +28,7 @@ nonisolated func dprint(_ items: Any..., separator: String = " ", terminator: St
 #endif
 }
 
-var isDebugging: Bool {
+nonisolated var isDebugging: Bool {
 #if DEBUG
     true
 #else

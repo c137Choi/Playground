@@ -9,17 +9,13 @@ import RxSwift
 import RxCocoa
 
 @propertyWrapper
-class Variable<Wrapped>: ObservableType {
+class Variable<Wrapped>: ObservableType, @unchecked Sendable {
     /// ObservableConvertibleType序列元素
     typealias Element = Wrapped
     /// 核心Relay对象
     let relay: BehaviorRelay<Wrapped>
-    /// 数据访问锁
-    private lazy var dataAccessLock = NSLock()
     /// 设置为true,则订阅的conditionalValue事件序列不发送事件
     private var blockEvents = false
-    /// 数据访问是否加锁
-    private let withAccessLock: Bool
     /// 有条件的事件序列 | blockEvents为true时不发送事件
     /// 常用于控件之间的双向绑定
     /// 配合setValue(:sendEvent:)方法使用
@@ -54,33 +50,14 @@ class Variable<Wrapped>: ObservableType {
     }
     
     /// 初始化
-    /// - Parameters:
-    ///   - wrappedValue: 初始值
-    ///   - withAccessLock: 数据访问是否加锁
-    init(wrappedValue: Wrapped, withAccessLock: Bool = false) {
+    /// - Parameter wrappedValue: 初始值
+    init(wrappedValue: Wrapped) {
         self.relay = BehaviorRelay(value: wrappedValue)
-        self.withAccessLock = withAccessLock
     }
     
     var wrappedValue: Wrapped {
-        get {
-            if withAccessLock {
-                return dataAccessLock.withLock {
-                    relay.value
-                }
-            } else {
-                return relay.value
-            }
-        }
-        set {
-            if withAccessLock {
-                dataAccessLock.withLock {
-                    relay << newValue
-                }
-            } else {
-                relay << newValue
-            }
-        }
+        get { relay.value }
+        set { relay << newValue }
     }
     
     var skipFirst: RxObservable<Wrapped> {
@@ -97,7 +74,7 @@ class Variable<Wrapped>: ObservableType {
 }
 
 @propertyWrapper
-final class ClamppedVariable<T>: Variable<T> where T: Comparable {
+final class ClamppedVariable<T>: Variable<T>, @unchecked Sendable where T: Comparable {
     
     let range: ClosedRange<T>
     
@@ -126,7 +103,7 @@ final class ClamppedVariable<T>: Variable<T> where T: Comparable {
 }
 
 @propertyWrapper
-final class CycledCase<Case: Equatable>: Variable<Case> {
+final class CycledCase<Case: Equatable>: Variable<Case>, @unchecked Sendable {
     typealias CaseArray = [Case]
     /// 元素数组
     let cases: CaseArray
@@ -181,7 +158,7 @@ final class CycledCase<Case: Equatable>: Variable<Case> {
 }
 
 @propertyWrapper
-final class CycledVariable<T>: Variable<T> where T: Comparable {
+final class CycledVariable<T>: Variable<T>, @unchecked Sendable where T: Comparable {
     /// 范围
     let range: ClosedRange<T>
     /// 用于发送范围错误事件

@@ -13,12 +13,14 @@ nonisolated extension DisposeBag {
         DisposeBag()
     }
     
+    /// 创建DisposeBag并开启任务(不抛出错误)
     static func task(name: String? = nil, priority: TaskPriority? = nil, operation: sending @escaping @isolated(any) () async -> Void) -> DisposeBag {
         DisposeBag {
             Task(name: name, priority: priority, operation: operation)
         }
     }
     
+    /// 创建DisposeBag并开启任务(可抛出错误)
     static func task(name: String? = nil, priority: TaskPriority? = nil, operation: sending @escaping @isolated(any) () async throws -> Void) -> DisposeBag {
         DisposeBag {
             Task(name: name, priority: priority, operation: operation)

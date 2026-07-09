@@ -9,7 +9,7 @@ import RxSwift
 import RxCocoa
 
 @propertyWrapper
-class Variable<Wrapped>: ObservableType, @unchecked Sendable {
+class Variable<Wrapped>: ObservableType, Sendable {
     /// ObservableConvertibleType序列元素
     typealias Element = Wrapped
     /// 核心Relay对象
@@ -74,7 +74,7 @@ class Variable<Wrapped>: ObservableType, @unchecked Sendable {
 }
 
 @propertyWrapper
-final class ClamppedVariable<T>: Variable<T>, @unchecked Sendable where T: Comparable {
+final class ClamppedVariable<T>: Variable<T>, Sendable where T: Comparable {
     
     let range: ClosedRange<T>
     
@@ -103,7 +103,7 @@ final class ClamppedVariable<T>: Variable<T>, @unchecked Sendable where T: Compa
 }
 
 @propertyWrapper
-final class CycledCase<Case: Equatable>: Variable<Case>, @unchecked Sendable {
+final class CycledCase<Case: Equatable>: Variable<Case>, Sendable {
     typealias CaseArray = [Case]
     /// 元素数组
     let cases: CaseArray
@@ -158,7 +158,7 @@ final class CycledCase<Case: Equatable>: Variable<Case>, @unchecked Sendable {
 }
 
 @propertyWrapper
-final class CycledVariable<T>: Variable<T>, @unchecked Sendable where T: Comparable {
+final class CycledVariable<T>: Variable<T>, Sendable where T: Comparable {
     /// 范围
     let range: ClosedRange<T>
     /// 用于发送范围错误事件

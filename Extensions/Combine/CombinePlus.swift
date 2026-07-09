@@ -8,9 +8,17 @@
 
 import Foundation
 import Combine
+import RxSwift
+import RxCocoa
 
-extension Publisher where Output: OptionalConvertible {
+nonisolated extension Publisher where Output: OptionalConvertible {
     var unwrapped: AnyPublisher<Output.Wrapped, Failure> {
         compactMap(\.optionalValue).eraseToAnyPublisher()
     }
+}
+
+nonisolated func <-> <T>(property: ControlProperty<T>, subject: CurrentValueSubject<T, Never>) -> Disposable {
+    let bindToProperty = subject.values.observable.bind(to: property)
+    let bindToSubject = property.subscribe(onNext: subject.send, onCompleted: bindToProperty.dispose)
+    return Disposables.create(bindToProperty, bindToSubject)
 }

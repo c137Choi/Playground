@@ -22,3 +22,17 @@ nonisolated func <-> <T>(property: ControlProperty<T>, subject: CurrentValueSubj
     let bindToSubject = property.subscribe(onNext: subject.send, onCompleted: bindToProperty.dispose)
     return Disposables.create(bindToProperty, bindToSubject)
 }
+
+nonisolated extension CurrentValueSubject {
+    
+    static func << (lhs: CurrentValueSubject<Output, Failure>, rhs: Output) {
+        lhs.send(rhs)
+    }
+}
+
+nonisolated extension PassthroughSubject {
+    
+    static func << (lhs: PassthroughSubject<Output, Failure>, rhs: Output) {
+        lhs.send(rhs)
+    }
+}

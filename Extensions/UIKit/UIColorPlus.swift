@@ -39,7 +39,7 @@ extension UIColor {
     }
     
     /// 颜色 -> 色温
-    var temperature: CGFloat {
+    nonisolated var temperature: CGFloat {
         guard let maybeRGBA else { return 0 }
         let red = maybeRGBA.red
         let green = maybeRGBA.green
@@ -96,11 +96,11 @@ extension UIColor {
         HSI(self)
     }
     
-    var maybeRGB: RGB? {
+    nonisolated var maybeRGB: RGB? {
         RGB(self)
     }
     
-    var maybeRGBA: RGBA? {
+    nonisolated var maybeRGBA: RGBA? {
         RGBA(self)
     }
     

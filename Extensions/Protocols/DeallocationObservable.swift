@@ -60,7 +60,7 @@ final class WeakPublished<Wrapped: DeallocationObservable> {
             if let newValue {
                 attachSentinel(to: newValue, version: version)
             }
-            subject.send(WeakBox(value: newValue))
+            subject << WeakBox(value: newValue)
         }
     }
     
@@ -79,7 +79,7 @@ final class WeakPublished<Wrapped: DeallocationObservable> {
         let observerID = ObjectIdentifier(self)
         target.deallocationSentinel.callbacks[observerID] = { [weak self] in
             guard let self, self.version == version else { return }
-            self.subject.send(WeakBox(value: nil))
+            self.subject << WeakBox(value: nil)
         }
     }
     

@@ -23,16 +23,8 @@ nonisolated func <-> <T>(property: ControlProperty<T>, subject: CurrentValueSubj
     return Disposables.create(bindToProperty, bindToSubject)
 }
 
-nonisolated extension CurrentValueSubject {
-    
-    static func << (lhs: CurrentValueSubject<Output, Failure>, rhs: Output) {
-        lhs.send(rhs)
-    }
-}
-
-nonisolated extension PassthroughSubject {
-    
-    static func << (lhs: PassthroughSubject<Output, Failure>, rhs: Output) {
+nonisolated extension Subject {
+    static func << (lhs: Self, rhs: Output) {
         lhs.send(rhs)
     }
 }

@@ -206,7 +206,7 @@ extension ObservableType where Element == Bool {
     }
 }
 
-extension ObservableType where Element: ObservableConvertibleType {
+nonisolated extension ObservableType where Element: ObservableConvertibleType {
     
     public var switchLatest: RxObservable<Element.Element> {
         switchLatest()

@@ -11,6 +11,11 @@ import Combine
 import RxSwift
 import RxCocoa
 
+extension PassthroughSubject: @retroactive @unchecked Sendable {}
+extension AnyPublisher: @retroactive @unchecked Sendable {}
+extension AnyCancellable: @retroactive @unchecked Sendable {}
+extension AsyncPublisher: @retroactive @unchecked Sendable {}
+
 nonisolated extension Publisher where Output: OptionalConvertible {
     var unwrapped: AnyPublisher<Output.Wrapped, Failure> {
         compactMap(\.optionalValue).eraseToAnyPublisher()

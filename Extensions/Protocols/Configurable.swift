@@ -92,8 +92,9 @@ extension Set: Configurable {}
 extension CGRect: Configurable {}
 extension CGSize: Configurable {}
 extension CGPoint: Configurable {}
-extension UIEdgeInsets: Configurable {}
 extension NSDirectionalEdgeInsets: Configurable {}
+extension UIEdgeInsets: Configurable {}
+extension UIConfigurationTextAttributesTransformer: Configurable {}
 
 @available(iOS 16, *)
 extension LocalizedStringResource: Configurable {}

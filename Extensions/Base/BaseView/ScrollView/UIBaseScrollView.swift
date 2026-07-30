@@ -47,6 +47,8 @@ class UIBaseScrollView: UIScrollView, UIViewLifeCycle {
         contentInsetAdjustmentBehavior = .automatic
         /// 交互时收起键盘
         keyboardDismissMode = .interactive
+        /// 立即交付触摸给子控件(如滑块)，避免 delaysContentTouches 默认延迟导致响应迟钝
+        delaysContentTouches = false
         /// 背景色
         backgroundColor = defaultBackgroundColor
         /// 垂直滚动条隐藏

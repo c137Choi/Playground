@@ -7,21 +7,21 @@
 
 import Foundation
 
-nonisolated struct AnyFormatStyle<Input, Output>: Sendable {
-    
-    private let format: @Sendable (Input) -> Output
-    
-    init(format: @Sendable @escaping (Input) -> Output) {
+nonisolated struct AnyFormatStyle<FormatInput, FormatOutput>: Sendable {
+
+    private let format: @Sendable (FormatInput) -> FormatOutput
+
+    init(format: @Sendable @escaping (FormatInput) -> FormatOutput) {
         self.format = format
     }
     
-    init<F: Sendable>(_ style: F) where F: FormatStyle, Input == F.FormatInput, Output == F.FormatOutput {
+    init<F: Sendable>(_ style: F) where F: FormatStyle, FormatInput == F.FormatInput, FormatOutput == F.FormatOutput {
         format = {
             style.format($0)
         }
     }
-    
-    func format(_ value: Input) -> Output {
+
+    func format(_ value: FormatInput) -> FormatOutput {
         format(value)
     }
 }

@@ -67,6 +67,10 @@ extension NSDirectionalEdgeInsets {
 
 extension UIEdgeInsets {
     
+    init(horizontal: CGFloat? = nil, vertical: CGFloat? = nil) {
+        self.init(top: vertical.orZero, left: horizontal.orZero, bottom: vertical.orZero, right: horizontal.orZero)
+    }
+    
     static func horizontal(_ padding: CGFloat) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
     }

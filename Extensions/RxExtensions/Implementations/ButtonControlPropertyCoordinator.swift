@@ -46,6 +46,10 @@ final class ButtonControlPropertyCoordinator<Button: UIButton, Property: Hashabl
         /// 监听按钮切换
         reload(buttons, initialProperty: initialProperty, eventFilter: eventFilter)
     }
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    deinit {}
     
     /// 监听按钮切换
     /// - Parameters:

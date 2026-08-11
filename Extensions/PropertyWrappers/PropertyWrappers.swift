@@ -22,7 +22,11 @@ import UIKit
     init(wrappedValue: @escaping () -> T) {
         self.wrappedValue = wrappedValue
     }
-    
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    deinit {}
+
     var fetched: T {
         let availableItem = pool.first(where: \.superview.isVoid)
         if let availableItem {
@@ -249,6 +253,10 @@ nonisolated final class CycledNumber<T: FloatingPoint>: CycledValue<T> {
 		self.requirements = requirements
 		self.wrappedValue = wrappedValue
 	}
+
+	/// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+	@_optimize(none)
+	deinit {}
 }
 
 struct ValueRequirement: OptionSet {
@@ -274,6 +282,10 @@ struct ValueRequirement: OptionSet {
 			value = validValue
 		}
 	}
+
+	/// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+	@_optimize(none)
+	deinit {}
 }
 
 /// 忽略空字符串
@@ -282,6 +294,10 @@ struct ValueRequirement: OptionSet {
 		get { super.wrappedValue }
 		set { super.wrappedValue = newValue.nonEmptyStringOrNil }
 	}
+
+	/// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+	@_optimize(none)
+	deinit {}
 }
 
 /// 转瞬即逝的变量 | 用于开销较大的变量, 如:NumberFormatter,DateFormatter等
@@ -335,12 +351,18 @@ struct ValueRequirement: OptionSet {
         self.valueBuilder = wrappedValue
     }
     
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    deinit {
+        timer.invalidate()
+    }
+
     private func countDown() {
         /// 只有值有效的时候才计时
         guard value.isValid else { return }
         timer.fire(.now() + interval)
     }
-    
+
     var wrappedValue: T? {
         get {
             defer {
@@ -368,9 +390,5 @@ struct ValueRequirement: OptionSet {
             }
             value = newValue
         }
-    }
-    
-    deinit {
-        timer.invalidate()
     }
 }

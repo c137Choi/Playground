@@ -11,7 +11,13 @@ class BaseStandardViewController<MainView: ViewModelSetupView>: BaseViewControll
     lazy var mainView = mainViewInitialization()
     
     lazy var viewModel = MainView.ViewModel()
-    
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    /// 由于该类为泛型且非 final,无法使用 isolated deinit(@preconcurrency 限制)
+    /// 改用 @MainActor deinit 与父类 BaseViewController 的 deinit 隔离保持一致
+    @_optimize(none)
+    @MainActor deinit {}
+
     override var defaultMainView: UIView? {
         mainView
     }

@@ -32,6 +32,10 @@ final class UIControlEventRelay<Control: UIControl>: Disposable {
         self.eventHandler = eventHandler
         control.addTarget(self, action: #selector(action(_:_:)), for: events)
     }
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    deinit {}
     
     @objc private func action(_ sender: AnyObject, _ event: UIEvent?) {
         eventHandler?(sender as! Control, event)

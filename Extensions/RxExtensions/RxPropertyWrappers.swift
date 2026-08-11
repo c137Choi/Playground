@@ -54,7 +54,11 @@ class Variable<Wrapped>: ObservableType, Sendable {
     init(wrappedValue: Wrapped) {
         self.relay = BehaviorRelay(value: wrappedValue)
     }
-    
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    deinit {}
+
     var wrappedValue: Wrapped {
         get { relay.value }
         set { relay << newValue }
@@ -82,7 +86,11 @@ final class ClamppedVariable<T>: Variable<T>, Sendable where T: Comparable {
         self.range = range
         super.init(wrappedValue: range << wrappedValue)
     }
-    
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    deinit {}
+
     /// 这里重写此属性是必须的,否则无法使用$property语法.relay
     override var projectedValue: ClamppedVariable<T> {
         self
@@ -126,7 +134,11 @@ final class CycledCase<Case: Equatable>: Variable<Case>, Sendable {
     override var projectedValue: CycledCase<Case> {
         self
     }
-    
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    deinit {}
+
     override var wrappedValue: Case {
         get { super.wrappedValue }
         set { super.wrappedValue = newValue }
@@ -169,7 +181,11 @@ final class CycledVariable<T>: Variable<T>, Sendable where T: Comparable {
         let initialValue = range << wrappedValue
         super.init(wrappedValue: initialValue)
     }
-    
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    deinit {}
+
     override var projectedValue: CycledVariable<T> {
         self
     }

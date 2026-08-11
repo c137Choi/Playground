@@ -76,6 +76,10 @@ final class _NSObjectProxy<T: NSObjectProtocol>: NSObject {
 		_target = target
 		super.init()
 	}
+
+	/// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+	@_optimize(none)
+	deinit {}
 	
 	//  核心代码
 	override func forwardingTarget(for aSelector: Selector!) -> Any? {

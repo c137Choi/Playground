@@ -74,6 +74,10 @@ final class WeakPublished<Wrapped: DeallocationObservable> {
             attachSentinel(to: wrappedValue, version: 0)
         }
     }
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    deinit {}
     
     private func attachSentinel(to target: Wrapped, version: UInt) {
         let observerID = ObjectIdentifier(self)

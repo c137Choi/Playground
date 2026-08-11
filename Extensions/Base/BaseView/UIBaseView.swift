@@ -112,6 +112,10 @@ class BasePagableViewModel<Model>: BaseViewModel, PagableViewModelType {
     subscript (index: Int) -> Model {
         items[index]
     }
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    @MainActor deinit {}
 }
 
 class PagableViewModel<Target: TargetType, Model: Codable>: BasePagableViewModel<Model> {
@@ -127,6 +131,10 @@ class PagableViewModel<Target: TargetType, Model: Codable>: BasePagableViewModel
                 .subscribe()
         }
     }
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    @_optimize(none)
+    @MainActor deinit {}
 }
 
 class UIBaseView: UIView {
@@ -150,7 +158,7 @@ class UIBaseView: UIView {
     }
     
     func prepareSubviews() {}
-    
+
     func prepareConstraints() {}
 }
 
@@ -192,6 +200,12 @@ class ViewControllerBaseView<Controller: ViewModelHostViewController>: UIBaseVie
             fatalError("Should not happen! Check your logic.")
         }
     }
+
+    /// 规避 Swift 6.3.3 EarlyPerfInliner 处理合成 deinit 时的崩溃(swiftlang/swift#90150)
+    /// 由于该类为泛型且非 final,无法使用 isolated deinit(@preconcurrency 限制)
+    /// 改用 @MainActor deinit 与父类 UIView 的 deinit 隔离保持一致
+    @_optimize(none)
+    @MainActor deinit {}
 }
 
 // MARK: - UIView协议实现

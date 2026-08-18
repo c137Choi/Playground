@@ -28,7 +28,7 @@ class UIBaseCollectionViewCell: UICollectionViewCell, UIViewLifeCycle {
         }
     }
     
-    @Published var indexPath: IndexPath?
+    var indexPath: IndexPath?
     
     override init(frame: CGRect) {
         super.init(frame: frame)

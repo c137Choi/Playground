@@ -20,7 +20,7 @@ class UIBaseTableViewHeaderFooterView: UITableViewHeaderFooterView, UIViewLifeCy
     var preferredCornerRadius: CGFloat? { nil }
     
     /// 分配的分组
-    @Published var section: Int?
+    var section: Int?
     
     /// 背景样式设置模式
     var backgroundStyleMode: UIBackgroundStyleMode = .modern {

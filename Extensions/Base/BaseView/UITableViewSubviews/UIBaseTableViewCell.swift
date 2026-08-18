@@ -87,7 +87,7 @@ class UIBaseTableViewCell: UITableViewCell, UIViewLifeCycle {
     }
     
     /// 分配的IndexPath
-    @Published var indexPath: IndexPath?
+    var indexPath: IndexPath?
     
     override func updateConfiguration(using state: UICellConfigurationState) {
         super.updateConfiguration(using: state)

@@ -7,7 +7,11 @@
 
 import RxSwift
 
-extension ObserverType {
+nonisolated extension ObserverType {
+    
+    static func << (lhs: Self, rhs: Element) {
+        lhs.onNext(rhs)
+    }
     
     func onNextOptional(_ element: Element?) {
         guard let element else { return }

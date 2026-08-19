@@ -7,7 +7,7 @@
 
 import RxSwift
 
-extension Completable {
+nonisolated extension Completable {
     
     static var empty: Completable {
         .empty()
@@ -28,7 +28,7 @@ extension Completable {
     }
 }
 
-extension Completable {
+nonisolated extension Completable {
     /// 串联Completable
     static func +(lhs: Completable, rhs: Completable) -> Completable {
         lhs.andThen(rhs)

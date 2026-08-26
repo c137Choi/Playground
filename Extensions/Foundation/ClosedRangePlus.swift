@@ -69,6 +69,17 @@ nonisolated extension ClosedRange where Bound == Int {
 
 nonisolated extension ClosedRange {
     
+    /// 初始化: 传入任意两个Bound,不用管谁大谁小
+    public init(_ bound1: Bound, bound2: Bound) {
+        let lowerBound = Swift.min(bound1, bound2)
+        let upperBound = Swift.max(bound1, bound2)
+        self.init(uncheckedBounds: (lowerBound, upperBound))
+    }
+    
+    /// 初始化
+    /// - Parameters:
+    ///   - lowerBound: 起始值
+    ///   - upperBound: 结束值
     public init(lowerBound: Bound, upperBound: Bound) throws {
         guard upperBound >= lowerBound else {
             throw "上限必须大于等于下限"

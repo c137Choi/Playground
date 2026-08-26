@@ -46,8 +46,28 @@ nonisolated extension HSI {
         self.init(cmy.rgb)
     }
     
+    /// 通过数学公式直接从RGB计算HSI(此处与UIColor一致采用HSV语义: brightness = max(r,g,b))
+    /// 替代原先经由UIColor中转的转换, 提升精度与性能
     init(_ rgb: RGB) {
-        self = rgb.uiColor.hsi
+        let r = rgb.red
+        let g = rgb.green
+        let b = rgb.blue
+        let maxVal = Swift.max(r, g, b)
+        let minVal = Swift.min(r, g, b)
+        let delta = maxVal - minVal
+        self.brightness = maxVal
+        self.saturation = maxVal == 0 ? 0 : delta / maxVal
+        if delta == 0 {
+            self.hue = 0
+        } else if maxVal == r {
+            var h = (g - b) / delta
+            if h < 0 { h += 6 }
+            self.hue = h / 6
+        } else if maxVal == g {
+            self.hue = ((b - r) / delta + 2) / 6
+        } else {
+            self.hue = ((r - g) / delta + 4) / 6
+        }
     }
     
     var uiColor: UIColor {

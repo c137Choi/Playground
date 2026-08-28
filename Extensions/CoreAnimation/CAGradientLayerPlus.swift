@@ -8,20 +8,30 @@ import UIKit
 
 // MARK: - 渐变色封装
 nonisolated struct ColorStop {
+    
     let color: UIColor
+    
     let stop: Double
+    
+    /// 初始化
+    /// - Parameters:
+    ///   - color: 颜色
+    ///   - stop: 停顿位置
     init(color: UIColor, stop: Double = -1) {
         self.color = color
         self.stop = stop
     }
     
-    /// 从HUE创建对象
-    /// - Parameters:
-    ///   - hue: 色相 (范围: 0 - 1)
-    static func fromHue(_ hue: Double) -> ColorStop {
+    /// 初始化
+    /// - Parameter hue: 色相
+    init(hue: Double) {
         let color = UIColor(hue: hue)
-        return self.init(color: color)
+        self.init(color: color)
     }
+}
+
+extension ColorStop {
+    static let hues = stride(from: 0, through: 1.0, by: 1 / 36.0).map(ColorStop.init(hue:))
 }
 
 extension UIColor {
@@ -56,6 +66,10 @@ extension CAGradientLayer {
     func refill(@ArrayBuilder<ColorStop> _ gradientBuilder: GradientColorsBuilder) {
         let colors = gradientBuilder()
         setColors(colors)
+    }
+    
+    func refill(_ gradientColors: GradientColors) {
+        setColors(gradientColors)
     }
     
     var direction: CGVector {

@@ -167,6 +167,11 @@ nonisolated extension RGB {
         GMCorrectionMatrix(gmShift: gmShift).apply(to: &self)
     }
     
+    /// 转换成MAX亮度时的颜色
+    var brightest: RGB {
+        self.hsi.with(new: \.brightness, 1.0).rgb
+    }
+    
     var rgba: RGBA {
         RGBA(self, alpha: 1)
     }

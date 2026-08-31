@@ -212,7 +212,7 @@ nonisolated extension RGB {
     }
     
     var rawValue: Int {
-        rgba.rgbValue
+        rgba.rgbIntValue
     }
     
     

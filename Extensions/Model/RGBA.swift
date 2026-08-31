@@ -41,7 +41,7 @@ nonisolated extension RGBA {
         RGB(red: red, green: green, blue: blue)
     }
     
-    var rgbValue: Int {
+    var rgbIntValue: Int {
         rawValue & 0x00_FF_FF_FF
     }
     

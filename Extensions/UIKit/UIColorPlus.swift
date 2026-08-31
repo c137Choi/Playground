@@ -35,7 +35,7 @@ extension UIColor {
     
     var hexString: String? {
         /// 注意这里不能使用int.hexString,因为如果碰到解析正绿色的时候,字符串会变成4位:#FF00
-        rgbInt.map(\.argbColorHexString)
+        rgbIntValue.map(\.argbColorHexString)
     }
     
     /// 颜色 -> 色温
@@ -61,8 +61,8 @@ extension UIColor {
     }
     
     /// 返回argb颜色
-    var rgbInt: Int? {
-        maybeRGBA.map(\.rgbValue)
+    var rgbIntValue: Int? {
+        maybeRGBA.map(\.rgbIntValue)
     }
     
     var hue: CGFloat {

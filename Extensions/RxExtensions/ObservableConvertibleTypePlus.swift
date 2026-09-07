@@ -486,13 +486,15 @@ extension ObservableConvertibleType where Element: Equatable {
 }
 
 // MARK: - RxObservable of Collection
-extension ObservableConvertibleType where Element: Collection {
+extension ObservableConvertibleType where Element: Sequence {
     
-    func removeDuplicates<Value>(at keyPath: KeyPath<Element.Element, Value>) -> RxObservable<[Element.Element]> where Value: Equatable {
+    func removingDuplicateElements<Value>(at keyPath: KeyPath<Element.Element, Value>) -> RxObservable<[Element.Element]> where Value: Hashable {
         asObservable().map { collection in
-            collection.removingDuplicates(at: keyPath)
+            collection.removingDuplicateElements(at: keyPath)
         }
     }
+}
+extension ObservableConvertibleType where Element: Collection {
     
     var isEmpty: RxObservable<Bool> {
         observable.map(\.isEmpty)

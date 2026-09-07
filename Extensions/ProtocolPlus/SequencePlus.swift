@@ -56,19 +56,21 @@ nonisolated extension Sequence {
         try reduce(into: initialResult, updateAccumulatingResult).filledOrNil
     }
     
-    /// 根据KeyPath过滤掉重复的元素
-    /// - Parameter keyPath: 元素的KeyPath
+    /// 移除重复的元素(如果有KeyPath值重复的元素, 只保留首次出现的)
+    /// - Parameter keyPath: 用于判断重复的KeyPath
     /// - Returns: 无重复元素的数组
-    func removingDuplicates<Value>(at keyPath: KeyPath<Element, Value>) -> [Element] where Value: Equatable {
-        removingDuplicates { element1, element2 in
-            element1[keyPath: keyPath] == element2[keyPath: keyPath]
+    func removingDuplicateElements<Value>(at keyPath: KeyPath<Element, Value>) -> [Element] where Value: Hashable {
+        /// 创建临时的Value集合, 利用Set的insert结果进行O(1)查重
+        var seen = Set<Value>()
+        return filter {
+            seen.insert($0[keyPath: keyPath]).inserted
         }
     }
     
     /// 移除重复项
     /// - Parameter includeElement: 判断是否重复的回调
     /// - Returns: 无重复元素的数组
-    func removingDuplicates(includeElement: (Element, Element) -> Bool) -> [Element] {
+    private func removingDuplicates(includeElement: (Element, Element) -> Bool) -> [Element] {
         var results = [Element]()
         
         forEach { element in

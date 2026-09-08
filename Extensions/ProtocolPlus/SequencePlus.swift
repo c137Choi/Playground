@@ -67,24 +67,6 @@ nonisolated extension Sequence {
         }
     }
     
-    /// 移除重复项
-    /// - Parameter includeElement: 判断是否重复的回调
-    /// - Returns: 无重复元素的数组
-    private func removingDuplicates(includeElement: (Element, Element) -> Bool) -> [Element] {
-        var results = [Element]()
-        
-        forEach { element in
-            let existingElements = results.filter {
-                return includeElement(element, $0)
-            }
-            if existingElements.count == 0 {
-                results.append(element)
-            }
-        }
-        
-        return results
-    }
-    
     func with<T>(_ anything: T) -> [(Element, T)] {
         map { element in
             (element, anything)

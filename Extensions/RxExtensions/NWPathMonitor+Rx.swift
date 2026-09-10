@@ -13,15 +13,9 @@ import RxCocoa
 extension NWPathMonitor: @retroactive ReactiveCompatible {}
 extension Reactive where Base == NWPathMonitor {
     
-    var satisfiedEthernetPath: RxObservable<NWPath?> {
-        satisfiedPath.map {
+    var currentEthernetPath: RxObservable<NWPath> {
+        currentPath.compactMap {
             $0.usesInterfaceType(.wifi) || $0.usesInterfaceType(.wiredEthernet) ? $0 : nil
-        }
-    }
-    
-    var satisfiedPath: RxObservable<NWPath> {
-        currentPath.filter {
-            $0.status == .satisfied
         }
     }
     

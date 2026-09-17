@@ -125,7 +125,7 @@ class PagableViewModel<Target: TargetType, Model: Codable>: BasePagableViewModel
     override func didInitialize() {
         guard let validTarget = target else { return }
         rx.disposeBag.insert {
-            Network.request(validTarget)
+            validTarget.kl.response
                 .map(Array<Model>.self, atKeyPath: "data")
                 .do(afterSuccess: rx.items.onNext)
                 .subscribe()

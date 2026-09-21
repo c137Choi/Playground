@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RangeDirection: Int {
+nonisolated enum RangeDirection: Int {
     case forward = 0
     case backward
 }
@@ -20,12 +20,12 @@ extension RangeDirection: CustomDebugStringConvertible {
 
 /// ClosedRange套壳
 /// 加了一个方向属性,根据此属性在调用(*)运算符乘以百分比时决定最终值的结果
-struct DirectionalRange<Bound>: Equatable where Bound: Comparable {
+nonisolated struct DirectionalRange<Bound>: Equatable where Bound: Comparable {
     var direction: RangeDirection
     var range: ClosedRange<Bound>
 }
 
-extension DirectionalRange {
+nonisolated extension DirectionalRange {
     
     /// 根据起止值初始化
     init(from start: Bound, to end: Bound) {
@@ -46,7 +46,7 @@ extension DirectionalRange: CustomDebugStringConvertible {
     }
 }
 
-extension DirectionalRange where Bound: BinaryFloatingPoint {
+nonisolated extension DirectionalRange where Bound: BinaryFloatingPoint {
     
     /// 计算范围和百分比相乘之后得出范围内的值
     /// - Parameters:
@@ -65,7 +65,7 @@ extension DirectionalRange where Bound: BinaryFloatingPoint {
     }
 }
 
-extension DirectionalRange where Bound: BinaryInteger {
+nonisolated extension DirectionalRange where Bound: BinaryInteger {
     
     /// 计算范围和百分比相乘之后得出范围内的值
     /// - Parameters:

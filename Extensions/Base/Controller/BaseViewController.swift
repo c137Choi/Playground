@@ -57,21 +57,21 @@ class BaseViewController: UIViewController, UIGestureRecognizerDelegate, ViewCon
         image: backBarButtonImage,
         style: .plain,
         target: self,
-        action: #selector(leftBarButtonItemTriggered))
+        action: #selector(leftBarButtonItemTriggered)).withoutSharedBackground
     
     /// The image should defined as a global computed property in each project.
     private(set) lazy var closeBarButtonItem = UIBarButtonItem(
         image: closeBarButtonImage,
         style: .plain,
         target: self,
-        action: #selector(leftBarButtonItemTriggered))
+        action: #selector(leftBarButtonItemTriggered)).withoutSharedBackground
     
     /// The image should defined as a global computed property in each project.
     private(set) lazy var dismissBarButtonItem = UIBarButtonItem(
         image: closeBarButtonImage,
         style: .plain,
         target: self,
-        action: #selector(dismissNavigationControllerOrSelf))
+        action: #selector(dismissNavigationControllerOrSelf)).withoutSharedBackground
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)

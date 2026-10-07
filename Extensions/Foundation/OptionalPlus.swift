@@ -98,8 +98,9 @@ nonisolated extension Optional {
     /// - Returns: 更新后的值
     @discardableResult
     mutating func mutating(update: (inout Wrapped) throws -> Void) rethrows -> Wrapped? {
-        guard self.isValid else { return nil }
-        try update(&self!)
+        guard var wrapped = self else { return nil }
+        try update(&wrapped)
+        self = wrapped
         return self
     }
     

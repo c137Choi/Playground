@@ -36,7 +36,8 @@ nonisolated extension Double {
         /// 步长大于1
         else {
             let doubleIncrement = increment.doubleValue
-            return Int(self / doubleIncrement).double * doubleIncrement
+            if doubleIncrement.isZero || doubleIncrement.isNaN { return self }
+            return (self / doubleIncrement).rounded(.toNearestOrAwayFromZero) * doubleIncrement
         }
     }
     

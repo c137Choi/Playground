@@ -15,11 +15,10 @@ public protocol LiveUpdatable {
     func updateMarginGuards(marginGuards: UIEdgeInsets, duration: JellyDuration) throws
     func updateCorners(radius: CGFloat, corners: CACornerMask, duration: JellyDuration)
 }
-
-/// # Animator
-/// An Animator is an UIViewControllerTransitionsDelegate with some extra candy.
-/// Basically the Animator is the main class to use when working with Jelly.
-public class Animator: NSObject {
+/// # JellyAnimator
+/// An JellyAnimator is an UIViewControllerTransitionsDelegate with some extra candy.
+/// Basically the JellyAnimator is the main class to use when working with Jelly.
+public class JellyAnimator: NSObject {
     private var presentation: Presentation
     
     private weak var currentPresentationController: PresentationController!
@@ -70,7 +69,7 @@ public class Animator: NSObject {
 /// The Animator needs to conform to the UIViewControllerTransitioningDelegate protocol
 /// it will provide a custom Presentation-Controller that tells UIKit which extra Views the presentation should have
 /// it also returns the interaction controllers for interaction with via gesuture recognizers
-extension Animator: UIViewControllerTransitioningDelegate {
+extension JellyAnimator: UIViewControllerTransitioningDelegate {
     /// Gets called from UIKit if presentatioStyle is custom and transitionDelegate is set
     public func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         let presentationController = PresentationController(presentedViewController: presented, presentingViewController: presenting, presentation: presentation)
@@ -108,7 +107,7 @@ extension Animator: UIViewControllerTransitioningDelegate {
     }
 }
 
-extension Animator: LiveUpdatable {
+extension JellyAnimator: LiveUpdatable {
     public func updateAlignment(alignment: PresentationAlignmentProtocol, duration: JellyDuration) throws {
         guard !(presentation is SlidePresentation), var presentation = presentation as? (Presentation & PresentationAlignmentProvider) else {
             throw LiveUpdateError.notSupportedOnSlide

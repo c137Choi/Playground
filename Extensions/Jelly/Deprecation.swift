@@ -9,8 +9,5 @@ public typealias JellySlideInPresentation = CoverPresentation
 @available(*, renamed: "FadePresentation")
 public typealias JellyFadeInPresentation = FadePresentation
 
-@available(*, renamed: "Animator")
-public typealias JellyAnimator = Animator
-
 @available(*, renamed: "Spring")
 public typealias Jellyness = Spring

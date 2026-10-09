@@ -22,6 +22,12 @@ nonisolated extension Publisher where Output: OptionalConvertible {
     }
 }
 
+extension Publisher where Self.Failure == Never {
+    func sink(storeIn bag: CancellableBag, receiveValue: @escaping (Self.Output) -> Void) {
+        sink(receiveValue: receiveValue).store(in: bag)
+    }
+}
+
 nonisolated func <-> <T>(property: ControlProperty<T>, subject: CurrentValueSubject<T, Never>) -> Disposable {
     let bindToProperty = subject.values.observable.bind(to: property)
     let bindToSubject = property.subscribe(onNext: subject.send, onCompleted: bindToProperty.dispose)

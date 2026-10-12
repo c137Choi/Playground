@@ -39,13 +39,8 @@ extension UIButton {
     
     /// 给contentEdgeInsets写个别名, 避免讨厌的过期警告
     var contentInsets: UIEdgeInsets {
-        get {
-            (self as ContentInsetsCompatible).contentInsetsCompatible
-        }
-        set {
-            var compatible: ContentInsetsCompatible = self
-            compatible.contentInsetsCompatible = newValue
-        }
+        get { (self as ContentInsetsCompatible).contentInsetsCompatible }
+        set { (self as ContentInsetsCompatible).contentInsetsCompatible = newValue }
     }
     
     var normalTitle: String? {
@@ -110,7 +105,7 @@ extension UIButton {
 }
 
 // MARK: - 过期API兼容层
-fileprivate protocol ContentInsetsCompatible {
+fileprivate protocol ContentInsetsCompatible: AnyObject {
     var contentInsetsCompatible: UIEdgeInsets { get set }
 }
 extension UIButton: ContentInsetsCompatible {}

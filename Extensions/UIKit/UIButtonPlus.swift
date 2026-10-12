@@ -39,8 +39,13 @@ extension UIButton {
     
     /// 给contentEdgeInsets写个别名, 避免讨厌的过期警告
     var contentInsets: UIEdgeInsets {
-        get { contentEdgeInsets }
-        set { contentEdgeInsets = newValue }
+        get {
+            (self as ContentInsetsCompatible).contentInsetsCompatible
+        }
+        set {
+            var compatible: ContentInsetsCompatible = self
+            compatible.contentInsetsCompatible = newValue
+        }
     }
     
     var normalTitle: String? {
@@ -101,6 +106,19 @@ extension UIButton {
         setTitle(title, for: .normal)
         setTitleColor(titleColor, for: .normal)
         titleFont = font
+    }
+}
+
+// MARK: - 过期API兼容层
+fileprivate protocol ContentInsetsCompatible {
+    var contentInsetsCompatible: UIEdgeInsets { get set }
+}
+extension UIButton: ContentInsetsCompatible {}
+extension UIButton {
+    @available(iOS, introduced: 2.0, deprecated: 15.0, message: "This property is ignored when using UIButtonConfiguration")
+    fileprivate var contentInsetsCompatible: UIEdgeInsets {
+        get { contentEdgeInsets }
+        set { contentEdgeInsets = newValue }
     }
 }
 

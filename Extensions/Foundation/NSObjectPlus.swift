@@ -65,7 +65,7 @@ extension NSObject {
 	}
 }
 
-final class _NSObjectProxy<T: NSObjectProtocol>: NSObject {
+nonisolated final class _NSObjectProxy<T: NSObjectProtocol>: NSObject {
 	
 	private(set) weak var _target: T!
 	var target: T {

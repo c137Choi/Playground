@@ -120,26 +120,4 @@ nonisolated extension BinaryFloatingPoint {
     var percentage: String {
         formatted(.percentage)
     }
-    
-    /// 格式化0...1.0到百分比
-    private func xxPercentString(fractions: Int = 0) -> String? {
-        NumberFormatter.xxShared.transform { formatter in
-            formatter.numberStyle = .percent
-            /// 因为shared属性内对复用的Formatter所有属性都作了重置(numberStyle被重置为了.none)
-            /// 可能还在同一个runloop中,设置了numberStyle = .percent之后相关属性还未生效
-            /// 这里改了numberStyle之后要重新设置相关属性(大概.numberStyle对数字格式化并不重要,因为设置了.numberStyle之后本质是设置了相关的一组属性)
-            /// 就算把上面设置.numberStyle一行注释掉, 只保留下面的一组属性设置, 也可以达到想要的格式化效果
-            /// 可能这就是苹果为什么推行format新API的原因吧
-            formatter.positiveSuffix = "%"
-            /// 数字 -> 字符串转换因子 | 0...1.0的小数乘以这个数, shared属性重置后此值为空
-            /// 所以之前格式化时输出的字符串总是0或1, 就是因为这个值
-            /// 还可以设置它为360, 这样就可以直接格式化色相了666 | 2024年09月25日18:17:30
-            formatter.multiplier = 100.nsNumber
-            /// 这里还同时设置了进位规则, 避免出现.9999999的情况
-            formatter.roundingMode = .halfEven
-            formatter.minimumFractionDigits = fractions
-            formatter.maximumFractionDigits = fractions
-            return formatter.string(for: self)
-        }
-    }
 }

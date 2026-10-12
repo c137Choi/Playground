@@ -9,9 +9,9 @@
 import Foundation
 
 final class GCDTimer {
-	
+    
     /// 定时器回调
-	typealias TickTock = (GCDTimer) -> Void
+    typealias TickTock = (GCDTimer) -> Void
     
     /// 定时器状态
     enum State {
@@ -22,13 +22,13 @@ final class GCDTimer {
         /// 挂起中
         case suspended
     }
-	
+    
     /// 定时器回调间隔
-	let timeInterval: DispatchTimeInterval
+    let timeInterval: DispatchTimeInterval
     /// 执行队列
-	let queue: DispatchQueue
+    let queue: DispatchQueue
     /// 供外部使用的定时器回调
-	let tickTock: TickTock
+    let tickTock: TickTock
     /// GCD定时器
     private var _timer: DispatchSourceTimer?
     /// 状态
@@ -43,35 +43,35 @@ final class GCDTimer {
         }
         return existingTimer
     }
-	/// 定时器初始化方法
-	/// - Parameters:
-	///   - timeInterval: 时间间隔
-	///   - queue: 执行的队列
-	///   - tickTock: 回调闭包
-	init(timeInterval: DispatchTimeInterval, queue: DispatchQueue = .main, tickTock: @escaping TickTock) {
-		self.timeInterval = timeInterval
-		self.queue = queue
-		self.tickTock = tickTock
-	}
-	
-	/// 创建Timer | 根据延迟时间启动定时器⏲
-	/// - Parameters:
-	///   - timeInterval: 时间间隔 | .never代表只执行一次
-	///   - delay: 延迟时间
-	///   - queue: 调用队列
-	///   - tickTock: 回调方法
-	/// - Returns: 定时器实列
-	@discardableResult
-	static func scheduledTimer(
-		timeInterval: DispatchTimeInterval = .never,
-		delay: DispatchTime = .now(),
-		queue: DispatchQueue = .main,
+    /// 定时器初始化方法
+    /// - Parameters:
+    ///   - timeInterval: 时间间隔
+    ///   - queue: 执行的队列
+    ///   - tickTock: 回调闭包
+    init(timeInterval: DispatchTimeInterval, queue: DispatchQueue = .main, tickTock: @escaping TickTock) {
+        self.timeInterval = timeInterval
+        self.queue = queue
+        self.tickTock = tickTock
+    }
+    
+    /// 创建Timer | 根据延迟时间启动定时器⏲
+    /// - Parameters:
+    ///   - timeInterval: 时间间隔 | .never代表只执行一次
+    ///   - delay: 延迟时间
+    ///   - queue: 调用队列
+    ///   - tickTock: 回调方法
+    /// - Returns: 定时器实列
+    @discardableResult
+    static func scheduledTimer(
+        timeInterval: DispatchTimeInterval = .never,
+        delay: DispatchTime = .now(),
+        queue: DispatchQueue = .main,
         tickTock: @escaping TickTock)
-	-> GCDTimer {
-		let timer = self.init(timeInterval: timeInterval, queue: queue, tickTock: tickTock)
-		timer.fire(delay)
-		return timer
-	}
+    -> GCDTimer {
+        let timer = self.init(timeInterval: timeInterval, queue: queue, tickTock: tickTock)
+        timer.fire(delay)
+        return timer
+    }
     
     /// 定时器调用方法
     private var timerTicking: DispatchWorkItem {
@@ -94,14 +94,14 @@ final class GCDTimer {
             state = .running
         }
     }
-	
-	/// 挂起定时器
+    
+    /// 挂起定时器
     func suspend() {
         if let timer = _timer, state == .running {
-			timer.suspend()
+            timer.suspend()
             state = .suspended
-		}
-	}
+        }
+    }
     
     /// 销毁定时器
     func invalidate() {
@@ -114,35 +114,35 @@ final class GCDTimer {
         _timer = .none
         state = .initial
     }
-	
-	/// 启动定时器
-	/// - Parameter delay: 延迟时间
-	func fire(_ delay: DispatchTime = .now()) {
-		timer.schedule(deadline: delay, repeating: timeInterval)
-		resume()
-	}
-	
-	deinit {
-		invalidate()
-	}
+    
+    /// 启动定时器
+    /// - Parameter delay: 延迟时间
+    func fire(_ delay: DispatchTime = .now()) {
+        timer.schedule(deadline: delay, repeating: timeInterval)
+        resume()
+    }
+    
+    isolated deinit {
+        invalidate()
+    }
 }
 
 // MARK: - __________ DispatchTime __________
 extension DispatchTime: @retroactive ExpressibleByIntegerLiteral {
-	public typealias IntegerLiteralType = Int
-	public init(integerLiteral value: Self.IntegerLiteralType) {
-		self = .now() + .seconds(value)
-	}
+    public typealias IntegerLiteralType = Int
+    public init(integerLiteral value: Self.IntegerLiteralType) {
+        self = .now() + .seconds(value)
+    }
 }
 
 extension DispatchTime: @retroactive ExpressibleByFloatLiteral {
-	public typealias FloatLiteralType = Double
-	public init(floatLiteral value: Self.FloatLiteralType) {
-		let nanoseconds = Int(value * 1_000_000_000)
-		self = .now() + .nanoseconds(nanoseconds)
-	}
-	
-	static func seconds(_ seconds: Double) -> DispatchTime {
-		self.init(floatLiteral: seconds)
-	}
+    public typealias FloatLiteralType = Double
+    public init(floatLiteral value: Self.FloatLiteralType) {
+        let nanoseconds = Int(value * 1_000_000_000)
+        self = .now() + .nanoseconds(nanoseconds)
+    }
+    
+    static func seconds(_ seconds: Double) -> DispatchTime {
+        self.init(floatLiteral: seconds)
+    }
 }

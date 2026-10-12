@@ -18,14 +18,6 @@ extension DateInterval {
 
 nonisolated extension Date {
     
-    /// ISO8601日期格式: "yyyy-MM-dd'T'HH:mm:ss"
-    fileprivate static let iso8601Formatter = ISO8601DateFormatter.make {
-        $0.timeZone = TimeZone(secondsFromGMT: 0)
-        $0.formatOptions = [
-            .withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime
-        ]
-    }
-    
     static func millisecondsSince1970(_ interval: Int) -> Date {
         Date(millisecondsSince1970: interval.double)
     }

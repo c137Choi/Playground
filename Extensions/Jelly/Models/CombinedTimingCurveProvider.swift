@@ -1,6 +1,7 @@
 import UIKit
 
-@objc(CombinedTimingCurveProvider) class CombinedTimingCurveProvider: NSObject, UITimingCurveProvider {
+@objc(CombinedTimingCurveProvider)
+class CombinedTimingCurveProvider: NSObject, UITimingCurveProvider {
     var springTimingParameters: UISpringTimingParameters?
     var cubicTimingParameters: UICubicTimingParameters?
     var timingCurveType: UITimingCurveType {

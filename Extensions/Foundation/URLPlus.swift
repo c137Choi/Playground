@@ -8,7 +8,7 @@ import Foundation
 
 extension URL {
     
-    static func ubiquityContainer(identifier: String?) -> URL? {
+    nonisolated static func ubiquityContainer(identifier: String?) -> URL? {
         FileManager.default.url(forUbiquityContainerIdentifier: identifier)
     }
     

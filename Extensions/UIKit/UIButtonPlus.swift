@@ -39,8 +39,8 @@ extension UIButton {
     
     /// 给contentEdgeInsets写个别名, 避免讨厌的过期警告
     var contentInsets: UIEdgeInsets {
-        get { (self as ContentInsetsCompatible).contentInsetsCompatible }
-        set { (self as ContentInsetsCompatible).contentInsetsCompatible = newValue }
+        get { (self as UIButtonCompatibleAPIs).contentEdgeInsetsAlias }
+        set { (self as UIButtonCompatibleAPIs).contentEdgeInsetsAlias = newValue }
     }
     
     var normalTitle: String? {
@@ -105,13 +105,13 @@ extension UIButton {
 }
 
 // MARK: - 过期API兼容层
-fileprivate protocol ContentInsetsCompatible: AnyObject {
-    var contentInsetsCompatible: UIEdgeInsets { get set }
+fileprivate protocol UIButtonCompatibleAPIs: AnyObject {
+    var contentEdgeInsetsAlias: UIEdgeInsets { get set }
 }
-extension UIButton: ContentInsetsCompatible {}
-extension UIButton {
-    @available(iOS, introduced: 2.0, deprecated: 15.0, message: "This property is ignored when using UIButtonConfiguration")
-    fileprivate var contentInsetsCompatible: UIEdgeInsets {
+
+extension UIButton: UIButtonCompatibleAPIs {
+    @available(iOS, deprecated: 15.0, message: "This property is ignored when using UIButtonConfiguration")
+    fileprivate var contentEdgeInsetsAlias: UIEdgeInsets {
         get { contentEdgeInsets }
         set { contentEdgeInsets = newValue }
     }

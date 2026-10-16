@@ -12,7 +12,7 @@ import AsyncAlgorithms
 nonisolated extension AsyncSequence {
     
     var observable: RxObservable<Element> {
-        self.asObservable()
+        self.asObservable(priority: nil)
     }
     
     /// 来源: https://www.hackingwithswift.com/quick-start/concurrency/how-to-convert-an-asyncsequence-into-a-sequence

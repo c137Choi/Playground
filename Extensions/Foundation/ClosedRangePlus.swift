@@ -70,7 +70,7 @@ nonisolated extension ClosedRange where Bound == Int {
 nonisolated extension ClosedRange {
     
     /// 初始化: 传入任意两个Bound,不用管谁大谁小
-    public init(_ bound1: Bound, bound2: Bound) {
+    public init(_ bound1: Bound, _ bound2: Bound) {
         let lowerBound = Swift.min(bound1, bound2)
         let upperBound = Swift.max(bound1, bound2)
         self.init(uncheckedBounds: (lowerBound, upperBound))

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import QMUIKit
 import Photos
 import PhotosUI
 import RxSwift

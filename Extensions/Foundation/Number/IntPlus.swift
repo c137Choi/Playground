@@ -9,6 +9,8 @@
 import UIKit
 
 nonisolated extension Int {
+    /// 色相范围
+    static let hueRange = 0...360
     /// 千分率范围
     static let permilleRange = 0...1_000
     /// 百分率范围

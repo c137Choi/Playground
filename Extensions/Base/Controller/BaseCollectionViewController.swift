@@ -102,6 +102,10 @@ class BaseCollectionViewController: BaseViewController, UICollectionViewDelegate
     // MARK: - CollectionView Delegates
     // 注意: 必须父类里有实现,代理方法才会调用
     
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         preferredCellSize ?? .zero
     }

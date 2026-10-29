@@ -125,7 +125,10 @@ extension Array where Element: UIButton {
             if let lastControlEvent {
                 /// 重复点击按钮不发送事件
                 if controlEvent.control === lastControlEvent.control {
-                    return nil
+                    /// 按钮仍处于选中状态才忽略 | 已被外部取消选中(如滑杆自动隐藏)时允许重新选中
+                    if lastControlEvent.control.isSelected {
+                        return nil
+                    }
                 }
                 /// 取消选中上一个按钮
                 else {

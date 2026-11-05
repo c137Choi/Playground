@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import Combine
-import RxSwift
 
 nonisolated extension AsyncStream {
     
@@ -20,20 +18,24 @@ nonisolated extension AsyncStream {
 
 nonisolated extension AsyncStream where Element: FixedWidthInteger {
     
-    static func timer(milliseconds: Int) -> AsyncStream<Element> {
-        timer(period: .milliseconds(milliseconds))
-    }
-    
     /// AsyncStream定时器
-    /// - Parameters:
-    ///   - dueTime: 执行前等待时间
-    ///   - period: 定时器间隔
-    /// - Returns: AsyncStream<Element>
-    static func timer(period: RxTimeInterval?) -> AsyncStream<Element> {
-        SerialDispatchQueueScheduler(qos: .userInitiated).transform { scheduler in
-            Observable<Element>.timer(0, period: period, scheduler: scheduler)
-                .asInfallible(onErrorJustReturn: 0)
-                .values
+    static func timer(milliseconds: Int, bufferingPolicy: AsyncStream<Element>.Continuation.BufferingPolicy = .bufferingNewest(1)) -> AsyncStream<Element> {
+        AsyncStream<Element>(bufferingPolicy: bufferingPolicy) { continuation in
+            let task = Task(priority: .userInitiated) {
+                /// 计数值(按元素位宽回绕循环: 如UInt8发出0...255)
+                var value: Element = 0
+                /// 首个元素立即产出
+                continuation.yield(value)
+                while !Task.isCancelled {
+                    try? await Task.sleep(nanoseconds: UInt64(milliseconds) * 1_000_000)
+                    value = value &+ 1
+                    continuation.yield(value)
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { @Sendable _ in
+                task.cancel()
+            }
         }
     }
 }

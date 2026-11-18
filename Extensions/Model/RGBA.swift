@@ -5,6 +5,8 @@
 //  Created by Choi on 2026/3/27.
 //
 
+import UIKit
+
 nonisolated struct RGBA {
     var red = Double.zero
     var green = Double.zero

@@ -5,6 +5,7 @@
 //  Created by Choi on 2026/2/26.
 //
 
+import Foundation
 import RxSwift
 
 public final class ProgressIndicator: ObservableConvertibleType {

@@ -6,7 +6,7 @@
 //  Copyright © 2017 Silver Fox. All rights reserved.
 //
 
-import CoreGraphics
+import UIKit
 
 nonisolated struct RGB {
     /// 0...1.0

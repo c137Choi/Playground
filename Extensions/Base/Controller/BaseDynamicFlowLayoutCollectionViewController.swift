@@ -41,6 +41,12 @@ Footer>, PagableViewModelDelegate {
         viewModel.fetchMoreData()
     }
     
+    override func configureCollectionView(_ collectionView: UICollectionView) {
+        super.configureCollectionView(collectionView)
+        /// 父类会无条件隐藏占位图; 若数据在viewDidLoad之前已返回(空列表), 此处按真实数据恢复显示状态
+        emptyView.isHidden = viewModel.numberOfItems > 0
+    }
+    
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         viewModel.numberOfSections
     }

@@ -9,13 +9,18 @@
 import UIKit
 
 nonisolated func lprint(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+    if AppLog.shared.isEnabled {
+        /// 写入应用日志文件
+        AppLog.shared.log(items.map { String(describing: $0) }.joined(separator: separator))
+    }
 #if DEBUG
     print(items, separator: separator, terminator: terminator)
 #endif
 }
 
 nonisolated func dprint(_ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #fileID, function: String = #function, line: Int = #line) {
-#if DEBUG
+    /// 正式包且非 alpha 测试包: 不输出也不记录
+    guard AppLog.shared.isEnabled else { return }
     let now = Date.now
     var fileName = (file as NSString).lastPathComponent
     let swiftExtension = ".swift"
@@ -23,7 +28,11 @@ nonisolated func dprint(_ items: Any..., separator: String = " ", terminator: St
         fileName.removeLast(swiftExtension.count)
     }
     let threadWarning = Thread.isMainThread ? "" : " | NOT-MAIN-THREAD"
-    print("🍌 @Time \(now.debugFormatted) \(fileName).\(function) @Line:\(line)\(threadWarning)")
+    let header = "🍌 @Time \(now.debugFormatted) \(fileName).\(function) @Line:\(line)\(threadWarning)"
+    /// 写入应用日志文件
+    AppLog.shared.log(header + "\n" + items.map { String(describing: $0) }.joined(separator: separator))
+#if DEBUG
+    print(header)
     print(items, separator: separator, terminator: terminator)
 #endif
 }

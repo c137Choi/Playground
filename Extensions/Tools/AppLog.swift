@@ -6,7 +6,7 @@
 import UIKit
 
 /// 应用运行日志
-/// 仅在 alpha 测试包与 Debug 构建下记录: 每次启动在沙盒 Documents 下新建一个日志文件, 文件名取启动时间(精确到秒);
+/// 仅在 alpha 测试包与 Debug 构建下记录: 每次启动在沙盒 Documents/AppLog 下新建一个日志文件(目录不存在时自动创建), 文件名取启动时间(精确到秒);
 /// dprint/lprint 的输出都会追加写入该文件, Release 正式包不产生任何日志读写
 /// 日志可能来自任意线程(dprint/lprint 为 nonisolated), 故声明为 nonisolated; 可变状态仅在串行队列上访问
 nonisolated final class AppLog: @unchecked Sendable {
@@ -18,20 +18,21 @@ nonisolated final class AppLog: @unchecked Sendable {
     
     /// 串行写入队列: 日志可能来自任意线程, 统一在此队列上写文件, 保证写入顺序与线程安全
     private let queue = DispatchQueue(label: "com.godox.knowled.applog", qos: .utility)
-    /// 日志行时间戳(精确到毫秒, 便于对齐并发/时序问题)
-    private let timestampFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "HH:mm:ss.SSS"
-        return formatter
-    }()
-    /// 日志文件名格式
-    private let fileNameFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd HH-mm-ss"
-        return formatter
-    }()
+    /// 日志行时间戳格式: HH:mm:ss.SSS(精确到毫秒, 便于对齐并发/时序问题)
+    /// 固定24小时制与公历, 不受系统区域/小时制设置影响
+    private let timestampFormatStyle = Date.VerbatimFormatStyle(
+        format: "\(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits):\(second: .twoDigits).\(secondFraction: .fractional(3))",
+        locale: .english,
+        timeZone: .autoupdatingCurrent,
+        calendar: .gregorian
+    )
+    /// 日志文件名格式: yyyy-MM-dd HH-mm-ss
+    private let fileNameFormatStyle = Date.VerbatimFormatStyle(
+        format: "\(year: .defaultDigits)-\(month: .twoDigits)-\(day: .twoDigits) \(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased))-\(minute: .twoDigits)-\(second: .twoDigits)",
+        locale: .english,
+        timeZone: .autoupdatingCurrent,
+        calendar: .gregorian
+    )
     /// 当前运行的日志文件
     private var fileHandle: FileHandle?
     /// 定时落盘: 未切后台/异常退出时也能把缓冲区写入文件(最长延迟1秒)
@@ -50,8 +51,10 @@ nonisolated final class AppLog: @unchecked Sendable {
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
         let device = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion) | \(UIDevice.current.model)"
         queue.async { [self] in
-            let fileURL = URL.documentDirectory
-                .appendingPathComponent(fileNameFormatter.string(from: Date()))
+            let directoryURL = URL.documentDirectory.appendingPathComponent("AppLog", isDirectory: true)
+            try? FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+            let fileURL = directoryURL
+                .appendingPathComponent(Date.now.formatted(fileNameFormatStyle))
                 .appendingPathExtension("log")
             guard FileManager.default.createFile(atPath: fileURL.path, contents: nil),
                   let handle = try? FileHandle(forWritingTo: fileURL) else { return }
@@ -72,7 +75,7 @@ nonisolated final class AppLog: @unchecked Sendable {
     func log(_ message: String) {
         guard isEnabled else { return }
         queue.async { [self] in
-            let timestamp = timestampFormatter.string(from: Date())
+            let timestamp = Date.now.formatted(timestampFormatStyle)
             appendToBuffer("[\(timestamp)] \(message)")
         }
     }
